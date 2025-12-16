@@ -116,6 +116,10 @@ def run_socratic_dialogue(dropdown_topic: str, custom_topic: str) -> tuple:
         with open(f"{outputs_dir}/04_judgment.md", 'r') as f:
             judgment_output = f.read()
 
+        # Add headers to distinguish the sections clearly
+        proposition_output = "## 🔵 First Line of Inquiry\n\n" + proposition_output
+        opposition_output = "## 🟢 Alternative Line of Inquiry\n\n" + opposition_output
+
         return topic_output, proposition_output, opposition_output, judgment_output
 
     except Exception as e:

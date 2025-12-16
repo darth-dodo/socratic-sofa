@@ -54,7 +54,7 @@ Respond with ONLY:
 Response:"""
 
         response = client.messages.create(
-            model="claude-haiku-4-20250605",  # Fast and cheap for moderation
+            model="claude-3-5-haiku-20241022",  # Fast and cheap for moderation
             max_tokens=100,
             messages=[{"role": "user", "content": moderation_prompt}]
         )
