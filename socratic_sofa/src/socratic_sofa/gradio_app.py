@@ -7,6 +7,7 @@ A philosophical dialogue system powered by CrewAI and the Socratic method
 import gradio as gr
 from datetime import datetime
 from socratic_sofa.crew import SocraticSofa
+from socratic_sofa.content_filter import is_topic_appropriate, get_alternative_suggestions
 import os
 import yaml
 from pathlib import Path
@@ -36,14 +37,18 @@ def load_topics():
 TOPICS = load_topics()
 
 
-def handle_topic_selection(dropdown_value: str, textbox_value: str) -> str:
+def handle_topic_selection(dropdown_value: str = None, textbox_value: str = None) -> str:
     """
     Handle topic selection from dropdown or textbox.
     Textbox takes priority if filled, otherwise use dropdown.
     """
-    # If user typed something, use that
-    if textbox_value and textbox_value.strip():
-        return textbox_value.strip()
+    # If user typed something, use that (priority 1)
+    if textbox_value and str(textbox_value).strip():
+        return str(textbox_value).strip()
+
+    # If no dropdown value, return empty
+    if not dropdown_value:
+        return ""
 
     # If dropdown is "Let AI choose", return empty
     if dropdown_value == "✨ Let AI choose":
@@ -69,6 +74,21 @@ def run_socratic_dialogue(dropdown_topic: str, custom_topic: str) -> tuple:
     """
     # Determine which topic to use
     final_topic = handle_topic_selection(dropdown_topic, custom_topic)
+
+    # Debug output
+    print(f"🔍 Topic Selection Debug:")
+    print(f"   Dropdown: {repr(dropdown_topic)}")
+    print(f"   Custom: {repr(custom_topic)}")
+    print(f"   Final: {repr(final_topic)}")
+
+    # Content moderation check
+    is_appropriate, rejection_reason = is_topic_appropriate(final_topic)
+    if not is_appropriate:
+        error_msg = f"⚠️ {rejection_reason}\n\n"
+        error_msg += "**Suggested topics:**\n"
+        for suggestion in get_alternative_suggestions():
+            error_msg += f"- {suggestion}\n"
+        return error_msg, error_msg, error_msg, error_msg
 
     # Prepare inputs
     inputs = {

@@ -1,12 +1,15 @@
 propose_topic:
   description: >
-    Propose an engaging philosophical topic suitable for Socratic inquiry.
-    The topic should be one that invites examination of assumptions, definitions,
-    and beliefs through systematic questioning.
+    {topic}
+
+    If a topic was provided above, use it exactly as given. If no topic was provided
+    (empty input), propose an engaging philosophical topic suitable for Socratic inquiry.
+    The topic should invite examination of assumptions, definitions, and beliefs through
+    systematic questioning.
   expected_output: >
-    A clear philosophical topic or question that lends itself to Socratic examination,
-    presented as an open question rather than a thesis to be proven. For example:
-    "What is justice?" or "Can virtue be taught?" or "What is the good life?"
+    The philosophical topic or question for this dialogue. If the user provided a topic,
+    simply present it clearly. If no topic was provided, propose an engaging question
+    like "What is justice?" or "Can virtue be taught?" or "What is the good life?"
   agent: socratic_questioner
 
 propose:
