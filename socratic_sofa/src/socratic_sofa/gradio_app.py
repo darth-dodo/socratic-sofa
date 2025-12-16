@@ -151,7 +151,7 @@ with gr.Blocks(
         philosophical depth over arriving at definitive conclusions.
 
         Built with [CrewAI](https://crewai.com) and [Claude](https://claude.ai) |
-        [View Source](https://github.com/anthropics/claude-code)
+        [View Source](https://github.com/darth-dodo/socratic-sofa)
         """
     )
 
