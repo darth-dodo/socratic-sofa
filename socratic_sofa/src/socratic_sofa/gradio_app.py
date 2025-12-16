@@ -129,7 +129,88 @@ def run_socratic_dialogue(dropdown_topic: str, custom_topic: str) -> tuple:
 
 # Create the Gradio interface
 with gr.Blocks(
-    title="Socratic Sofa - Philosophical Dialogue"
+    title="Socratic Sofa - Philosophical Dialogue",
+    css="""
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .gradio-container {
+                padding: 10px !important;
+            }
+
+            /* Stack columns vertically on mobile */
+            .gr-row {
+                flex-direction: column !important;
+            }
+
+            .gr-column {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin-bottom: 16px !important;
+            }
+
+            /* Typography adjustments */
+            .prose h1 {
+                font-size: 1.5rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            .prose h2 {
+                font-size: 1.2rem !important;
+                margin-top: 1rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            .prose h3 {
+                font-size: 1rem !important;
+                margin-top: 0.75rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+
+            .prose p {
+                font-size: 0.95rem !important;
+                line-height: 1.5 !important;
+            }
+
+            /* Button improvements */
+            button {
+                width: 100% !important;
+                font-size: 1rem !important;
+                padding: 12px !important;
+                margin: 8px 0 !important;
+            }
+
+            /* Component spacing */
+            .gr-box {
+                border-radius: 8px !important;
+                margin-bottom: 12px !important;
+            }
+
+            /* Dropdown and input fields */
+            .gr-dropdown,
+            .gr-textbox {
+                width: 100% !important;
+            }
+        }
+
+        /* Touch-friendly button sizing for all screens */
+        button {
+            min-height: 48px;
+            font-weight: 500;
+        }
+
+        /* Better spacing for forms */
+        .gr-form {
+            gap: 12px;
+        }
+
+        /* Improve markdown readability */
+        .prose {
+            max-width: 100%;
+        }
+
+        /* Better spacing between sections */
+        .gr-row {
+            margin-bottom: 1.5rem;
+        }
+    """
 ) as demo:
 
     gr.Markdown(
@@ -143,50 +224,50 @@ with gr.Blocks(
         """
     )
 
-    with gr.Row():
-        with gr.Column(scale=1):
-            gr.Markdown(
-                """
-                ### How It Works
-                1. **Choose Topic**: Pick from library or write your own
-                2. **First Inquiry**: Explore through Socratic questions
-                3. **Alternative Inquiry**: Examine from a different angle
-                4. **Evaluation**: Judge the quality of philosophical inquiry
+    # Input Section - Single column for better mobile support
+    with gr.Column():
+        gr.Markdown(
+            """
+            ### How It Works
+            1. **Choose Topic**: Pick from library or write your own
+            2. **First Inquiry**: Explore through Socratic questions
+            3. **Alternative Inquiry**: Examine from a different angle
+            4. **Evaluation**: Judge the quality of philosophical inquiry
 
-                ### The Socratic Method
-                - Uses questions to stimulate critical thinking
-                - Exposes contradictions through elenchus
-                - Maintains intellectual humility
-                - Progresses: definition → assumption → contradiction → insight
-                """
-            )
+            ### The Socratic Method
+            - Uses questions to stimulate critical thinking
+            - Exposes contradictions through elenchus
+            - Maintains intellectual humility
+            - Progresses: definition → assumption → contradiction → insight
+            """
+        )
 
-            topic_dropdown = gr.Dropdown(
-                choices=["✨ Let AI choose"] + TOPICS,
-                value="✨ Let AI choose",
-                label="📚 Topic Library",
-                info="Pick a classic question or choose your own below"
-            )
+        topic_dropdown = gr.Dropdown(
+            choices=["✨ Let AI choose"] + TOPICS,
+            value="✨ Let AI choose",
+            label="📚 Topic Library",
+            info="Pick a classic question or choose your own below"
+        )
 
-            topic_input = gr.Textbox(
-                label="Or Enter Your Own Topic",
-                placeholder="E.g., 'Should we colonize Mars?' (leave empty to use dropdown selection)",
-                lines=2
-            )
+        topic_input = gr.Textbox(
+            label="Or Enter Your Own Topic",
+            placeholder="E.g., 'Should we colonize Mars?' (leave empty to use dropdown selection)",
+            lines=2
+        )
 
-            run_button = gr.Button(
-                "🧠 Begin Socratic Dialogue",
-                variant="primary",
-                size="lg"
-            )
+        run_button = gr.Button(
+            "🧠 Begin Socratic Dialogue",
+            variant="primary",
+            size="lg"
+        )
 
-            gr.Markdown(
-                """
-                ---
-                **Note**: Each dialogue takes 2-3 minutes to complete.
-                The AI will generate thoughtful questions following authentic Socratic method.
-                """
-            )
+        gr.Markdown(
+            """
+            ---
+            **Note**: Each dialogue takes 2-3 minutes to complete.
+            The AI will generate thoughtful questions following authentic Socratic method.
+            """
+        )
 
     with gr.Row():
         with gr.Column():
@@ -196,16 +277,15 @@ with gr.Blocks(
                 show_label=False
             )
 
-    with gr.Row():
+    # Use Row for desktop, but CSS will stack on mobile
+    with gr.Row(equal_height=False):
         with gr.Column():
-            gr.Markdown("### ❓ First Line of Inquiry")
             proposition_output = gr.Markdown(
                 label="Proposition",
                 show_label=False
             )
 
         with gr.Column():
-            gr.Markdown("### 🔄 Alternative Line of Inquiry")
             opposition_output = gr.Markdown(
                 label="Opposition",
                 show_label=False
