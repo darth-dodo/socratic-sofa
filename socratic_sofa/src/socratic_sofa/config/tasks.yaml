@@ -1,0 +1,60 @@
+propose_topic:
+  description: >
+    Propose an engaging philosophical topic suitable for Socratic inquiry.
+    The topic should be one that invites examination of assumptions, definitions,
+    and beliefs through systematic questioning.
+  expected_output: >
+    A clear philosophical topic or question that lends itself to Socratic examination,
+    presented as an open question rather than a thesis to be proven. For example:
+    "What is justice?" or "Can virtue be taught?" or "What is the good life?"
+  agent: socratic_questioner
+
+propose:
+  description: >
+    Using the Socratic method, explore one perspective on the proposed topic through
+    a series of probing questions. Do NOT make assertions or argue a position.
+    Instead, pose questions that would help examine the assumptions and implications
+    of one view on the topic. Make sure your inquiry is relevant given the current
+    year is {current_year}.
+  expected_output: >
+    A Socratic dialogue consisting of 5-7 carefully crafted questions that:
+    - Begin with clarifying the key concepts and definitions
+    - Probe the foundations and assumptions of the position
+    - Reveal potential contradictions or tensions
+    - Lead toward deeper inquiry without asserting conclusions
+    - Follow the pattern: definition → assumption → contradiction → insight
+    Each question should be numbered and build upon previous questions.
+  agent: socratic_questioner
+
+oppose:
+  description: >
+    Using the Socratic method, explore an alternative or opposing perspective on
+    the topic through a different line of questioning. Again, do NOT make assertions.
+    Pose questions that would help examine a different set of assumptions or reveal
+    different tensions in the topic. Make sure your inquiry is relevant given the
+    current year is {current_year}.
+  expected_output: >
+    A Socratic dialogue consisting of 5-7 carefully crafted questions that:
+    - Approach the topic from a different angle than the first inquiry
+    - Challenge different assumptions or explore alternative implications
+    - Reveal tensions or contradictions in the opposing view
+    - Guide toward new insights without providing answers
+    - Demonstrate genuine philosophical curiosity and intellectual humility
+    Each question should be numbered and flow naturally from one to the next.
+  agent: socratic_questioner
+
+judge_task:
+  description: >
+    Evaluate the quality and effectiveness of the Socratic dialogues presented.
+    Assess whether the questioning genuinely follows the Socratic method, reveals
+    meaningful insights, and advances philosophical understanding. Do NOT judge
+    the philosophical positions themselves, but rather the quality of the inquiry.
+  expected_output: >
+    A comprehensive evaluation including:
+    - Scores for each dialogue on: Question Quality (40%), Elenctic Effectiveness (25%),
+      Philosophical Insight (20%), and Socratic Fidelity (15%)
+    - Total percentage scores for each inquiry
+    - Brief assessment of which inquiry better exemplifies the Socratic method
+    - One-sentence suggestion for deepening the Socratic examination
+    - Notes on whether questions genuinely probe or merely lead to conclusions
+  agent: judge
