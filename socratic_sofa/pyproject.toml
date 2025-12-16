@@ -1,0 +1,28 @@
+[project]
+name = "socratic_sofa"
+version = "0.1.0"
+description = "socratic-sofa using crewAI"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "anthropic>=0.75.0",
+    "crewai[tools]==1.7.0",
+    "gradio>=6.1.0",
+    "pyyaml>=6.0.3",
+]
+
+[project.scripts]
+socratic_sofa = "socratic_sofa.main:run"
+socratic_web = "socratic_sofa.gradio_app:main"
+run_crew = "socratic_sofa.main:run"
+train = "socratic_sofa.main:train"
+replay = "socratic_sofa.main:replay"
+test = "socratic_sofa.main:test"
+run_with_trigger = "socratic_sofa.main:run_with_trigger"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.crewai]
+type = "crew"
