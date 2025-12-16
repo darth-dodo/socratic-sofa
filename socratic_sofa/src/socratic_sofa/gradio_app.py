@@ -8,21 +8,71 @@ import gradio as gr
 from datetime import datetime
 from socratic_sofa.crew import SocraticSofa
 import os
+import yaml
+from pathlib import Path
 
 
-def run_socratic_dialogue(topic: str = None) -> tuple:
+# Load topics from YAML
+def load_topics():
+    """Load topic library from topics.yaml"""
+    topics_file = Path(__file__).parent / "topics.yaml"
+    try:
+        with open(topics_file, 'r') as f:
+            topics_data = yaml.safe_load(f)
+
+        # Flatten topics into a list with category labels
+        all_topics = []
+        for category_key, category_data in topics_data.items():
+            category_name = category_data['name']
+            for topic in category_data['topics']:
+                all_topics.append(f"[{category_name}] {topic}")
+
+        return all_topics
+    except Exception as e:
+        print(f"Error loading topics: {e}")
+        return ["What is justice?", "What is happiness?", "What is truth?"]
+
+
+TOPICS = load_topics()
+
+
+def handle_topic_selection(dropdown_value: str, textbox_value: str) -> str:
+    """
+    Handle topic selection from dropdown or textbox.
+    Textbox takes priority if filled, otherwise use dropdown.
+    """
+    # If user typed something, use that
+    if textbox_value and textbox_value.strip():
+        return textbox_value.strip()
+
+    # If dropdown is "Let AI choose", return empty
+    if dropdown_value == "✨ Let AI choose":
+        return ""
+
+    # Extract topic from "[Category] Topic" format
+    if "] " in dropdown_value:
+        return dropdown_value.split("] ", 1)[1]
+
+    return dropdown_value
+
+
+def run_socratic_dialogue(dropdown_topic: str, custom_topic: str) -> tuple:
     """
     Run the Socratic dialogue crew and return all outputs
 
     Args:
-        topic: Optional custom topic. If None, the AI will propose one.
+        dropdown_topic: Topic selected from dropdown
+        custom_topic: Custom topic entered by user
 
     Returns:
         Tuple of (topic_output, proposition_output, opposition_output, judgment_output)
     """
+    # Determine which topic to use
+    final_topic = handle_topic_selection(dropdown_topic, custom_topic)
+
     # Prepare inputs
     inputs = {
-        'topic': topic if topic else '',
+        'topic': final_topic,
         'current_year': str(datetime.now().year)
     }
 
@@ -74,7 +124,7 @@ with gr.Blocks(
             gr.Markdown(
                 """
                 ### How It Works
-                1. **Propose Topic**: Enter a topic or let the AI suggest one
+                1. **Choose Topic**: Pick from library or write your own
                 2. **First Inquiry**: Explore through Socratic questions
                 3. **Alternative Inquiry**: Examine from a different angle
                 4. **Evaluation**: Judge the quality of philosophical inquiry
@@ -87,9 +137,16 @@ with gr.Blocks(
                 """
             )
 
+            topic_dropdown = gr.Dropdown(
+                choices=["✨ Let AI choose"] + TOPICS,
+                value="✨ Let AI choose",
+                label="📚 Topic Library",
+                info="Pick a classic question or choose your own below"
+            )
+
             topic_input = gr.Textbox(
-                label="Philosophical Topic (Optional)",
-                placeholder="E.g., 'What is justice?' or leave empty for AI to propose",
+                label="Or Enter Your Own Topic",
+                placeholder="E.g., 'Should we colonize Mars?' (leave empty to use dropdown selection)",
                 lines=2
             )
 
@@ -158,7 +215,7 @@ with gr.Blocks(
     # Connect the button to the function
     run_button.click(
         fn=run_socratic_dialogue,
-        inputs=[topic_input],
+        inputs=[topic_dropdown, topic_input],
         outputs=[topic_output, proposition_output, opposition_output, judgment_output]
     )
 

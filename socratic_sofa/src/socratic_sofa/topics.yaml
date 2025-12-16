@@ -1,0 +1,142 @@
+# Socratic Sofa - Topic Library
+# A curated list of philosophical questions for exploration
+
+classics:
+  name: "Classic Philosophy"
+  topics:
+    - "What is justice?"
+    - "What is the good life?"
+    - "Can we know anything for certain?"
+    - "What is virtue?"
+    - "Is knowledge power?"
+    - "What is truth?"
+    - "What is beauty?"
+    - "Can virtue be taught?"
+    - "What is wisdom?"
+    - "What is the nature of reality?"
+
+ethics:
+  name: "Ethics & Morality"
+  topics:
+    - "Is lying ever justified?"
+    - "Do the ends justify the means?"
+    - "Is free will real or an illusion?"
+    - "What makes an action right or wrong?"
+    - "Is morality relative or universal?"
+    - "Should we always tell the truth?"
+    - "Is it ever okay to break a promise?"
+    - "What do we owe to strangers?"
+    - "Can we be good without religion?"
+    - "Is there a duty to help others?"
+
+mind:
+  name: "Mind & Consciousness"
+  topics:
+    - "What is consciousness?"
+    - "Do we have souls?"
+    - "Can machines think?"
+    - "What is the self?"
+    - "Is the mind separate from the body?"
+    - "Do animals have consciousness?"
+    - "What are dreams?"
+    - "Can we trust our perceptions?"
+    - "What is memory?"
+    - "Is identity continuous or changing?"
+
+society:
+  name: "Society & Politics"
+  topics:
+    - "What is freedom?"
+    - "What makes a government legitimate?"
+    - "Is equality possible?"
+    - "What is power?"
+    - "Should there be limits on speech?"
+    - "What is the social contract?"
+    - "Is democracy the best system?"
+    - "What are human rights?"
+    - "Is revolution ever justified?"
+    - "What is civil disobedience?"
+
+modern:
+  name: "Modern Dilemmas"
+  topics:
+    - "Should AI have rights?"
+    - "Is privacy dead in the digital age?"
+    - "Does social media make us less social?"
+    - "Is technology making us smarter or dumber?"
+    - "Should we colonize other planets?"
+    - "Is climate change a moral issue?"
+    - "Should robots replace human workers?"
+    - "Is genetic engineering ethical?"
+    - "Do we live in a simulation?"
+    - "Should we try to live forever?"
+
+fun:
+  name: "Fun & Quirky"
+  topics:
+    - "Is a hot dog a sandwich?"
+    - "If a tree falls in a forest and no one hears it, does it make a sound?"
+    - "Which came first, the chicken or the egg?"
+    - "Can you step in the same river twice?"
+    - "Is cereal a soup?"
+    - "Would you rather fight one horse-sized duck or 100 duck-sized horses?"
+    - "If you replace every part of a ship, is it still the same ship?"
+    - "Is water wet?"
+    - "Can time travel create paradoxes?"
+    - "If you teleport, do you die and get copied?"
+
+personal:
+  name: "Personal Life"
+  topics:
+    - "What is happiness?"
+    - "What is love?"
+    - "What is friendship?"
+    - "What is the meaning of life?"
+    - "How should we face death?"
+    - "What is success?"
+    - "Is it better to be feared or loved?"
+    - "What is courage?"
+    - "Can money buy happiness?"
+    - "What is the purpose of education?"
+
+existence:
+  name: "Big Questions"
+  topics:
+    - "Why is there something rather than nothing?"
+    - "Do we have a purpose?"
+    - "Is the universe infinite?"
+    - "What existed before the Big Bang?"
+    - "Are we alone in the universe?"
+    - "What happens after death?"
+    - "Is time real?"
+    - "Can something come from nothing?"
+    - "What is infinity?"
+    - "Does God exist?"
+
+art:
+  name: "Art & Creativity"
+  topics:
+    - "What is art?"
+    - "Can anything be art?"
+    - "Is beauty objective or subjective?"
+    - "What is creativity?"
+    - "Can AI create real art?"
+    - "Does art need meaning?"
+    - "Is graffiti vandalism or art?"
+    - "What makes music good?"
+    - "Can ugly things be beautiful?"
+    - "Is there bad art?"
+
+science:
+  name: "Science & Knowledge"
+  topics:
+    - "What is the scientific method?"
+    - "Can science answer moral questions?"
+    - "Is mathematics discovered or invented?"
+    - "What is a theory?"
+    - "Should we trust experts?"
+    - "Is science objective?"
+    - "What is the nature of time?"
+    - "Is space infinite?"
+    - "What is nothing?"
+    - "Can we know everything?"

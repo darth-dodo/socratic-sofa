@@ -3470,6 +3470,7 @@ dependencies = [
     { name = "anthropic" },
     { name = "crewai", extra = ["tools"] },
     { name = "gradio" },
+    { name = "pyyaml" },
 ]
 
 [package.metadata]
@@ -3477,6 +3478,7 @@ requires-dist = [
     { name = "anthropic", specifier = ">=0.75.0" },
     { name = "crewai", extras = ["tools"], specifier = "==1.7.0" },
     { name = "gradio", specifier = ">=6.1.0" },
+    { name = "pyyaml", specifier = ">=6.0.3" },
 ]
 
 [[package]]

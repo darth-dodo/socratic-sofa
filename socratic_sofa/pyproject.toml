@@ -8,6 +8,7 @@ dependencies = [
     "anthropic>=0.75.0",
     "crewai[tools]==1.7.0",
     "gradio>=6.1.0",
+    "pyyaml>=6.0.3",
 ]
 
 [project.scripts]
