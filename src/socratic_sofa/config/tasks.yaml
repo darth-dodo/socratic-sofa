@@ -14,35 +14,53 @@ propose_topic:
 
 propose:
   description: >
-    Using the Socratic method, explore one perspective on the proposed topic through
-    a series of probing questions. Do NOT make assertions or argue a position.
-    Instead, pose questions that would help examine the assumptions and implications
-    of one view on the topic. Make sure your inquiry is relevant given the current
-    year is {current_year}.
+    Using the Socratic method, explore ONE specific perspective on the proposed topic
+    through a series of probing questions. Do NOT make assertions or argue a position.
+
+    Choose a clear philosophical angle for your inquiry (e.g., focusing on individual
+    experience, ethical implications, epistemological questions, or practical consequences).
+    State your chosen angle clearly at the start.
+
+    Pose questions that examine the assumptions and implications of this particular
+    view on the topic. Make sure your inquiry is relevant given the current year is {current_year}.
   expected_output: >
     A Socratic dialogue consisting of 5-7 carefully crafted questions that:
-    - Begin with clarifying the key concepts and definitions
-    - Probe the foundations and assumptions of the position
-    - Reveal potential contradictions or tensions
+    - Begin by stating the philosophical angle you are taking (in one sentence)
+    - Clarify key concepts and definitions related to your chosen angle
+    - Probe the foundations and assumptions of this particular perspective
+    - Reveal potential contradictions or tensions within this view
     - Lead toward deeper inquiry without asserting conclusions
     - Follow the pattern: definition → assumption → contradiction → insight
+
     Each question should be numbered and build upon previous questions.
   agent: socratic_questioner
 
 oppose:
   description: >
-    Using the Socratic method, explore an alternative or opposing perspective on
-    the topic through a different line of questioning. Again, do NOT make assertions.
-    Pose questions that would help examine a different set of assumptions or reveal
-    different tensions in the topic. Make sure your inquiry is relevant given the
-    current year is {current_year}.
+    IMPORTANT: You must create a DIFFERENT line of questioning than the first inquiry.
+
+    Review the first inquiry above carefully. Now, using the Socratic method, explore
+    an ALTERNATIVE or CONTRASTING perspective on the topic. Your questions must:
+
+    1. Take a fundamentally different philosophical angle (e.g., if the first inquiry
+       focused on individual ethics, focus on social/collective dimensions; if it
+       examined consequences, examine duties or virtues instead)
+    2. Challenge different underlying assumptions than those probed in the first inquiry
+    3. Explore implications the first inquiry did not address
+
+    Do NOT repeat or rephrase questions from the first inquiry. Do NOT make assertions.
+    Make sure your inquiry is relevant given the current year is {current_year}.
   expected_output: >
     A Socratic dialogue consisting of 5-7 carefully crafted questions that:
-    - Approach the topic from a different angle than the first inquiry
-    - Challenge different assumptions or explore alternative implications
-    - Reveal tensions or contradictions in the opposing view
-    - Guide toward new insights without providing answers
+    - Take a CLEARLY DIFFERENT philosophical angle than the first inquiry
+    - Challenge assumptions NOT explored in the first line of questioning
+    - Reveal tensions or contradictions from an alternative viewpoint
+    - Guide toward NEW insights distinct from the first inquiry
     - Demonstrate genuine philosophical curiosity and intellectual humility
+
+    Before listing your questions, briefly state (in one sentence) what different
+    angle you are taking compared to the first inquiry.
+
     Each question should be numbered and flow naturally from one to the next.
   agent: socratic_questioner
 

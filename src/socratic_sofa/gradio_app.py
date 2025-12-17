@@ -8,9 +8,10 @@ import gradio as gr
 from datetime import datetime
 from socratic_sofa.crew import SocraticSofa
 from socratic_sofa.content_filter import is_topic_appropriate, get_alternative_suggestions
-import os
 import yaml
 from pathlib import Path
+from threading import Thread
+from queue import Queue
 
 
 # Load topics from YAML
@@ -61,15 +62,17 @@ def handle_topic_selection(dropdown_value: str = None, textbox_value: str = None
     return dropdown_value
 
 
-def run_socratic_dialogue(dropdown_topic: str, custom_topic: str) -> tuple:
+def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
     """
-    Run the Socratic dialogue crew and return all outputs
+    Run the Socratic dialogue crew with streaming output.
+
+    Uses a generator to yield progressive results as each task completes.
 
     Args:
         dropdown_topic: Topic selected from dropdown
         custom_topic: Custom topic entered by user
 
-    Returns:
+    Yields:
         Tuple of (topic_output, proposition_output, opposition_output, judgment_output)
     """
     # Determine which topic to use
@@ -88,7 +91,23 @@ def run_socratic_dialogue(dropdown_topic: str, custom_topic: str) -> tuple:
         error_msg += "**Suggested topics:**\n"
         for suggestion in get_alternative_suggestions():
             error_msg += f"- {suggestion}\n"
-        return error_msg, error_msg, error_msg, error_msg
+        yield error_msg, error_msg, error_msg, error_msg
+        return
+
+    # Initialize outputs with loading states
+    outputs = {
+        'topic': "⏳ *Preparing philosophical inquiry...*",
+        'proposition': "⏳ *Waiting for topic selection...*",
+        'opposition': "⏳ *Waiting for first inquiry...*",
+        'judgment': "⏳ *Waiting for dialogues to complete...*"
+    }
+
+    # Queue for receiving task completions
+    task_queue = Queue()
+
+    def task_callback(output):
+        """Callback function called when each task completes"""
+        task_queue.put(output)
 
     # Prepare inputs
     inputs = {
@@ -96,35 +115,102 @@ def run_socratic_dialogue(dropdown_topic: str, custom_topic: str) -> tuple:
         'current_year': str(datetime.now().year)
     }
 
+    # Yield initial loading state
+    yield (
+        outputs['topic'],
+        outputs['proposition'],
+        outputs['opposition'],
+        outputs['judgment']
+    )
+
     try:
-        # Run the crew
-        crew = SocraticSofa().crew()
-        result = crew.kickoff(inputs=inputs)
+        # Create the crew with callback
+        crew_instance = SocraticSofa()
+        crew_instance.task_callback = task_callback
+        crew = crew_instance.crew()
 
-        # Read the output files
-        outputs_dir = "outputs"
+        # Run crew in a separate thread so we can stream updates
+        result_container = {'result': None, 'error': None}
 
-        with open(f"{outputs_dir}/01_topic.md", 'r') as f:
-            topic_output = f.read()
+        def run_crew():
+            try:
+                result_container['result'] = crew.kickoff(inputs=inputs)
+            except Exception as e:
+                result_container['error'] = e
 
-        with open(f"{outputs_dir}/02_proposition.md", 'r') as f:
-            proposition_output = f.read()
+        crew_thread = Thread(target=run_crew)
+        crew_thread.start()
 
-        with open(f"{outputs_dir}/03_opposition.md", 'r') as f:
-            opposition_output = f.read()
+        # Track which tasks have completed
+        task_names = ['propose_topic', 'propose', 'oppose', 'judge_task']
+        task_index = 0
 
-        with open(f"{outputs_dir}/04_judgment.md", 'r') as f:
-            judgment_output = f.read()
+        # Poll for updates while crew is running
+        while crew_thread.is_alive() or not task_queue.empty():
+            try:
+                # Check for completed tasks (non-blocking with timeout)
+                task_output = task_queue.get(timeout=0.5)
 
-        # Add headers to distinguish the sections clearly
-        proposition_output = "## 🔵 First Line of Inquiry\n\n" + proposition_output
-        opposition_output = "## 🟢 Alternative Line of Inquiry\n\n" + opposition_output
+                # Determine which task just completed based on order
+                if task_index < len(task_names):
+                    task_name = task_names[task_index]
 
-        return topic_output, proposition_output, opposition_output, judgment_output
+                    if task_name == 'propose_topic':
+                        outputs['topic'] = task_output.raw
+                        outputs['proposition'] = "🔄 *First line of inquiry in progress...*"
+                    elif task_name == 'propose':
+                        outputs['proposition'] = "## 🔵 First Line of Inquiry\n\n" + task_output.raw
+                        outputs['opposition'] = "🔄 *Alternative inquiry in progress...*"
+                    elif task_name == 'oppose':
+                        outputs['opposition'] = "## 🟢 Alternative Line of Inquiry\n\n" + task_output.raw
+                        outputs['judgment'] = "🔄 *Evaluating dialogues...*"
+                    elif task_name == 'judge_task':
+                        outputs['judgment'] = task_output.raw
+
+                    task_index += 1
+
+                    # Yield updated outputs
+                    yield (
+                        outputs['topic'],
+                        outputs['proposition'],
+                        outputs['opposition'],
+                        outputs['judgment']
+                    )
+
+            except Exception:
+                # Queue timeout - continue polling
+                pass
+
+        # Wait for thread to complete
+        crew_thread.join()
+
+        # Check for errors
+        if result_container['error']:
+            raise result_container['error']
+
+        # Get final results from task objects to ensure we have all outputs
+        tasks = crew.tasks
+        if len(tasks) >= 4:
+            if tasks[0].output:
+                outputs['topic'] = tasks[0].output.raw
+            if tasks[1].output:
+                outputs['proposition'] = "## 🔵 First Line of Inquiry\n\n" + tasks[1].output.raw
+            if tasks[2].output:
+                outputs['opposition'] = "## 🟢 Alternative Line of Inquiry\n\n" + tasks[2].output.raw
+            if tasks[3].output:
+                outputs['judgment'] = tasks[3].output.raw
+
+        # Final yield with complete results
+        yield (
+            outputs['topic'],
+            outputs['proposition'],
+            outputs['opposition'],
+            outputs['judgment']
+        )
 
     except Exception as e:
-        error_msg = f"Error running dialogue: {str(e)}"
-        return error_msg, error_msg, error_msg, error_msg
+        error_msg = f"❌ Error running dialogue: {str(e)}"
+        yield error_msg, error_msg, error_msg, error_msg
 
 
 # CSS for mobile responsive design
@@ -208,6 +294,12 @@ CUSTOM_CSS = """
         .gr-row {
             margin-bottom: 1.5rem;
         }
+
+        /* Streaming status indicators */
+        .streaming-status {
+            color: #6366f1;
+            font-style: italic;
+        }
     """
 
 # Create the Gradio interface
@@ -267,7 +359,7 @@ with gr.Blocks(
             """
             ---
             **Note**: Each dialogue takes 2-3 minutes to complete.
-            The AI will generate thoughtful questions following authentic Socratic method.
+            Results will stream progressively as each stage completes.
             """
         )
 
@@ -318,9 +410,9 @@ with gr.Blocks(
         """
     )
 
-    # Connect the button to the function
+    # Connect the button to the streaming function
     run_button.click(
-        fn=run_socratic_dialogue,
+        fn=run_socratic_dialogue_streaming,
         inputs=[topic_dropdown, topic_input],
         outputs=[topic_output, proposition_output, opposition_output, judgment_output]
     )
