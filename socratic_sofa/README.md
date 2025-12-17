@@ -26,7 +26,18 @@ Unlike traditional debate systems, Socratic Sofa follows the authentic philosoph
 - 🌐 **Web Interface** - Beautiful Gradio UI for interactive dialogues
 - 📁 **Structured Outputs** - Each stage saved to separate markdown files
 
-## Installation
+## 📚 Documentation
+
+**New!** Check out our comprehensive documentation:
+
+- **[📖 Full Documentation](docs/README.md)** - Complete documentation hub
+- **[🚀 Getting Started](docs/getting-started/)** - Installation, quickstart, tutorials
+- **[🏗️ Architecture](docs/architecture/)** - System design, agents, tasks
+- **[👥 User Guide](docs/user-guide/)** - Web interface, CLI, topics
+- **[💻 Development](docs/development/)** - Contributing, testing, deployment
+- **[🔧 API Reference](docs/api/)** - Technical API documentation
+
+## Quick Start
 
 ### Prerequisites
 
@@ -217,10 +228,20 @@ Edit `src/socratic_sofa/crew.py` to:
 
 ## Support & Resources
 
+### Documentation
+- **[📖 Full Documentation](docs/README.md)** - Comprehensive guides and API reference
+- **[Getting Started](docs/getting-started/installation.md)** - Installation and setup guide
+- **[User Guide](docs/user-guide/)** - How to use Socratic Sofa
+- **[Contributing](docs/development/contributing.md)** - Contribution guidelines
+
+### External Resources
 - **CrewAI Documentation**: https://docs.crewai.com
 - **Gradio Documentation**: https://gradio.app/docs
-- **Claude Code**: https://claude.ai/code
-- **Issues**: Please report bugs via GitHub issues
+- **Claude API**: https://www.anthropic.com/claude
+
+### Getting Help
+- **Issues**: Report bugs via [GitHub Issues](https://github.com/darth-dodo/socratic-sofa/issues)
+- **Discussions**: Ask questions in GitHub Discussions
 
 ## License
 
