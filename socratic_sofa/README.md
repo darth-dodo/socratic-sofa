@@ -1,91 +1,101 @@
-# 📚 Socratic Sofa Documentation
+---
+title: Socratic Sofa
+emoji: 🏛️
+colorFrom: indigo
+colorTo: purple
+sdk: gradio
+sdk_version: 6.1.0
+app_file: app.py
+pinned: false
+license: mit
+---
 
-Welcome to the comprehensive documentation for **Socratic Sofa** - an AI-powered philosophical dialogue system using the authentic Socratic method.
+# 🏛️ Socratic Sofa
 
-## 📖 Documentation Sections
+**AI-Powered Philosophical Dialogue Using the Authentic Socratic Method**
 
-### 🚀 Getting Started
+Experience deep philosophical inquiry where AI explores topics through systematic questioning rather than assertions. Built with CrewAI and Claude, Socratic Sofa follows the classical Socratic method to reveal contradictions, challenge assumptions, and guide toward deeper understanding.
 
-New to Socratic Sofa? Start here!
+## ✨ Features
 
-- **[Installation Guide](getting-started/installation.md)** - Step-by-step setup instructions
-- **[Quickstart](getting-started/quickstart.md)** - Get your first dialogue running in 5 minutes
-- **[First Dialogue Tutorial](getting-started/first-dialogue.md)** - Complete walkthrough of creating your first philosophical dialogue
+- 🤔 **Socratic Philosopher Agent** - Masters the art of philosophical questioning following authentic elenchus
+- ⚖️ **Dialectic Moderator** - Evaluates the authenticity and effectiveness of Socratic inquiry
+- 📚 **100 Curated Topics** - Philosophical questions across ethics, metaphysics, epistemology, politics, and mind
+- 🌐 **Mobile-Responsive UI** - Beautiful, touch-friendly interface that works on all devices
+- 📜 **Four-Stage Dialogue** - Topic → Proposition → Opposition → Judgment
 
-### 🏗️ Architecture
+## 🎯 How It Works
 
-Understand how Socratic Sofa works under the hood.
+### The Socratic Method
 
-- **[System Overview](architecture/overview.md)** - Architecture diagrams, components, data flow
-- **[Agents](architecture/agents.md)** - Detailed agent documentation (Socratic Philosopher, Dialectic Moderator)
-- **[Tasks & Workflow](architecture/tasks.md)** - Task pipeline, dependencies, evaluation criteria
-- **[Content Moderation](architecture/content-moderation.md)** - AI-powered content filtering and safety measures
+Unlike traditional debate systems, Socratic Sofa uses **questions, not assertions**:
 
-### 👥 User Guide
+1. **Questions Only** - No direct claims about truth, only questions that reveal it
+2. **Elenchus** (Refutation) - Exposes contradictions through systematic questioning
+3. **Intellectual Humility** - The questioner professes ignorance
+4. **Progressive Inquiry** - Definition → Assumption → Contradiction → Insight
 
-Learn how to use Socratic Sofa effectively.
+### Using Socratic Sofa
 
-- **[Web Interface](user-guide/web-interface.md)** - Complete Gradio UI guide with features and navigation
-- **[CLI Usage](user-guide/cli-usage.md)** - Command-line interface guide with examples
-- **[Topic Library](user-guide/topic-library.md)** - Explore 100 curated philosophical questions
-- **[Custom Topics](user-guide/custom-topics.md)** - Create your own philosophical topics
+1. **Choose a Topic**:
+   - Select from 100 curated philosophical questions
+   - Enter your own philosophical topic
+   - Let the AI propose a topic
 
-### 💻 Development
+2. **First Inquiry**: Watch as the AI explores the topic through 5-7 Socratic questions
 
-Contributing to Socratic Sofa? Read these guides.
+3. **Alternative Inquiry**: A second line of questioning from a different perspective
 
-- **[Development Setup](development/setup.md)** - Set up your development environment
-- **[Contributing Guidelines](development/contributing.md)** - Code standards, PR process, conventions
-- **[Testing Guide](development/testing.md)** - Testing strategy, running tests, coverage
-- **[Deployment](development/deployment.md)** - Deploy to various platforms (Hugging Face, Render, Docker)
+4. **Evaluation**: The Dialectic Moderator assesses both inquiries on:
+   - Question Quality (40%)
+   - Elenctic Effectiveness (25%)
+   - Philosophical Insight (20%)
+   - Socratic Fidelity (15%)
 
-### 🔧 API Reference
+## 📖 Example Topics
 
-Technical API documentation for developers.
+**Ethics & Morality**
+- What is justice?
+- Can we justify civil disobedience?
+- What constitutes a good life?
 
-- **[Crew API](api/crew.md)** - SocraticSofa class and CrewAI orchestration
-- **[Gradio App API](api/gradio-app.md)** - Web interface functions and parameters
-- **[Content Filter API](api/content-filter.md)** - Content moderation functions and categories
+**Epistemology**
+- What is the nature of knowledge?
+- Can we know anything with certainty?
+- How do we distinguish truth from opinion?
 
-## 🎯 Quick Links
+**Contemporary Issues**
+- Should AI have rights?
+- What is the ethics of AI-generated art?
+- What are our obligations to future generations?
 
-### For Users
-- [Installation Guide](getting-started/installation.md) → [Quickstart](getting-started/quickstart.md) → [First Dialogue](getting-started/first-dialogue.md)
-- [Web Interface Guide](user-guide/web-interface.md)
-- [Topic Library](user-guide/topic-library.md)
+## 🔧 Technical Details
 
-### For Developers
-- [Development Setup](development/setup.md) → [Contributing](development/contributing.md)
-- [Architecture Overview](architecture/overview.md)
-- [API Reference](api/)
+- **Framework**: CrewAI 1.7.0 for multi-agent orchestration
+- **LLM**: Claude Sonnet 4.5 via Anthropic API
+- **Interface**: Gradio 6.1.0 with mobile-responsive design
+- **Method**: Sequential task execution following philosophical dialogue structure
 
-### For Deployers
-- [Deployment Guide](development/deployment.md)
-- [System Architecture](architecture/overview.md)
+## 📚 Learn More
 
-## 🆘 Getting Help
+- **GitHub**: [socratic-sofa](https://github.com/darth-dodo/socratic-sofa)
+- **Documentation**: [Full Docs](https://github.com/darth-dodo/socratic-sofa/tree/main/docs)
+- **Socratic Method**: [Stanford Encyclopedia](https://plato.stanford.edu/entries/socrates/)
 
-- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/darth-dodo/socratic-sofa/issues)
-- **Questions**: Check the [FAQ section](getting-started/installation.md#faq) in the installation guide
-- **Community**: Join discussions in GitHub Discussions
+## 🤝 Contributing
 
-## 📝 Contributing to Documentation
+Contributions welcome! See the [GitHub repository](https://github.com/darth-dodo/socratic-sofa) for:
+- Feature requests
+- Bug reports
+- Documentation improvements
+- New philosophical topics
 
-Found a typo or want to improve the docs? We welcome contributions!
+## 📄 License
 
-1. Documentation is written in Markdown
-2. Follow the [Contributing Guidelines](development/contributing.md)
-3. Submit a pull request with your improvements
-
-## 🔗 External Resources
-
-- **CrewAI Documentation**: https://docs.crewai.com
-- **Gradio Documentation**: https://gradio.app/docs
-- **Anthropic Claude**: https://www.anthropic.com/claude
-- **Socratic Method**: https://plato.stanford.edu/entries/socrates/
+MIT License - See [LICENSE](https://github.com/darth-dodo/socratic-sofa/blob/main/LICENSE) for details
 
 ---
 
-**Last Updated**: December 2025
-**Version**: 0.1.0
-**License**: MIT
+*"The unexamined life is not worth living." - Socrates*
+
+Built with [CrewAI](https://crewai.com) and [Claude](https://claude.ai) | Inspired by classical Socratic philosophy
