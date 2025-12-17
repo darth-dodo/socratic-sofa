@@ -1,0 +1,14 @@
+# Socratic Sofa Dependencies for Hugging Face Spaces
+
+# Core AI Framework
+crewai[tools]==1.7.0
+
+# LLM Provider
+anthropic>=0.75.0
+
+# Web Interface
+gradio>=6.1.0
+
+# Configuration
+pyyaml>=6.0.3
+python-dotenv>=1.1.0

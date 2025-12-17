@@ -127,10 +127,8 @@ def run_socratic_dialogue(dropdown_topic: str, custom_topic: str) -> tuple:
         return error_msg, error_msg, error_msg, error_msg
 
 
-# Create the Gradio interface
-with gr.Blocks(
-    title="Socratic Sofa - Philosophical Dialogue",
-    css="""
+# CSS for mobile responsive design
+CUSTOM_CSS = """
         /* Mobile responsive styles */
         @media (max-width: 768px) {
             .gradio-container {
@@ -211,6 +209,10 @@ with gr.Blocks(
             margin-bottom: 1.5rem;
         }
     """
+
+# Create the Gradio interface
+with gr.Blocks(
+    title="Socratic Sofa - Philosophical Dialogue"
 ) as demo:
 
     gr.Markdown(
@@ -330,6 +332,7 @@ def main():
         server_name="0.0.0.0",
         server_port=7860,
         share=False,
+        css=CUSTOM_CSS,
         theme=gr.themes.Soft(
             primary_hue="indigo",
             secondary_hue="purple",
