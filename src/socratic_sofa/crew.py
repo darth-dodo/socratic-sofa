@@ -1,7 +1,7 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
-from typing import List
+from typing import List, Callable, Optional
 
 @CrewBase
 class SocraticSofa():
@@ -9,6 +9,9 @@ class SocraticSofa():
 
     agents: List[BaseAgent]
     tasks: List[Task]
+
+    # Optional callback for streaming task completions
+    task_callback: Optional[Callable] = None
 
     @agent
     def socratic_questioner(self) -> Agent:
@@ -24,36 +27,34 @@ class SocraticSofa():
             verbose=True
         )
 
-    # To learn more about structured task outputs,
-    # task dependencies, and task callbacks, check out the documentation:
-    # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     @task
     def propose_topic(self) -> Task:
         return Task(
             config=self.tasks_config['propose_topic'],
-            output_file='outputs/01_topic.md'
+            callback=self.task_callback
         )
 
     @task
     def propose(self) -> Task:
         return Task(
             config=self.tasks_config['propose'], # type: ignore[index]
-            output_file='outputs/02_proposition.md'
+            callback=self.task_callback
         )
 
     @task
     def oppose(self) -> Task:
         return Task(
             config=self.tasks_config['oppose'], # type: ignore[index]
-            output_file='outputs/03_opposition.md'
+            callback=self.task_callback
         )
-    
+
     @task
     def judge_task(self) -> Task:
         return Task(
             config=self.tasks_config['judge_task'], # type: ignore[index]
-            output_file='outputs/04_judgment.md'
+            callback=self.task_callback
         )
+
     @crew
     def crew(self) -> Crew:
         """Creates the SocraticSofa crew"""
