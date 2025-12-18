@@ -55,16 +55,19 @@ Unlike traditional debate systems, Socratic Sofa uses **questions, not assertion
 ## 📖 Example Topics
 
 **Ethics & Morality**
+
 - What is justice?
 - Can we justify civil disobedience?
 - What constitutes a good life?
 
 **Epistemology**
+
 - What is the nature of knowledge?
 - Can we know anything with certainty?
 - How do we distinguish truth from opinion?
 
 **Contemporary Issues**
+
 - Should AI have rights?
 - What is the ethics of AI-generated art?
 - What are our obligations to future generations?
@@ -76,6 +79,31 @@ Unlike traditional debate systems, Socratic Sofa uses **questions, not assertion
 - **Interface**: Gradio 6.1.0 with mobile-responsive design
 - **Method**: Sequential task execution following philosophical dialogue structure
 
+## 🛠️ Development
+
+### Pre-commit Hooks
+
+This project uses pre-commit hooks for code quality:
+
+```bash
+# Install hooks (one-time setup)
+make precommit-install
+
+# Run all checks manually
+make precommit
+
+# Run security checks only
+make security
+```
+
+**Included hooks:**
+
+- **Formatting**: isort, ruff-format
+- **Linting**: ruff (pycodestyle, pyflakes, bugbear, security)
+- **Security**: bandit, detect-secrets
+- **Quality**: vulture (dead code), large file check
+- **Dev Experience**: trailing whitespace, YAML/JSON validation, prettier
+
 ## 📚 Learn More
 
 - **GitHub**: [socratic-sofa](https://github.com/darth-dodo/socratic-sofa)
@@ -85,6 +113,7 @@ Unlike traditional debate systems, Socratic Sofa uses **questions, not assertion
 ## 🤝 Contributing
 
 Contributions welcome! See the [GitHub repository](https://github.com/darth-dodo/socratic-sofa) for:
+
 - Feature requests
 - Bug reports
 - Documentation improvements
@@ -96,6 +125,6 @@ MIT License - See [LICENSE](https://github.com/darth-dodo/socratic-sofa/blob/mai
 
 ---
 
-*"The unexamined life is not worth living." - Socrates*
+_"The unexamined life is not worth living." - Socrates_
 
 Built with [CrewAI](https://crewai.com) and [Claude](https://claude.ai) | Inspired by classical Socratic philosophy

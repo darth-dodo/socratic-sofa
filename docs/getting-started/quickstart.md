@@ -12,6 +12,7 @@ Before starting, ensure you've completed the [installation guide](./installation
 - ✅ Anthropic API key configured in `.env`
 
 Quick verification:
+
 ```bash
 cd socratic-sofa/socratic_sofa
 make check-api
@@ -42,6 +43,7 @@ make web
 ```
 
 **Expected output**:
+
 ```
 Running on local URL:  http://127.0.0.1:7860
 ```
@@ -53,6 +55,7 @@ Running on local URL:  http://127.0.0.1:7860
 3. You should see the Socratic Sofa interface
 
 **Interface preview**:
+
 ```
 ┌─────────────────────────────────────┐
 │  🏛️ Socratic Sofa                   │
@@ -93,6 +96,7 @@ Running on local URL:  http://127.0.0.1:7860
 **Input**: "What is happiness?"
 
 **Output sections**:
+
 - **Topic**: Philosophical question about the nature of happiness
 - **First Inquiry**: 7 questions exploring hedonistic vs eudaimonic happiness
 - **Alternative Inquiry**: 7 questions examining cultural and temporal aspects
@@ -113,12 +117,14 @@ make dev
 ```
 
 **What happens**:
+
 1. The system starts processing the dialogue
 2. You'll see verbose output from CrewAI agents
 3. Results are saved to the `outputs/` directory
 4. Process takes 2-3 minutes
 
 **Expected output**:
+
 ```
 🏛️ Running Socratic dialogue (CLI)...
 
@@ -156,6 +162,7 @@ cat outputs/04_judgment.md     # Evaluation and scores
 ```
 
 **Example output structure**:
+
 ```
 outputs/
 ├── 01_topic.md         # "What is the nature of knowledge?"
@@ -173,6 +180,7 @@ Every Socratic dialogue consists of four stages:
 The philosophical question to explore.
 
 **Example**:
+
 ```markdown
 What is the relationship between knowledge and truth?
 ```
@@ -182,6 +190,7 @@ What is the relationship between knowledge and truth?
 5-7 Socratic questions exploring one perspective.
 
 **Example**:
+
 ```markdown
 1. When we claim to possess knowledge, what exactly distinguishes
    it from mere belief or opinion?
@@ -201,6 +210,7 @@ What is the relationship between knowledge and truth?
 5-7 questions from a different angle or perspective.
 
 **Example**:
+
 ```markdown
 1. Rather than viewing knowledge as requiring absolute truth,
    might it be better understood as justified belief within
@@ -217,10 +227,12 @@ What is the relationship between knowledge and truth?
 Scores and comparison of both inquiries.
 
 **Example**:
+
 ```markdown
 ## Evaluation
 
 **First Inquiry**
+
 - Question Quality: 4/5 (40%)
 - Elenctic Effectiveness: 3/5 (25%)
 - Philosophical Insight: 4/5 (20%)
@@ -228,6 +240,7 @@ Scores and comparison of both inquiries.
 - **Total: 88%**
 
 **Alternative Inquiry**
+
 - Question Quality: 5/5 (40%)
 - Elenctic Effectiveness: 5/5 (25%)
 - Philosophical Insight: 5/5 (20%)
@@ -245,12 +258,14 @@ with epistemic pluralism and contextual factors...
 ### Choosing Good Topics
 
 **Great topics** for Socratic dialogue:
+
 - ✅ "What is justice?"
 - ✅ "Can we know anything with certainty?"
 - ✅ "Should we colonize Mars?"
 - ✅ "What makes art valuable?"
 
 **Avoid**:
+
 - ❌ "What is 2+2?" (not philosophically rich)
 - ❌ "Tell me about Python" (not a question)
 - ❌ Inappropriate or offensive content (filtered automatically)
@@ -258,6 +273,7 @@ with epistemic pluralism and contextual factors...
 ### Reading the Questions
 
 The Socratic method asks questions, never makes assertions:
+
 - Look for question marks at the end
 - Questions should challenge assumptions
 - They reveal contradictions rather than state positions
@@ -266,6 +282,7 @@ The Socratic method asks questions, never makes assertions:
 ### Understanding Scores
 
 The evaluation uses weighted criteria:
+
 - **Question Quality (40%)**: Clarity, depth, logical flow
 - **Elenctic Effectiveness (25%)**: Success revealing contradictions
 - **Philosophical Insight (20%)**: Depth of inquiry
@@ -278,6 +295,7 @@ Scores of 80%+ indicate high-quality Socratic dialogue.
 ### Issue: "API key not found"
 
 **Solution**:
+
 ```bash
 # Create .env file
 echo "ANTHROPIC_API_KEY=your_actual_key" > .env
@@ -289,6 +307,7 @@ make check-api
 ### Issue: "Module not found"
 
 **Solution**:
+
 ```bash
 # Reinstall dependencies
 uv sync
@@ -300,6 +319,7 @@ uv run socratic_web
 ### Issue: Web interface won't open
 
 **Solution**:
+
 ```bash
 # Check if port 7860 is in use
 lsof -i :7860
@@ -313,6 +333,7 @@ uv run python -c "from socratic_sofa.gradio_app import demo; demo.launch(server_
 **Expected behavior**: 2-3 minutes is normal for quality output.
 
 **If longer than 5 minutes**:
+
 - Check your internet connection
 - Verify API key has sufficient credits
 - Check Anthropic API status at status.anthropic.com
@@ -352,21 +373,25 @@ make help            # Show all commands
 Here are some philosophical questions perfect for Socratic dialogue:
 
 **Ethics**:
+
 - What is the good life?
 - Is morality objective or subjective?
 - Can we justify civil disobedience?
 
 **Epistemology**:
+
 - What is the nature of knowledge?
 - How do we distinguish truth from opinion?
 - Can we trust our senses?
 
 **Metaphysics**:
+
 - What is consciousness?
 - Do we have free will?
 - What is the nature of time?
 
 **Contemporary**:
+
 - Should AI have rights?
 - What are our obligations to future generations?
 - Is privacy a fundamental right in the digital age?

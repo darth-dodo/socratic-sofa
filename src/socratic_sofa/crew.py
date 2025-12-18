@@ -1,58 +1,54 @@
+from collections.abc import Callable
+
 from crewai import Agent, Crew, Process, Task
-from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
-from typing import List, Callable, Optional
+from crewai.project import CrewBase, agent, crew, task
+
 
 @CrewBase
-class SocraticSofa():
+class SocraticSofa:
     """SocraticSofa crew"""
 
-    agents: List[BaseAgent]
-    tasks: List[Task]
+    agents: list[BaseAgent]
+    tasks: list[Task]
 
     # Optional callback for streaming task completions
-    task_callback: Optional[Callable] = None
+    task_callback: Callable | None = None
 
     @agent
     def socratic_questioner(self) -> Agent:
         return Agent(
-            config=self.agents_config['socratic_questioner'], # type: ignore[index]
-            verbose=True
+            config=self.agents_config["socratic_questioner"],
+            verbose=True,  # type: ignore[index]
         )
 
     @agent
     def judge(self) -> Agent:
-        return Agent(
-            config=self.agents_config['judge'], # type: ignore[index]
-            verbose=True
-        )
+        return Agent(config=self.agents_config["judge"], verbose=True)  # type: ignore[index]
 
     @task
     def propose_topic(self) -> Task:
-        return Task(
-            config=self.tasks_config['propose_topic'],
-            callback=self.task_callback
-        )
+        return Task(config=self.tasks_config["propose_topic"], callback=self.task_callback)
 
     @task
     def propose(self) -> Task:
         return Task(
-            config=self.tasks_config['propose'], # type: ignore[index]
-            callback=self.task_callback
+            config=self.tasks_config["propose"],
+            callback=self.task_callback,  # type: ignore[index]
         )
 
     @task
     def oppose(self) -> Task:
         return Task(
-            config=self.tasks_config['oppose'], # type: ignore[index]
-            callback=self.task_callback
+            config=self.tasks_config["oppose"],
+            callback=self.task_callback,  # type: ignore[index]
         )
 
     @task
     def judge_task(self) -> Task:
         return Task(
-            config=self.tasks_config['judge_task'], # type: ignore[index]
-            callback=self.task_callback
+            config=self.tasks_config["judge_task"],  # type: ignore[index]
+            callback=self.task_callback,
         )
 
     @crew

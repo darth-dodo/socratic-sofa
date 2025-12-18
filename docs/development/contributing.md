@@ -426,6 +426,7 @@ Refs #55"
 ### Before Creating PR
 
 1. **Update from upstream**:
+
    ```bash
    git checkout main
    git pull upstream main
@@ -434,6 +435,7 @@ Refs #55"
    ```
 
 2. **Ensure code quality**:
+
    ```bash
    make lint
    make format
@@ -462,9 +464,11 @@ docs(contributing): clarify commit message guidelines
 
 ```markdown
 ## Description
+
 Brief description of changes and motivation.
 
 ## Type of Change
+
 - [ ] Bug fix (non-breaking change fixing an issue)
 - [ ] New feature (non-breaking change adding functionality)
 - [ ] Breaking change (fix or feature causing existing functionality to change)
@@ -473,20 +477,24 @@ Brief description of changes and motivation.
 - [ ] Performance improvement
 
 ## Changes Made
+
 - Detailed list of changes
 - File-by-file if significant
 - Architecture/design decisions
 
 ## Testing
+
 - [ ] CLI mode tested
 - [ ] Web interface tested
 - [ ] Unit tests added/updated (when applicable)
 - [ ] Manual testing performed
 
 ## Screenshots (if applicable)
+
 Include screenshots for UI changes.
 
 ## Checklist
+
 - [ ] Code follows project style guidelines
 - [ ] Self-review completed
 - [ ] Comments added for complex code
@@ -495,6 +503,7 @@ Include screenshots for UI changes.
 - [ ] Dependent changes merged
 
 ## Related Issues
+
 Closes #XX
 Refs #YY
 ```
@@ -609,10 +618,13 @@ Brief introduction paragraph.
 Always include working code examples:
 
 \`\`\`python
+
 # Example with comments
+
 from socratic_sofa.crew import SocraticSofa
 
 # Create crew instance
+
 crew = SocraticSofa()
 result = crew.run_dialogue("What is truth?")
 \`\`\`
@@ -624,7 +636,9 @@ Show expected output:
 \`\`\`bash
 $ make dev
 🏛️ Running Socratic dialogue (CLI)...
+
 # ... output ...
+
 ✅ Dialogue complete!
 \`\`\`
 ```
@@ -685,6 +699,7 @@ git push origin feature/your-feature
 ### Review Etiquette
 
 **As a contributor**:
+
 - Respond to all comments
 - Ask for clarification if needed
 - Don't take feedback personally
@@ -692,6 +707,7 @@ git push origin feature/your-feature
 - Mark conversations as resolved
 
 **As a reviewer**:
+
 - Be constructive and specific
 - Praise good solutions
 - Explain the "why" behind suggestions
@@ -733,6 +749,7 @@ A: For bugs and features, yes. For docs/typos, a direct PR is fine.
 ## Recognition
 
 Contributors are recognized in:
+
 - Git commit history
 - GitHub contributors graph
 - Release notes for significant contributions

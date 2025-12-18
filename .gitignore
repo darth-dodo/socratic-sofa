@@ -28,3 +28,4 @@ outputs/*.md
 .pytest_cache/
 .coverage
 htmlcov/
+node_modules/

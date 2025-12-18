@@ -32,16 +32,19 @@ poetry run python -c "from socratic_sofa.crew import SocraticSofa; print('✓ In
 ### Running a Dialogue
 
 **Standard Method:**
+
 ```bash
 poetry run socratic-sofa
 ```
 
 **Using Make:**
+
 ```bash
 make run
 ```
 
 **Direct Python:**
+
 ```bash
 poetry run python src/socratic_sofa/main.py
 ```
@@ -59,6 +62,7 @@ When you run the CLI:
 ### Console Output
 
 **During Processing:**
+
 ```
 [timestamp] Starting Socratic dialogue...
 [timestamp] Agent: socratic_philosopher_proposition
@@ -70,6 +74,7 @@ When you run the CLI:
 ```
 
 **Final Output:**
+
 ```
 Raw Result: [Final evaluation summary]
 ✓ Dialogue complete. Files saved to outputs/
@@ -92,6 +97,7 @@ outputs/
 ### File Contents
 
 #### 01_topic.md
+
 ```markdown
 # Selected Topic: [Topic Name]
 
@@ -101,58 +107,70 @@ outputs/
 ```
 
 #### 02_proposition.md
+
 ```markdown
 # Socratic Inquiry: Proposition
 
 **Initial Position:** [Starting point]
 
 ## Question 1
+
 [First probing question]
 
 ## Question 2
+
 [Building on previous responses]
 
 [Continues through systematic questioning...]
 ```
 
 #### 03_opposition.md
+
 ```markdown
 # Socratic Inquiry: Opposition
 
 **Alternative Angle:** [Different perspective]
 
 ## Question 1
+
 [Questions from alternative viewpoint]
 
 [Alternative line of inquiry...]
 ```
 
 #### 04_judgment.md
+
 ```markdown
 # Dialectic Evaluation
 
 ## Quality Assessment
+
 [How well did the dialogue follow Socratic method?]
 
 ## Strengths
+
 [What worked well]
 
 ## Areas for Improvement
+
 [Opportunities for deeper exploration]
 
 ## Overall Effectiveness
+
 [Meta-commentary on philosophical process]
 ```
 
 ### File Management
 
 **Important Notes:**
+
 - Files are overwritten with each new dialogue
 - Save important dialogues before running again
 - Consider renaming outputs to preserve them
 - Use version control (git) to track dialogue history
 
 **Preserving Outputs:**
+
 ```bash
 # Save current dialogue with topic name
 cp outputs/01_topic.md "saved_dialogues/justice_$(date +%Y%m%d).md"
@@ -173,6 +191,7 @@ To run with a different topic, you need to modify the source code:
 **File Location:** `src/socratic_sofa/main.py`
 
 **Current Default:**
+
 ```python
 def run():
     """
@@ -185,6 +204,7 @@ def run():
 ```
 
 **Modify Topic:**
+
 ```python
 def run():
     """
@@ -197,6 +217,7 @@ def run():
 ```
 
 **Run Modified Version:**
+
 ```bash
 poetry run socratic-sofa
 ```
@@ -206,6 +227,7 @@ poetry run socratic-sofa
 For automated topic selection, create a custom script:
 
 **File:** `custom_dialogue.py`
+
 ```python
 #!/usr/bin/env python
 """Custom Socratic dialogue runner"""
@@ -240,6 +262,7 @@ if __name__ == "__main__":
 ```
 
 **Usage:**
+
 ```bash
 poetry run python custom_dialogue.py "What is truth?"
 poetry run python custom_dialogue.py "Should AI have rights?"
@@ -253,6 +276,7 @@ poetry run python custom_dialogue.py "Is beauty objective?"
 Create a batch processing script for multiple topics:
 
 **File:** `batch_dialogues.py`
+
 ```python
 #!/usr/bin/env python
 """Batch process multiple topics"""
@@ -330,11 +354,13 @@ if __name__ == "__main__":
 ```
 
 **Usage:**
+
 ```bash
 poetry run python batch_dialogues.py
 ```
 
 **Expected Output Structure:**
+
 ```
 batch_outputs/
 ├── What_is_justice_20250117_143022/
@@ -354,22 +380,26 @@ batch_outputs/
 Train the AI agents on specific topics to improve performance:
 
 **Command:**
+
 ```bash
 poetry run python src/socratic_sofa/main.py train <iterations> <filename>
 ```
 
 **Example:**
+
 ```bash
 poetry run python src/socratic_sofa/main.py train 5 training_results.json
 ```
 
 **What It Does:**
+
 - Runs the topic `"AI LLMs"` multiple times
 - Collects performance data
 - Saves training results to specified file
 - Improves agent responses over iterations
 
 **Parameters:**
+
 - `iterations`: Number of training cycles (recommended: 5-10)
 - `filename`: JSON file to store training data
 
@@ -378,22 +408,26 @@ poetry run python src/socratic_sofa/main.py train 5 training_results.json
 Test crew performance with evaluation:
 
 **Command:**
+
 ```bash
 poetry run python src/socratic_sofa/main.py test <iterations> <eval_model>
 ```
 
 **Example:**
+
 ```bash
 poetry run python src/socratic_sofa/main.py test 3 gpt-4
 ```
 
 **What It Does:**
+
 - Runs test topic `"AI LLMs"`
 - Evaluates dialogue quality
 - Uses specified LLM for evaluation
 - Generates performance metrics
 
 **Parameters:**
+
 - `iterations`: Number of test cycles
 - `eval_model`: LLM model for evaluation (e.g., `gpt-4`, `claude-3`)
 
@@ -402,16 +436,19 @@ poetry run python src/socratic_sofa/main.py test 3 gpt-4
 Replay a specific task from a previous run:
 
 **Command:**
+
 ```bash
 poetry run python src/socratic_sofa/main.py replay <task_id>
 ```
 
 **Example:**
+
 ```bash
 poetry run python src/socratic_sofa/main.py replay task_abc123
 ```
 
 **What It Does:**
+
 - Replays a specific task execution
 - Useful for debugging
 - Reproduces exact conditions
@@ -422,11 +459,13 @@ poetry run python src/socratic_sofa/main.py replay task_abc123
 Run with external trigger payloads (for integrations):
 
 **Command:**
+
 ```bash
 poetry run python src/socratic_sofa/main.py run_with_trigger '{"topic":"Custom topic","context":"Additional context"}'
 ```
 
 **What It Does:**
+
 - Accepts JSON payload as input
 - Useful for webhook integrations
 - Enables external system triggers
@@ -437,6 +476,7 @@ poetry run python src/socratic_sofa/main.py run_with_trigger '{"topic":"Custom t
 ### Reading Outputs Programmatically
 
 **Python Script:**
+
 ```python
 from pathlib import Path
 
@@ -468,6 +508,7 @@ print(f"Proposition length: {len(dialogue['proposition'])} chars")
 ### Converting Outputs
 
 **To HTML:**
+
 ```bash
 # Using pandoc
 pandoc outputs/02_proposition.md -o proposition.html
@@ -479,6 +520,7 @@ done
 ```
 
 **To PDF:**
+
 ```bash
 # Using pandoc with LaTeX
 pandoc outputs/02_proposition.md -o proposition.pdf
@@ -491,6 +533,7 @@ pandoc outputs/02_proposition.md \
 ```
 
 **To DOCX:**
+
 ```bash
 pandoc outputs/02_proposition.md -o proposition.docx
 ```
@@ -498,16 +541,19 @@ pandoc outputs/02_proposition.md -o proposition.docx
 ### Analyzing Outputs
 
 **Word Count:**
+
 ```bash
 wc -w outputs/*.md
 ```
 
 **Extract Questions:**
+
 ```bash
 grep -h "^## Question\|^\\*\\*Question" outputs/02_proposition.md
 ```
 
 **Compare Dialogues:**
+
 ```bash
 diff outputs/02_proposition.md saved_dialogues/justice_prop.md
 ```
@@ -517,11 +563,13 @@ diff outputs/02_proposition.md saved_dialogues/justice_prop.md
 ### Required Environment Variables
 
 **OpenAI API (Required):**
+
 ```bash
 export OPENAI_API_KEY="sk-..."
 ```
 
 **Optional Variables:**
+
 ```bash
 # Model selection (default: gpt-4o)
 export OPENAI_MODEL_NAME="gpt-4o"
@@ -545,6 +593,7 @@ CREWAI_TELEMETRY=false
 ```
 
 **Load automatically:**
+
 ```bash
 # Install python-dotenv if needed
 poetry add python-dotenv
@@ -559,6 +608,7 @@ load_dotenv()
 ### Shell Script Wrapper
 
 **File:** `run_dialogue.sh`
+
 ```bash
 #!/bin/bash
 # Wrapper script for Socratic Sofa
@@ -589,6 +639,7 @@ echo "Dialogue saved to: $OUTPUT_DIR"
 ```
 
 **Usage:**
+
 ```bash
 chmod +x run_dialogue.sh
 ./run_dialogue.sh "What is truth?"
@@ -597,6 +648,7 @@ chmod +x run_dialogue.sh
 ### Python API Wrapper
 
 **File:** `dialogue_api.py`
+
 ```python
 from datetime import datetime
 from pathlib import Path
@@ -654,6 +706,7 @@ if __name__ == "__main__":
 ### Common Issues
 
 **Problem: ModuleNotFoundError**
+
 ```
 Solution: Ensure proper installation
 $ poetry install
@@ -661,6 +714,7 @@ $ poetry run socratic-sofa
 ```
 
 **Problem: API Key Error**
+
 ```
 Solution: Set environment variable
 $ export OPENAI_API_KEY="sk-..."
@@ -668,6 +722,7 @@ $ poetry run socratic-sofa
 ```
 
 **Problem: Permission Denied**
+
 ```
 Solution: Check file permissions
 $ chmod +x run_dialogue.sh
@@ -675,6 +730,7 @@ $ ls -l outputs/
 ```
 
 **Problem: Outputs Not Generated**
+
 ```
 Solution: Check outputs/ directory exists
 $ mkdir -p outputs
@@ -682,6 +738,7 @@ $ poetry run socratic-sofa
 ```
 
 **Problem: Long Processing Time**
+
 ```
 Normal: 2-3 minutes is expected
 Check: API rate limits or network issues
@@ -706,6 +763,7 @@ from socratic_sofa.crew import SocraticSofa
 ### Optimization Strategies
 
 **1. Model Selection:**
+
 ```python
 # Faster but less sophisticated
 os.environ["OPENAI_MODEL_NAME"] = "gpt-3.5-turbo"
@@ -718,11 +776,13 @@ os.environ["OPENAI_MODEL_NAME"] = "gpt-4-turbo"
 ```
 
 **2. Batch Processing:**
+
 - Process topics during off-peak hours
 - Use parallel processing cautiously (API limits)
 - Save outputs immediately to prevent data loss
 
 **3. Error Handling:**
+
 ```python
 import time
 

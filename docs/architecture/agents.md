@@ -89,6 +89,7 @@ The Socratic Philosopher follows a structured questioning approach:
 ### Behavioral Characteristics
 
 **What the Agent Does**:
+
 - Poses 5-7 carefully structured questions per dialogue
 - Builds each question from the previous one
 - Uses analogies and hypothetical scenarios
@@ -96,6 +97,7 @@ The Socratic Philosopher follows a structured questioning approach:
 - Focuses on the journey of inquiry, not the destination
 
 **What the Agent Avoids**:
+
 - Making direct assertions ("Truth is...")
 - Arguing for specific positions
 - Providing definitive answers
@@ -105,9 +107,11 @@ The Socratic Philosopher follows a structured questioning approach:
 ### Task Assignments
 
 #### 1. propose_topic Task
+
 **Purpose**: Generate or refine the philosophical topic for inquiry
 
 **Behavior**:
+
 - If user provides topic: Present it clearly
 - If no topic provided: Propose engaging philosophical question
 - Ensure topic is suitable for Socratic inquiry
@@ -115,9 +119,11 @@ The Socratic Philosopher follows a structured questioning approach:
 **Output**: Single clear topic or question
 
 #### 2. propose Task
+
 **Purpose**: Explore one perspective through Socratic questions
 
 **Behavior**:
+
 - Generate 5-7 sequential questions
 - Follow pattern: definition → assumption → contradiction → insight
 - Maintain relevance to current year context
@@ -126,9 +132,11 @@ The Socratic Philosopher follows a structured questioning approach:
 **Output**: Numbered list of Socratic questions exploring one angle
 
 #### 3. oppose Task
+
 **Purpose**: Examine alternative or opposing perspective
 
 **Behavior**:
+
 - Approach topic from different angle than first inquiry
 - Challenge different assumptions
 - Reveal alternative tensions or contradictions
@@ -151,6 +159,7 @@ Max Iterations: 25 (CrewAI default)
 **Topic: "What is justice?"**
 
 **Proposition Approach**:
+
 1. When we speak of justice, do we mean what is fair to the individual or to society as a whole?
 2. If justice requires treating everyone equally, does this mean treating everyone identically, or according to their needs?
 3. Can a law be unjust, and if so, what makes it unjust—its content or its application?
@@ -159,6 +168,7 @@ Max Iterations: 25 (CrewAI default)
 6. Does justice exist independently of human judgment, or is it created through our agreements?
 
 **Opposition Approach**:
+
 1. Is it possible that what we call "justice" is simply the interest of the stronger party?
 2. If different societies have different conceptions of justice, can justice be universal?
 3. When personal justice conflicts with societal justice, which should take precedence?
@@ -183,15 +193,18 @@ The Dialectic Moderator is an expert in Socratic dialectic and the art of philos
 The Dialectic Moderator assesses dialogues across four dimensions:
 
 #### 1. Question Quality (40% Weight)
+
 **Focus**: Depth, clarity, and logical progression
 
 **Assessment Points**:
+
 - Are questions clear and well-formulated?
 - Do questions build logically upon each other?
 - Is the depth of inquiry appropriate for the topic?
 - Are questions genuinely probing vs. superficial?
 
 **Scoring Scale** (0-5):
+
 - 5: Exceptionally deep, clear, perfectly sequenced
 - 4: Very good clarity and progression
 - 3: Adequate quality with minor issues
@@ -200,15 +213,18 @@ The Dialectic Moderator assesses dialogues across four dimensions:
 - 0: Questions fail to serve philosophical purpose
 
 #### 2. Elenctic Effectiveness (25% Weight)
+
 **Focus**: Success in revealing contradictions and testing beliefs
 
 **Assessment Points**:
+
 - Do questions expose contradictions in reasoning?
 - Is the elenchus (refutation) method properly applied?
 - Are assumptions successfully challenged?
 - Do questions test consistency of beliefs?
 
 **Scoring Scale** (0-5):
+
 - 5: Masterful revelation of contradictions
 - 4: Effective challenging of assumptions
 - 3: Moderate success in exposing tensions
@@ -217,15 +233,18 @@ The Dialectic Moderator assesses dialogues across four dimensions:
 - 0: No elenchus present
 
 #### 3. Philosophical Insight (20% Weight)
+
 **Focus**: Depth of inquiry and advancement toward truth
 
 **Assessment Points**:
+
 - Do questions lead to deeper understanding?
 - Is the inquiry genuinely philosophical vs. trivial?
 - Are new insights generated?
 - Does the dialogue advance understanding?
 
 **Scoring Scale** (0-5):
+
 - 5: Profound philosophical insights generated
 - 4: Significant advancement in understanding
 - 3: Moderate insight development
@@ -234,15 +253,18 @@ The Dialectic Moderator assesses dialogues across four dimensions:
 - 0: No meaningful insight
 
 #### 4. Socratic Fidelity (15% Weight)
+
 **Focus**: Adherence to authentic Socratic method
 
 **Assessment Points**:
+
 - Does the questioner avoid direct assertions?
 - Is intellectual humility maintained?
 - Are questions genuine vs. rhetorical?
 - Is the method true to Socratic tradition?
 
 **Scoring Scale** (0-5):
+
 - 5: Perfect Socratic form maintained
 - 4: Strong adherence with minor lapses
 - 3: Generally Socratic with some assertions
@@ -281,6 +303,7 @@ Output: Complete Evaluation Report
 ### Behavioral Characteristics
 
 **What the Agent Does**:
+
 - Provides objective, criteria-based assessment
 - Evaluates methodology, not philosophical positions
 - Identifies both strengths and weaknesses
@@ -288,6 +311,7 @@ Output: Complete Evaluation Report
 - Maintains neutrality toward philosophical content
 
 **What the Agent Avoids**:
+
 - Judging the correctness of philosophical positions
 - Favoring one viewpoint over another
 - Evaluating based on personal philosophical preferences
@@ -296,9 +320,11 @@ Output: Complete Evaluation Report
 ### Task Assignment
 
 #### judge_task Task
+
 **Purpose**: Evaluate both Socratic dialogues
 
 **Behavior**:
+
 - Score each dialogue across four criteria
 - Calculate weighted percentages
 - Compare effectiveness of both inquiries
@@ -306,6 +332,7 @@ Output: Complete Evaluation Report
 - Check for genuine Socratic questioning vs. leading questions
 
 **Output**: Structured evaluation report with:
+
 - Individual scores per dialogue
 - Total percentages
 - Comparative assessment
@@ -330,25 +357,29 @@ Max Iterations: 25 (CrewAI default)
 # Dialectic Evaluation
 
 ## First Line of Inquiry
+
 - Question Quality (40%): 4.5/5 → 36%
 - Elenctic Effectiveness (25%): 4/5 → 20%
 - Philosophical Insight (20%): 4/5 → 16%
 - Socratic Fidelity (15%): 5/5 → 15%
-**Total: 87%**
+  **Total: 87%**
 
 ## Alternative Line of Inquiry
+
 - Question Quality (40%): 4/5 → 32%
 - Elenctic Effectiveness (25%): 4.5/5 → 23%
 - Philosophical Insight (20%): 3.5/5 → 14%
 - Socratic Fidelity (15%): 4.5/5 → 14%
-**Total: 83%**
+  **Total: 83%**
 
 ## Assessment
+
 The first inquiry demonstrates stronger Socratic fidelity and clearer
 question progression, while the alternative inquiry excels at revealing
 contradictions through effective elenchus.
 
 ## Recommendation
+
 To deepen the Socratic examination, probe the relationship between
 individual conscience and societal norms when they conflict.
 ```
@@ -376,12 +407,14 @@ individual conscience and societal norms when they conflict.
 ### Context Sharing
 
 **CrewAI Memory System**:
+
 - Each task receives output from previous tasks
 - Agents maintain short-term memory during execution
 - Context flows forward through the pipeline
 - No backward propagation (sequential process)
 
 **Information Flow**:
+
 - `propose_topic` → topic → `propose`
 - `propose` → topic + first dialogue → `oppose`
 - `oppose` → topic + both dialogues → `judge_task`
@@ -391,6 +424,7 @@ individual conscience and societal norms when they conflict.
 ### For Socratic Philosopher
 
 **Do**:
+
 - Ask one clear question at a time
 - Build questions sequentially
 - Use concrete examples and analogies
@@ -398,6 +432,7 @@ individual conscience and societal norms when they conflict.
 - Focus on definitions first
 
 **Don't**:
+
 - Make assertions or claims
 - Lead to predetermined conclusions
 - Use obviously rhetorical questions
@@ -407,6 +442,7 @@ individual conscience and societal norms when they conflict.
 ### For Dialectic Moderator
 
 **Do**:
+
 - Apply criteria consistently
 - Provide specific examples in feedback
 - Focus on methodology quality
@@ -414,6 +450,7 @@ individual conscience and societal norms when they conflict.
 - Offer actionable improvement suggestions
 
 **Don't**:
+
 - Judge philosophical positions themselves
 - Favor certain viewpoints
 - Apply personal philosophical preferences

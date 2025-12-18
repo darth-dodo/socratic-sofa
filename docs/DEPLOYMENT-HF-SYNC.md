@@ -15,11 +15,11 @@ Complete guide for keeping your Socratic Sofa GitHub repository synchronized wit
 
 Hugging Face Spaces supports three ways to sync with GitHub:
 
-| Method | Pros | Cons | Best For |
-|--------|------|------|----------|
-| **Automatic Sync** | No manual work, instant updates | Requires GitHub connection | Production deployments |
-| **Manual Push** | Full control, simple | Requires manual action | Testing, one-off deploys |
-| **GitHub Actions** | Customizable, automated | Requires setup | CI/CD pipelines |
+| Method             | Pros                            | Cons                       | Best For                 |
+| ------------------ | ------------------------------- | -------------------------- | ------------------------ |
+| **Automatic Sync** | No manual work, instant updates | Requires GitHub connection | Production deployments   |
+| **Manual Push**    | Full control, simple            | Requires manual action     | Testing, one-off deploys |
+| **GitHub Actions** | Customizable, automated         | Requires setup             | CI/CD pipelines          |
 
 ## Method 1: Automatic Sync (Recommended)
 
@@ -30,6 +30,7 @@ This method automatically syncs your GitHub repo to Hugging Face every time you 
 1. **Visit Hugging Face**: https://huggingface.co/new-space
 
 2. **Configure Space**:
+
    ```
    Space name: socratic-sofa
    License: MIT
@@ -54,6 +55,7 @@ This method automatically syncs your GitHub repo to Hugging Face every time you 
    - Grant access to your repositories
 
 5. **Select Repository**:
+
    ```
    Repository: darth-dodo/socratic-sofa
    Branch: main
@@ -120,6 +122,7 @@ EOF
    - Click **"New secret"**
 
 2. **Add your Anthropic API key**:
+
    ```
    Name: ANTHROPIC_API_KEY
    Value: sk-ant-api03-xxxxxxxxxxxxx
@@ -168,6 +171,7 @@ AI-powered philosophical dialogue using the authentic Socratic method.
 ## About
 
 Built with CrewAI and Claude, this system follows the classical Socratic method:
+
 - Questions, not assertions
 - Exposes contradictions through elenchus
 - Maintains intellectual humility
@@ -201,6 +205,7 @@ git push origin main
    - Watch the build process
 
 2. **Wait for build** (2-3 minutes):
+
    ```
    Installing dependencies...
    Building Gradio app...
@@ -242,6 +247,7 @@ Push directly to Hugging Face Git repository.
 ### Step 2: Configure Repository Structure
 
 Follow steps 3-6 from Method 1 to create:
+
 - `app.py`
 - `requirements.txt`
 - `HF_README.md`
@@ -298,6 +304,7 @@ alias push-all='git push origin main && git push hf main'
 ```
 
 Then use:
+
 ```bash
 git commit -m "Your changes"
 push-all
@@ -325,7 +332,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch: # Allow manual trigger
 
 jobs:
   deploy:
@@ -335,7 +342,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for proper git operations
+          fetch-depth: 0 # Full history for proper git operations
 
       - name: Push to Hugging Face Space
         env:
@@ -362,20 +369,20 @@ jobs:
 Add deployment checks:
 
 ```yaml
-      - name: Check Space health
-        run: |
-          sleep 180  # Wait 3 minutes for build
+- name: Check Space health
+  run: |
+    sleep 180  # Wait 3 minutes for build
 
-          # Check if Space is running
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            "https://huggingface.co/spaces/${{ github.repository_owner }}/socratic-sofa")
+    # Check if Space is running
+    STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+      "https://huggingface.co/spaces/${{ github.repository_owner }}/socratic-sofa")
 
-          if [ $STATUS -eq 200 ]; then
-            echo "✅ Space is live!"
-          else
-            echo "⚠️ Space returned status: $STATUS"
-            exit 1
-          fi
+    if [ $STATUS -eq 200 ]; then
+      echo "✅ Space is live!"
+    else
+      echo "⚠️ Space returned status: $STATUS"
+      exit 1
+    fi
 ```
 
 ### Step 4: Test Workflow
@@ -454,6 +461,7 @@ pyyaml>=6.0.3
 ### Issue: Build Fails on Hugging Face
 
 **Check logs**:
+
 1. Go to your Space
 2. Click "Logs" tab
 3. Look for error messages
@@ -477,11 +485,13 @@ python_version: "3.11"
 ### Issue: API Key Not Working
 
 **Verify secret**:
+
 1. Space Settings → Variables and secrets
 2. Check `ANTHROPIC_API_KEY` is set
 3. Value should start with `sk-ant-api03-`
 
 **Test locally**:
+
 ```bash
 export ANTHROPIC_API_KEY=your_key
 python app.py
@@ -490,11 +500,13 @@ python app.py
 ### Issue: Auto-Sync Not Triggering
 
 **Check webhook**:
+
 1. GitHub repo → Settings → Webhooks
 2. Look for Hugging Face webhook
 3. Check recent deliveries for errors
 
 **Reconnect if needed**:
+
 1. HF Space Settings → Repository
 2. Click "Disconnect"
 3. Re-link to GitHub
@@ -502,6 +514,7 @@ python app.py
 ### Issue: Push to HF Remote Fails
 
 **Authentication error**:
+
 ```bash
 # Use token in URL
 git remote set-url hf https://USER:TOKEN@huggingface.co/spaces/USER/SPACE
@@ -511,6 +524,7 @@ git remote set-url hf git@hf.co:spaces/USER/SPACE
 ```
 
 **Large files error**:
+
 ```bash
 # Hugging Face has file size limits
 # Add to .gitignore:
@@ -523,11 +537,13 @@ outputs/
 ### Issue: Space Shows Old Version
 
 **Force rebuild**:
+
 1. Go to Space Settings
 2. Click "Factory reboot"
 3. Wait for rebuild (2-3 minutes)
 
 **Or push with force**:
+
 ```bash
 git push hf main --force
 ```
@@ -563,6 +579,7 @@ python app.py
 ### 4. Use Semantic Versioning
 
 Tag releases:
+
 ```bash
 git tag -a v1.0.0 -m "Initial release"
 git push origin v1.0.0

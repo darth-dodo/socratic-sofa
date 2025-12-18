@@ -1,7 +1,7 @@
 # Socratic Sofa - Makefile
 # Common development commands for the Socratic dialogue system
 
-.PHONY: help install dev web clean test lint format deploy
+.PHONY: help install dev web clean test lint format deploy precommit precommit-install precommit-update
 
 help:  ## Show this help message
 	@echo "Socratic Sofa - Development Commands"
@@ -48,6 +48,35 @@ lint:  ## Run linting checks
 format:  ## Format code with ruff
 	@echo "✨ Formatting code..."
 	uv run ruff format src/
+
+# =============================================================================
+# Pre-commit Hooks
+# =============================================================================
+
+precommit-install:  ## Install pre-commit hooks
+	@echo "🔧 Installing pre-commit hooks..."
+	uv pip install pre-commit
+	uv run pre-commit install
+	uv run pre-commit install --hook-type commit-msg
+	@echo "✅ Pre-commit hooks installed!"
+
+precommit:  ## Run pre-commit on all files
+	@echo "🔍 Running pre-commit checks..."
+	uv run pre-commit run --all-files
+
+precommit-update:  ## Update pre-commit hooks to latest versions
+	@echo "📦 Updating pre-commit hooks..."
+	uv run pre-commit autoupdate
+	@echo "✅ Hooks updated!"
+
+security:  ## Run security checks only
+	@echo "🔒 Running security checks..."
+	uv run bandit -c pyproject.toml -r src/
+	uv run pre-commit run detect-secrets --all-files
+
+typecheck:  ## Run type checking
+	@echo "🔬 Running type checks..."
+	uv run mypy src/ --ignore-missing-imports
 
 deploy-hf:  ## Deploy to Hugging Face Spaces (requires HF_TOKEN)
 	@echo "🚀 Deploying to Hugging Face Spaces..."

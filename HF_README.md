@@ -55,16 +55,19 @@ Unlike traditional debate systems, Socratic Sofa uses **questions, not assertion
 ## 📖 Example Topics
 
 **Ethics & Morality**
+
 - What is justice?
 - Can we justify civil disobedience?
 - What constitutes a good life?
 
 **Epistemology**
+
 - What is the nature of knowledge?
 - Can we know anything with certainty?
 - How do we distinguish truth from opinion?
 
 **Contemporary Issues**
+
 - Should AI have rights?
 - What is the ethics of AI-generated art?
 - What are our obligations to future generations?
@@ -85,6 +88,7 @@ Unlike traditional debate systems, Socratic Sofa uses **questions, not assertion
 ## 🤝 Contributing
 
 Contributions welcome! See the [GitHub repository](https://github.com/darth-dodo/socratic-sofa) for:
+
 - Feature requests
 - Bug reports
 - Documentation improvements
@@ -96,6 +100,6 @@ MIT License - See [LICENSE](https://github.com/darth-dodo/socratic-sofa/blob/mai
 
 ---
 
-*"The unexamined life is not worth living." - Socrates*
+_"The unexamined life is not worth living." - Socrates_
 
 Built with [CrewAI](https://crewai.com) and [Claude](https://claude.ai) | Inspired by classical Socratic philosophy

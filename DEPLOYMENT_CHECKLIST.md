@@ -118,6 +118,7 @@ After deployment:
 ### Build Fails
 
 **Problem**: Dependencies not installing
+
 ```
 Solution: Verify requirements.txt has correct versions:
 - crewai[tools]==1.7.0
@@ -127,6 +128,7 @@ Solution: Verify requirements.txt has correct versions:
 ```
 
 **Problem**: Module not found error
+
 ```
 Solution: Check that src/ directory structure is correct
 and app.py has correct path: sys.path.insert(0, str(Path(__file__).parent / "src"))
@@ -135,6 +137,7 @@ and app.py has correct path: sys.path.insert(0, str(Path(__file__).parent / "src
 ### Runtime Errors
 
 **Problem**: API key not found
+
 ```
 Solution:
 1. Go to Space Settings → Variables and Secrets
@@ -143,11 +146,13 @@ Solution:
 ```
 
 **Problem**: Gradio version warning
+
 ```
 Solution: Already fixed! CSS parameter moved to launch() method
 ```
 
 **Problem**: Content moderation blocks all topics
+
 ```
 Solution: Check content_filter.py settings
 Verify topics.yaml is being loaded correctly
@@ -156,12 +161,14 @@ Verify topics.yaml is being loaded correctly
 ### Performance Issues
 
 **Problem**: Cold start takes long
+
 ```
 Solution: This is normal for HF Spaces free tier
 First request after inactivity may take 30-60 seconds
 ```
 
 **Problem**: Dialogue generation is slow
+
 ```
 Solution:
 1. Check Anthropic API status

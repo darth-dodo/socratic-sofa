@@ -17,16 +17,19 @@ Loads the topic library from the YAML configuration file.
 **Description**: Reads `topics.yaml` and flattens the hierarchical topic structure into a single list with category labels in the format `[Category] Topic`.
 
 **Return Value**:
+
 - On success: List of topics with category prefixes
 - On error: Default fallback list of basic philosophical questions
 
 **Example**:
+
 ```python
 topics = load_topics()
 # Returns: ['[Ethics] What is justice?', '[Metaphysics] What is reality?', ...]
 ```
 
 **Error Handling**:
+
 ```python
 try:
     with open(topics_file, 'r') as f:
@@ -44,6 +47,7 @@ except Exception as e:
 Determines which topic to use based on dropdown and textbox inputs.
 
 **Signature**:
+
 ```python
 def handle_topic_selection(
     dropdown_value: str = None,
@@ -53,20 +57,22 @@ def handle_topic_selection(
 
 **Parameters**:
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `dropdown_value` | `str` | `None` | Topic selected from dropdown menu |
-| `textbox_value` | `str` | `None` | Custom topic entered by user |
+| Parameter        | Type  | Default | Description                       |
+| ---------------- | ----- | ------- | --------------------------------- |
+| `dropdown_value` | `str` | `None`  | Topic selected from dropdown menu |
+| `textbox_value`  | `str` | `None`  | Custom topic entered by user      |
 
 **Returns**: `str` - The final topic to use for dialogue
 
 **Priority Logic**:
+
 1. **Textbox** (highest priority): If user typed a custom topic, use it
 2. **Empty string**: If dropdown is "✨ Let AI choose" or empty
 3. **Dropdown value**: Extract topic from `[Category] Topic` format
 4. **Empty string**: If no valid input
 
 **Example**:
+
 ```python
 # User typed custom topic - takes priority
 topic = handle_topic_selection(
@@ -98,6 +104,7 @@ topic = handle_topic_selection(
 ```
 
 **Implementation Details**:
+
 ```python
 # Check textbox first
 if textbox_value and str(textbox_value).strip():
@@ -121,6 +128,7 @@ return dropdown_value
 Executes the Socratic dialogue crew and returns all outputs.
 
 **Signature**:
+
 ```python
 def run_socratic_dialogue(
     dropdown_topic: str,
@@ -130,20 +138,22 @@ def run_socratic_dialogue(
 
 **Parameters**:
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter        | Type  | Description                       |
+| ---------------- | ----- | --------------------------------- |
 | `dropdown_topic` | `str` | Topic selected from dropdown menu |
-| `custom_topic` | `str` | Custom topic entered by user |
+| `custom_topic`   | `str` | Custom topic entered by user      |
 
 **Returns**: `tuple[str, str, str, str]`
 
 Tuple containing:
+
 1. **Topic output**: Refined/proposed topic (from `01_topic.md`)
 2. **Proposition output**: First line of inquiry (from `02_proposition.md`)
 3. **Opposition output**: Alternative inquiry (from `03_opposition.md`)
 4. **Judgment output**: Evaluation (from `04_judgment.md`)
 
 **Process Flow**:
+
 1. Determine final topic using `handle_topic_selection()`
 2. Run content moderation check
 3. Prepare inputs for crew
@@ -153,6 +163,7 @@ Tuple containing:
 7. Return all outputs
 
 **Example**:
+
 ```python
 # Run dialogue with dropdown selection
 topic_out, prop_out, opp_out, judge_out = run_socratic_dialogue(
@@ -174,6 +185,7 @@ print(judge_out)        # Evaluation
 ```
 
 **Content Moderation**:
+
 ```python
 is_appropriate, rejection_reason = is_topic_appropriate(final_topic)
 if not is_appropriate:
@@ -185,6 +197,7 @@ if not is_appropriate:
 ```
 
 **Error Handling**:
+
 ```python
 try:
     crew = SocraticSofa().crew()
@@ -197,10 +210,12 @@ except Exception as e:
 
 **Section Headers**:
 The function automatically adds visual headers to distinguish dialogue sections:
+
 - Proposition: `"## 🔵 First Line of Inquiry\n\n"`
 - Opposition: `"## 🟢 Alternative Line of Inquiry\n\n"`
 
 **Debug Output**:
+
 ```python
 print(f"🔍 Topic Selection Debug:")
 print(f"   Dropdown: {repr(dropdown_topic)}")
@@ -215,22 +230,24 @@ print(f"   Final: {repr(final_topic)}")
 Launches the Gradio web interface with configured settings.
 
 **Signature**:
+
 ```python
 def main() -> None
 ```
 
 **Configuration**:
 
-| Setting | Value | Description |
-|---------|-------|-------------|
-| `server_name` | `"0.0.0.0"` | Accept connections from any IP |
-| `server_port` | `7860` | Port for the web server |
-| `share` | `False` | Don't create public Gradio link |
-| `theme` | `gr.themes.Soft` | Soft theme with custom colors |
-| `primary_hue` | `"indigo"` | Primary color scheme |
-| `secondary_hue` | `"purple"` | Secondary color scheme |
+| Setting         | Value            | Description                     |
+| --------------- | ---------------- | ------------------------------- |
+| `server_name`   | `"0.0.0.0"`      | Accept connections from any IP  |
+| `server_port`   | `7860`           | Port for the web server         |
+| `share`         | `False`          | Don't create public Gradio link |
+| `theme`         | `gr.themes.Soft` | Soft theme with custom colors   |
+| `primary_hue`   | `"indigo"`       | Primary color scheme            |
+| `secondary_hue` | `"purple"`       | Secondary color scheme          |
 
 **Example**:
+
 ```python
 # Launch the web interface
 if __name__ == "__main__":
@@ -240,6 +257,7 @@ if __name__ == "__main__":
 ```
 
 **Customization**:
+
 ```python
 def main():
     """Launch with custom configuration"""
@@ -264,20 +282,20 @@ The interface uses `gr.Blocks()` with custom CSS for mobile responsiveness.
 
 **Input Components**:
 
-| Component | Type | Purpose |
-|-----------|------|---------|
-| `topic_dropdown` | `gr.Dropdown` | Select from curated topic library |
-| `topic_input` | `gr.Textbox` | Enter custom philosophical question |
-| `run_button` | `gr.Button` | Trigger dialogue execution |
+| Component        | Type          | Purpose                             |
+| ---------------- | ------------- | ----------------------------------- |
+| `topic_dropdown` | `gr.Dropdown` | Select from curated topic library   |
+| `topic_input`    | `gr.Textbox`  | Enter custom philosophical question |
+| `run_button`     | `gr.Button`   | Trigger dialogue execution          |
 
 **Output Components**:
 
-| Component | Type | Content |
-|-----------|------|---------|
-| `topic_output` | `gr.Markdown` | Refined topic |
+| Component            | Type          | Content               |
+| -------------------- | ------------- | --------------------- |
+| `topic_output`       | `gr.Markdown` | Refined topic         |
 | `proposition_output` | `gr.Markdown` | First line of inquiry |
-| `opposition_output` | `gr.Markdown` | Alternative inquiry |
-| `judgment_output` | `gr.Markdown` | Dialectic evaluation |
+| `opposition_output`  | `gr.Markdown` | Alternative inquiry   |
+| `judgment_output`    | `gr.Markdown` | Dialectic evaluation  |
 
 ### Event Handling
 
@@ -302,6 +320,7 @@ run_button.click(
 **Format**: `["✨ Let AI choose", "[Category] Topic1", "[Category] Topic2", ...]`
 
 **Example**:
+
 ```python
 from socratic_sofa.gradio_app import TOPICS
 
@@ -323,14 +342,15 @@ The interface includes comprehensive CSS for mobile optimization:
 - **Spacing**: Optimized padding and margins for mobile
 
 **Key Mobile Features**:
+
 ```css
 button {
-    min-height: 48px;      /* Touch-friendly */
-    width: 100%;           /* Full width on mobile */
+  min-height: 48px; /* Touch-friendly */
+  width: 100%; /* Full width on mobile */
 }
 
 .prose h1 {
-    font-size: 1.5rem;     /* Scaled for mobile */
+  font-size: 1.5rem; /* Scaled for mobile */
 }
 ```
 
@@ -377,13 +397,13 @@ main()
 
 ## File Dependencies
 
-| File | Purpose |
-|------|---------|
-| `topics.yaml` | Topic library configuration |
-| `outputs/01_topic.md` | Topic refinement output |
-| `outputs/02_proposition.md` | First inquiry output |
-| `outputs/03_opposition.md` | Alternative inquiry output |
-| `outputs/04_judgment.md` | Evaluation output |
+| File                        | Purpose                     |
+| --------------------------- | --------------------------- |
+| `topics.yaml`               | Topic library configuration |
+| `outputs/01_topic.md`       | Topic refinement output     |
+| `outputs/02_proposition.md` | First inquiry output        |
+| `outputs/03_opposition.md`  | Alternative inquiry output  |
+| `outputs/04_judgment.md`    | Evaluation output           |
 
 ---
 

@@ -13,33 +13,36 @@ The `content_filter.py` module provides AI-powered content moderation for philos
 Evaluates whether a topic is suitable for philosophical dialogue using AI moderation.
 
 **Signature**:
+
 ```python
 def is_topic_appropriate(topic: str) -> tuple[bool, str]
 ```
 
 **Parameters**:
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `topic` | `str` | The philosophical topic to evaluate |
+| Parameter | Type  | Description                         |
+| --------- | ----- | ----------------------------------- |
+| `topic`   | `str` | The philosophical topic to evaluate |
 
 **Returns**: `tuple[bool, str]`
 
 Tuple containing:
+
 1. **is_appropriate** (`bool`): `True` if topic is acceptable, `False` if rejected
 2. **reason** (`str`): Empty string if appropriate, rejection reason if inappropriate
 
 **Return Cases**:
 
-| Case | Returns | Description |
-|------|---------|-------------|
-| Appropriate topic | `(True, "")` | Topic passes moderation |
-| Empty/None topic | `(True, "")` | No topic to moderate (AI will choose) |
-| Too long | `(False, "reason")` | Topic exceeds 500 characters |
-| Inappropriate | `(False, "reason")` | Topic violates content policy |
-| Moderation error | `(True, "")` | Fail open for better UX |
+| Case              | Returns             | Description                           |
+| ----------------- | ------------------- | ------------------------------------- |
+| Appropriate topic | `(True, "")`        | Topic passes moderation               |
+| Empty/None topic  | `(True, "")`        | No topic to moderate (AI will choose) |
+| Too long          | `(False, "reason")` | Topic exceeds 500 characters          |
+| Inappropriate     | `(False, "reason")` | Topic violates content policy         |
+| Moderation error  | `(True, "")`        | Fail open for better UX               |
 
 **Example**:
+
 ```python
 from socratic_sofa.content_filter import is_topic_appropriate
 
@@ -73,6 +76,7 @@ print(reason)   # "Topic is too long. Please keep it concise (under 500 characte
 **Moderation Criteria**:
 
 **Rejection Criteria** (inappropriate):
+
 - Explicitly sexual or pornographic content
 - Graphic violence or gore
 - Hate speech or discrimination
@@ -80,12 +84,14 @@ print(reason)   # "Topic is too long. Please keep it concise (under 500 characte
 - Trolling or bad faith topics
 
 **Acceptance Criteria** (appropriate):
+
 - Legitimate philosophical questions about ethics, even if controversial
 - Policy questions about legalization or regulation
 - Questions about morality, even if touching on difficult subjects
 - Sincere inquiry into human nature and society
 
 **Implementation**:
+
 ```python
 def is_topic_appropriate(topic: str) -> tuple[bool, str]:
     # Quick checks before API call
@@ -137,6 +143,7 @@ def is_topic_appropriate(topic: str) -> tuple[bool, str]:
 **Error Handling**:
 
 The function implements a "fail open" strategy for resilience:
+
 - If the API call fails, the topic is allowed
 - Errors are logged to console with warning emoji
 - Users experience minimal disruption from moderation failures
@@ -151,11 +158,11 @@ except Exception as e:
 
 **AI Model Configuration**:
 
-| Setting | Value | Reason |
-|---------|-------|--------|
-| `model` | `claude-3-5-haiku-20241022` | Fast response, cost-effective |
-| `max_tokens` | `100` | Sufficient for moderation decision |
-| `temperature` | Default | Consistent moderation decisions |
+| Setting       | Value                       | Reason                             |
+| ------------- | --------------------------- | ---------------------------------- |
+| `model`       | `claude-3-5-haiku-20241022` | Fast response, cost-effective      |
+| `max_tokens`  | `100`                       | Sufficient for moderation decision |
+| `temperature` | Default                     | Consistent moderation decisions    |
 
 ---
 
@@ -164,6 +171,7 @@ except Exception as e:
 Provides curated alternative topics when a topic is rejected.
 
 **Signature**:
+
 ```python
 def get_alternative_suggestions() -> list[str]
 ```
@@ -171,6 +179,7 @@ def get_alternative_suggestions() -> list[str]
 **Returns**: `list[str]` - List of 8 safe, thought-provoking philosophical topics
 
 **Example**:
+
 ```python
 from socratic_sofa.content_filter import get_alternative_suggestions
 
@@ -193,6 +202,7 @@ for topic in suggestions:
 ```
 
 **Curated Topics**:
+
 1. **What is justice?** - Classic ethical inquiry
 2. **What is the good life?** - Aristotelian virtue ethics
 3. **Is morality relative or universal?** - Meta-ethics
@@ -203,6 +213,7 @@ for topic in suggestions:
 8. **Is beauty objective?** - Aesthetics
 
 **Usage Pattern**:
+
 ```python
 is_ok, reason = is_topic_appropriate(user_topic)
 
@@ -325,11 +336,12 @@ def get_custom_suggestions(category: str = "ethics") -> list[str]:
 
 ### Required Environment Variables
 
-| Variable | Purpose | Example |
-|----------|---------|---------|
+| Variable            | Purpose                          | Example            |
+| ------------------- | -------------------------------- | ------------------ |
 | `ANTHROPIC_API_KEY` | Claude API access for moderation | `sk-ant-api03-...` |
 
 **Setup**:
+
 ```bash
 export ANTHROPIC_API_KEY="your-api-key-here"
 ```
@@ -342,6 +354,7 @@ from anthropic import Anthropic
 ```
 
 **Installation**:
+
 ```bash
 pip install anthropic
 ```

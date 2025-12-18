@@ -60,6 +60,7 @@ The project is currently in **early development phase** without formal test suit
 ### When Will Tests Be Added?
 
 Tests will be added when:
+
 1. Core architecture stabilizes
 2. Agent configurations finalize
 3. API contracts solidify
@@ -243,6 +244,7 @@ Test on multiple browsers:
 - [ ] **Safari**: Latest version (macOS/iOS)
 
 Common issues to check:
+
 - CSS flexbox support
 - JavaScript ES6 features
 - WebSocket connections (for Gradio)
@@ -633,6 +635,7 @@ exclude_lines = [
 ### Test Writing Guidelines
 
 1. **Arrange-Act-Assert Pattern**:
+
    ```python
    def test_example():
        # Arrange: Set up test data
@@ -647,6 +650,7 @@ exclude_lines = [
    ```
 
 2. **Descriptive Test Names**:
+
    ```python
    # Good
    def test_empty_topic_returns_ai_generated_question():
@@ -658,6 +662,7 @@ exclude_lines = [
    ```
 
 3. **One Assertion Per Test** (when reasonable):
+
    ```python
    # Good
    def test_topic_validation_rejects_empty_string():
@@ -675,6 +680,7 @@ exclude_lines = [
    ```
 
 4. **Use Fixtures for Common Setup**:
+
    ```python
    @pytest.fixture
    def configured_crew():
@@ -688,6 +694,7 @@ exclude_lines = [
    ```
 
 5. **Mark Slow Tests**:
+
    ```python
    import pytest
 
@@ -698,6 +705,7 @@ exclude_lines = [
    ```
 
 6. **Mock External Dependencies**:
+
    ```python
    from unittest.mock import patch, MagicMock
 
@@ -715,6 +723,7 @@ exclude_lines = [
 Special considerations for testing CrewAI agents:
 
 1. **Test Configuration, Not Responses**:
+
    ```python
    # Test that agent is configured correctly
    def test_socratic_agent_configuration():
@@ -724,6 +733,7 @@ Special considerations for testing CrewAI agents:
    ```
 
 2. **Test Structure, Not Content**:
+
    ```python
    # Test output structure, not specific philosophical content
    def test_dialogue_has_required_questions():
@@ -733,6 +743,7 @@ Special considerations for testing CrewAI agents:
    ```
 
 3. **Use Deterministic Tests for Deterministic Code**:
+
    ```python
    # Test parsing logic, not AI generation
    def test_question_parsing():
@@ -771,7 +782,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: "3.12"
       - name: Install UV
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
       - name: Install dependencies

@@ -79,11 +79,13 @@ uv sync
 ```
 
 This command will:
+
 - Create a virtual environment automatically
 - Install CrewAI, Anthropic SDK, Gradio, and all dependencies
 - Take 1-2 minutes depending on internet speed
 
 **Expected output**:
+
 ```
 Resolved XX packages in X.XXs
 Installed XX packages in X.XXs
@@ -109,6 +111,7 @@ echo "ANTHROPIC_API_KEY=your_api_key_here" > .env
 **Important**: Replace `your_api_key_here` with your actual API key from Anthropic.
 
 Your `.env` file should look like:
+
 ```
 ANTHROPIC_API_KEY=sk-ant-api03-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
@@ -172,6 +175,7 @@ uv pip list
 ```
 
 **Expected packages** (versions may vary):
+
 - `crewai` (1.7.0)
 - `anthropic` (0.75.0+)
 - `gradio` (6.1.0+)
@@ -205,6 +209,7 @@ uv run python -c "from socratic_sofa.crew import SocraticSofa; print('Import suc
 **Error**: `Requires Python >=3.10, <3.14`
 
 **Solution**:
+
 ```bash
 # Check your Python version
 python3 --version
@@ -220,6 +225,7 @@ python3 --version
 **Error**: `pip: command not found` or `uv: command not found`
 
 **Solution**:
+
 ```bash
 # Ensure pip is installed
 python3 -m ensurepip --upgrade
@@ -236,6 +242,7 @@ export PATH="$HOME/.local/bin:$PATH"
 **Error**: `Failed to resolve dependencies`
 
 **Solution**:
+
 ```bash
 # Clear UV cache
 uv cache clean
@@ -252,6 +259,7 @@ uv sync --verbose
 **Error**: `ANTHROPIC_API_KEY not found`
 
 **Solution**:
+
 ```bash
 # Verify .env file exists
 ls -la .env
@@ -272,6 +280,7 @@ echo "ANTHROPIC_API_KEY=your_actual_key" > .env
 **Error**: `ModuleNotFoundError: No module named 'socratic_sofa'`
 
 **Solution**:
+
 ```bash
 # Ensure you're in the right directory
 pwd  # Should show .../socratic-sofa/socratic_sofa
@@ -288,6 +297,7 @@ uv run socratic_sofa
 **Error**: `Permission denied` when creating files
 
 **Solution**:
+
 ```bash
 # Create outputs directory with correct permissions
 mkdir -p outputs
@@ -325,6 +335,7 @@ python3.12 --version
 #### Common macOS Issues
 
 **Issue**: Command not found errors
+
 ```bash
 # Add to PATH in ~/.zshrc or ~/.bash_profile
 export PATH="/opt/homebrew/bin:$PATH"
@@ -352,6 +363,7 @@ python3.12 --version
 #### Common Linux Issues
 
 **Issue**: SSL certificate errors
+
 ```bash
 # Install CA certificates
 sudo apt install ca-certificates
@@ -378,6 +390,7 @@ Install Windows Terminal from Microsoft Store for better command-line experience
 #### Common Windows Issues
 
 **Issue**: UV commands not found
+
 ```powershell
 # Add Python Scripts to PATH
 $env:PATH += ";$env:USERPROFILE\AppData\Local\Programs\Python\Python312\Scripts"
@@ -386,6 +399,7 @@ $env:PATH += ";$env:USERPROFILE\AppData\Local\Programs\Python\Python312\Scripts"
 ```
 
 **Issue**: Line ending errors
+
 ```bash
 # Configure git to handle line endings
 git config --global core.autocrlf true

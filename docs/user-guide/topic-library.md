@@ -13,6 +13,7 @@ The topic library provides ready-to-use philosophical questions organized into 1
 Timeless questions from the Western philosophical tradition.
 
 **Topics:**
+
 1. **What is justice?**
    - Explores fairness, moral rightness, and social order
    - Classic question from Plato's Republic
@@ -72,6 +73,7 @@ Timeless questions from the Western philosophical tradition.
 Questions about right and wrong, moral principles, and ethical dilemmas.
 
 **Topics:**
+
 1. **Is lying ever justified?**
    - Classic ethical dilemma
    - Absolute vs. situational ethics
@@ -131,6 +133,7 @@ Questions about right and wrong, moral principles, and ethical dilemmas.
 Questions about the nature of mind, consciousness, and personal identity.
 
 **Topics:**
+
 1. **What is consciousness?**
    - The hard problem of consciousness
    - Subjective experience (qualia)
@@ -190,6 +193,7 @@ Questions about the nature of mind, consciousness, and personal identity.
 Questions about government, social organization, and political philosophy.
 
 **Topics:**
+
 1. **What is freedom?**
    - Positive vs. negative liberty
    - Freedom and responsibility
@@ -249,6 +253,7 @@ Questions about government, social organization, and political philosophy.
 Contemporary questions at the intersection of technology, society, and ethics.
 
 **Topics:**
+
 1. **Should AI have rights?**
    - Moral status of artificial beings
    - Consciousness in machines
@@ -308,6 +313,7 @@ Contemporary questions at the intersection of technology, society, and ethics.
 Light-hearted but philosophically interesting questions.
 
 **Topics:**
+
 1. **Is a hot dog a sandwich?**
    - Philosophy of categories
    - Definitions and boundaries
@@ -367,6 +373,7 @@ Light-hearted but philosophically interesting questions.
 Questions about individual existence, relationships, and life choices.
 
 **Topics:**
+
 1. **What is happiness?**
    - Hedonic vs. eudaimonic happiness
    - Pleasure and fulfillment
@@ -426,6 +433,7 @@ Questions about individual existence, relationships, and life choices.
 Ultimate questions about existence, cosmos, and the fundamental nature of reality.
 
 **Topics:**
+
 1. **Why is there something rather than nothing?**
    - Fundamental metaphysics
    - Cosmological argument
@@ -485,6 +493,7 @@ Ultimate questions about existence, cosmos, and the fundamental nature of realit
 Questions about aesthetic experience, artistic creation, and beauty.
 
 **Topics:**
+
 1. **What is art?**
    - Defining art
    - Institutional theory
@@ -544,6 +553,7 @@ Questions about aesthetic experience, artistic creation, and beauty.
 Questions about scientific method, knowledge, and the nature of inquiry.
 
 **Topics:**
+
 1. **What is the scientific method?**
    - Empiricism and experimentation
    - Hypothesis testing
@@ -603,6 +613,7 @@ Questions about scientific method, knowledge, and the nature of inquiry.
 ### In the Web Interface
 
 **Accessing Topics:**
+
 1. Open the Socratic Sofa web interface
 2. Look for the dropdown labeled "📚 Topic Library"
 3. Click to expand and browse all topics
@@ -610,6 +621,7 @@ Questions about scientific method, knowledge, and the nature of inquiry.
 5. Select any topic to use it for your dialogue
 
 **Special Option:**
+
 - **"✨ Let AI choose"**: Default option that allows the AI to select an appropriate topic
 
 ### In the CLI
@@ -617,6 +629,7 @@ Questions about scientific method, knowledge, and the nature of inquiry.
 Topics are loaded from `src/socratic_sofa/topics.yaml`. To use specific topics:
 
 **Method 1: Modify main.py**
+
 ```python
 inputs = {
     'topic': 'What is justice?',  # Any topic from library
@@ -625,6 +638,7 @@ inputs = {
 ```
 
 **Method 2: Programmatic Access**
+
 ```python
 import yaml
 from pathlib import Path
@@ -644,12 +658,14 @@ print(ethics_topics)  # List of 10 ethics topics
 ### Choosing Effective Topics
 
 **✅ Good Choices:**
+
 - Questions that genuinely interest you
 - Topics with multiple valid perspectives
 - Questions without obvious single answers
 - Issues that challenge your assumptions
 
 **❌ Less Effective:**
+
 - Questions with factual answers
 - Overly technical or specialized topics
 - Yes/no questions without depth
@@ -658,24 +674,28 @@ print(ethics_topics)  # List of 10 ethics topics
 ### Matching Topics to Goals
 
 **For Learning Philosophy:**
+
 - Start with Classic Philosophy category
 - Progress to Ethics & Morality
 - Explore Mind & Consciousness
 - Challenge with Big Questions
 
 **For Contemporary Issues:**
+
 - Begin with Modern Dilemmas
 - Explore Society & Politics
 - Consider Science & Knowledge
 - Apply to personal contexts
 
 **For Engagement:**
+
 - Start with Fun & Quirky
 - Move to Personal Life
 - Explore Art & Creativity
 - Deepen with classics
 
 **For Depth:**
+
 - Begin with Big Questions
 - Explore Mind & Consciousness
 - Challenge with Ethics
@@ -684,17 +704,20 @@ print(ethics_topics)  # List of 10 ethics topics
 ### Progressive Difficulty
 
 **Beginner Level:**
+
 - Fun & Quirky category
 - Personal Life topics
 - Simple questions from Ethics
 
 **Intermediate Level:**
+
 - Classic Philosophy
 - Society & Politics
 - Art & Creativity
 - Science & Knowledge
 
 **Advanced Level:**
+
 - Mind & Consciousness
 - Big Questions
 - Complex Modern Dilemmas
@@ -705,30 +728,35 @@ print(ethics_topics)  # List of 10 ethics topics
 ### Related Topic Clusters
 
 **Justice and Morality:**
+
 - What is justice?
 - Is morality relative or universal?
 - What makes an action right or wrong?
 - Do the ends justify the means?
 
 **Consciousness and Identity:**
+
 - What is consciousness?
 - What is the self?
 - Can machines think?
 - Is identity continuous or changing?
 
 **Freedom and Politics:**
+
 - What is freedom?
 - What makes a government legitimate?
 - Is democracy the best system?
 - Should there be limits on speech?
 
 **Existence and Meaning:**
+
 - What is the meaning of life?
 - Why is there something rather than nothing?
 - Do we have a purpose?
 - What is happiness?
 
 **Technology and Ethics:**
+
 - Should AI have rights?
 - Can AI create real art?
 - Is technology making us smarter or dumber?
@@ -739,14 +767,17 @@ print(ethics_topics)  # List of 10 ethics topics
 Explore topics from different angles:
 
 **Personal vs. Political:**
+
 - What is happiness? + What is the good life?
 - What is freedom? + Is free will real?
 
 **Ancient vs. Modern:**
+
 - What is virtue? + Should AI have rights?
 - Can virtue be taught? + Is genetic engineering ethical?
 
 **Theoretical vs. Practical:**
+
 - What is truth? + Should we always tell the truth?
 - What is justice? + Is revolution ever justified?
 
@@ -757,6 +788,7 @@ Explore topics from different angles:
 The topic library is stored in `src/socratic_sofa/topics.yaml`:
 
 **Format:**
+
 ```yaml
 category_key:
   name: "Display Name"
@@ -767,6 +799,7 @@ category_key:
 ```
 
 **Adding Topics:**
+
 ```yaml
 your_category:
   name: "Your Category Name"
@@ -777,6 +810,7 @@ your_category:
 ```
 
 **Tips for Adding Topics:**
+
 - Keep questions clear and open-ended
 - Avoid yes/no questions
 - Ensure philosophical depth
@@ -786,6 +820,7 @@ your_category:
 ### Creating Custom Categories
 
 **Example: Environmental Ethics**
+
 ```yaml
 environment:
   name: "Environmental Ethics"
@@ -798,6 +833,7 @@ environment:
 ```
 
 **Example: Digital Life**
+
 ```yaml
 digital:
   name: "Digital Life"
@@ -845,11 +881,13 @@ digital:
 **Location:** `src/socratic_sofa/topics.yaml`
 
 **Coverage:**
+
 - Traditional Philosophy: 40% (Classic, Ethics, Mind, Existence)
 - Contemporary Issues: 30% (Modern, Society, Science)
 - Creative & Personal: 30% (Art, Personal, Fun)
 
 **Question Types:**
+
 - "What is..." questions: 35%
 - "Should/Can..." questions: 30%
 - "Is..." questions: 25%
@@ -858,17 +896,20 @@ digital:
 ## Philosophical Traditions Represented
 
 **Western Philosophy:**
+
 - Ancient Greek (Socrates, Plato, Aristotle)
 - Medieval (Aquinas, Augustine)
 - Modern (Descartes, Kant, Hume)
 - Contemporary (Rawls, Singer, Dennett)
 
 **Eastern Influences:**
+
 - Questions of self and consciousness
 - Nature and harmony themes
 - Practical wisdom emphasis
 
 **Applied Philosophy:**
+
 - Business ethics
 - Medical ethics
 - Technology ethics
@@ -879,6 +920,7 @@ digital:
 The topic library is designed to grow. Potential additions:
 
 **Planned Categories:**
+
 - Philosophy of Language
 - Philosophy of Mathematics
 - Medical Ethics
@@ -886,6 +928,7 @@ The topic library is designed to grow. Potential additions:
 - Educational Philosophy
 
 **Community Contributions:**
+
 - Submit topic suggestions via GitHub
 - Propose new categories
 - Share effective topic variations
@@ -899,6 +942,7 @@ Whether you're a student, educator, philosopher, or curious mind, these topics o
 Start exploring, stay curious, and embrace the journey of philosophical inquiry.
 
 **Next Steps:**
+
 - [Custom Topics Guide](./custom-topics.md) - Learn to create your own questions
 - [Web Interface Guide](./web-interface.md) - Navigate the platform
 - [CLI Usage Guide](./cli-usage.md) - Command-line access
