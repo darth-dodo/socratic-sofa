@@ -4,14 +4,16 @@ Socratic Sofa - Gradio Web Interface
 A philosophical dialogue system powered by CrewAI and the Socratic method
 """
 
-import gradio as gr
 from datetime import datetime
-from socratic_sofa.crew import SocraticSofa
-from socratic_sofa.content_filter import is_topic_appropriate, get_alternative_suggestions
-import yaml
 from pathlib import Path
-from threading import Thread
 from queue import Queue
+from threading import Thread
+
+import gradio as gr
+import yaml
+
+from socratic_sofa.content_filter import get_alternative_suggestions, is_topic_appropriate
+from socratic_sofa.crew import SocraticSofa
 
 
 # Load topics from YAML
@@ -19,14 +21,14 @@ def load_topics():
     """Load topic library from topics.yaml"""
     topics_file = Path(__file__).parent / "topics.yaml"
     try:
-        with open(topics_file, 'r') as f:
+        with open(topics_file) as f:
             topics_data = yaml.safe_load(f)
 
         # Flatten topics into a list with category labels
         all_topics = []
         for category_key, category_data in topics_data.items():
-            category_name = category_data['name']
-            for topic in category_data['topics']:
+            category_name = category_data["name"]
+            for topic in category_data["topics"]:
                 all_topics.append(f"[{category_name}] {topic}")
 
         return all_topics
@@ -79,7 +81,7 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
     final_topic = handle_topic_selection(dropdown_topic, custom_topic)
 
     # Debug output
-    print(f"🔍 Topic Selection Debug:")
+    print("🔍 Topic Selection Debug:")
     print(f"   Dropdown: {repr(dropdown_topic)}")
     print(f"   Custom: {repr(custom_topic)}")
     print(f"   Final: {repr(final_topic)}")
@@ -96,10 +98,10 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
 
     # Initialize outputs with loading states
     outputs = {
-        'topic': "⏳ *Preparing philosophical inquiry...*",
-        'proposition': "⏳ *Waiting for topic selection...*",
-        'opposition': "⏳ *Waiting for first inquiry...*",
-        'judgment': "⏳ *Waiting for dialogues to complete...*"
+        "topic": "⏳ *Preparing philosophical inquiry...*",
+        "proposition": "⏳ *Waiting for topic selection...*",
+        "opposition": "⏳ *Waiting for first inquiry...*",
+        "judgment": "⏳ *Waiting for dialogues to complete...*",
     }
 
     # Queue for receiving task completions
@@ -110,18 +112,10 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
         task_queue.put(output)
 
     # Prepare inputs
-    inputs = {
-        'topic': final_topic,
-        'current_year': str(datetime.now().year)
-    }
+    inputs = {"topic": final_topic, "current_year": str(datetime.now().year)}
 
     # Yield initial loading state
-    yield (
-        outputs['topic'],
-        outputs['proposition'],
-        outputs['opposition'],
-        outputs['judgment']
-    )
+    yield (outputs["topic"], outputs["proposition"], outputs["opposition"], outputs["judgment"])
 
     try:
         # Create the crew with callback
@@ -130,19 +124,19 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
         crew = crew_instance.crew()
 
         # Run crew in a separate thread so we can stream updates
-        result_container = {'result': None, 'error': None}
+        result_container = {"result": None, "error": None}
 
         def run_crew():
             try:
-                result_container['result'] = crew.kickoff(inputs=inputs)
+                result_container["result"] = crew.kickoff(inputs=inputs)
             except Exception as e:
-                result_container['error'] = e
+                result_container["error"] = e
 
         crew_thread = Thread(target=run_crew)
         crew_thread.start()
 
         # Track which tasks have completed
-        task_names = ['propose_topic', 'propose', 'oppose', 'judge_task']
+        task_names = ["propose_topic", "propose", "oppose", "judge_task"]
         task_index = 0
 
         # Poll for updates while crew is running
@@ -155,26 +149,28 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
                 if task_index < len(task_names):
                     task_name = task_names[task_index]
 
-                    if task_name == 'propose_topic':
-                        outputs['topic'] = task_output.raw
-                        outputs['proposition'] = "🔄 *First line of inquiry in progress...*"
-                    elif task_name == 'propose':
-                        outputs['proposition'] = "## 🔵 First Line of Inquiry\n\n" + task_output.raw
-                        outputs['opposition'] = "🔄 *Alternative inquiry in progress...*"
-                    elif task_name == 'oppose':
-                        outputs['opposition'] = "## 🟢 Alternative Line of Inquiry\n\n" + task_output.raw
-                        outputs['judgment'] = "🔄 *Evaluating dialogues...*"
-                    elif task_name == 'judge_task':
-                        outputs['judgment'] = task_output.raw
+                    if task_name == "propose_topic":
+                        outputs["topic"] = task_output.raw
+                        outputs["proposition"] = "🔄 *First line of inquiry in progress...*"
+                    elif task_name == "propose":
+                        outputs["proposition"] = "## 🔵 First Line of Inquiry\n\n" + task_output.raw
+                        outputs["opposition"] = "🔄 *Alternative inquiry in progress...*"
+                    elif task_name == "oppose":
+                        outputs["opposition"] = (
+                            "## 🟢 Alternative Line of Inquiry\n\n" + task_output.raw
+                        )
+                        outputs["judgment"] = "🔄 *Evaluating dialogues...*"
+                    elif task_name == "judge_task":
+                        outputs["judgment"] = task_output.raw
 
                     task_index += 1
 
                     # Yield updated outputs
                     yield (
-                        outputs['topic'],
-                        outputs['proposition'],
-                        outputs['opposition'],
-                        outputs['judgment']
+                        outputs["topic"],
+                        outputs["proposition"],
+                        outputs["opposition"],
+                        outputs["judgment"],
                     )
 
             except Exception:
@@ -185,28 +181,25 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
         crew_thread.join()
 
         # Check for errors
-        if result_container['error']:
-            raise result_container['error']
+        if result_container["error"]:
+            raise result_container["error"]
 
         # Get final results from task objects to ensure we have all outputs
         tasks = crew.tasks
         if len(tasks) >= 4:
             if tasks[0].output:
-                outputs['topic'] = tasks[0].output.raw
+                outputs["topic"] = tasks[0].output.raw
             if tasks[1].output:
-                outputs['proposition'] = "## 🔵 First Line of Inquiry\n\n" + tasks[1].output.raw
+                outputs["proposition"] = "## 🔵 First Line of Inquiry\n\n" + tasks[1].output.raw
             if tasks[2].output:
-                outputs['opposition'] = "## 🟢 Alternative Line of Inquiry\n\n" + tasks[2].output.raw
+                outputs["opposition"] = (
+                    "## 🟢 Alternative Line of Inquiry\n\n" + tasks[2].output.raw
+                )
             if tasks[3].output:
-                outputs['judgment'] = tasks[3].output.raw
+                outputs["judgment"] = tasks[3].output.raw
 
         # Final yield with complete results
-        yield (
-            outputs['topic'],
-            outputs['proposition'],
-            outputs['opposition'],
-            outputs['judgment']
-        )
+        yield (outputs["topic"], outputs["proposition"], outputs["opposition"], outputs["judgment"])
 
     except Exception as e:
         error_msg = f"❌ Error running dialogue: {str(e)}"
@@ -303,10 +296,7 @@ CUSTOM_CSS = """
     """
 
 # Create the Gradio interface
-with gr.Blocks(
-    title="Socratic Sofa - Philosophical Dialogue"
-) as demo:
-
+with gr.Blocks(title="Socratic Sofa - Philosophical Dialogue") as demo:
     gr.Markdown(
         """
         # 🏛️ Socratic Sofa
@@ -340,20 +330,16 @@ with gr.Blocks(
             choices=["✨ Let AI choose"] + TOPICS,
             value="✨ Let AI choose",
             label="📚 Topic Library",
-            info="Pick a classic question or choose your own below"
+            info="Pick a classic question or choose your own below",
         )
 
         topic_input = gr.Textbox(
             label="Or Enter Your Own Topic",
             placeholder="E.g., 'Should we colonize Mars?' (leave empty to use dropdown selection)",
-            lines=2
+            lines=2,
         )
 
-        run_button = gr.Button(
-            "🧠 Begin Socratic Dialogue",
-            variant="primary",
-            size="lg"
-        )
+        run_button = gr.Button("🧠 Begin Socratic Dialogue", variant="primary", size="lg")
 
         gr.Markdown(
             """
@@ -366,32 +352,20 @@ with gr.Blocks(
     with gr.Row():
         with gr.Column():
             gr.Markdown("### 📜 Proposed Topic")
-            topic_output = gr.Markdown(
-                label="Topic",
-                show_label=False
-            )
+            topic_output = gr.Markdown(label="Topic", show_label=False)
 
     # Use Row for desktop, but CSS will stack on mobile
     with gr.Row(equal_height=False):
         with gr.Column():
-            proposition_output = gr.Markdown(
-                label="Proposition",
-                show_label=False
-            )
+            proposition_output = gr.Markdown(label="Proposition", show_label=False)
 
         with gr.Column():
-            opposition_output = gr.Markdown(
-                label="Opposition",
-                show_label=False
-            )
+            opposition_output = gr.Markdown(label="Opposition", show_label=False)
 
     with gr.Row():
         with gr.Column():
             gr.Markdown("### ⚖️ Dialectic Evaluation")
-            judgment_output = gr.Markdown(
-                label="Judgment",
-                show_label=False
-            )
+            judgment_output = gr.Markdown(label="Judgment", show_label=False)
 
     gr.Markdown(
         """
@@ -414,21 +388,21 @@ with gr.Blocks(
     run_button.click(
         fn=run_socratic_dialogue_streaming,
         inputs=[topic_dropdown, topic_input],
-        outputs=[topic_output, proposition_output, opposition_output, judgment_output]
+        outputs=[topic_output, proposition_output, opposition_output, judgment_output],
     )
 
 
 def main():
     """Launch the Gradio web interface"""
     demo.launch(
-        server_name="0.0.0.0",
+        server_name="0.0.0.0",  # nosec B104 - Required for HF Spaces deployment
         server_port=7860,
         share=False,
         css=CUSTOM_CSS,
         theme=gr.themes.Soft(
             primary_hue="indigo",
             secondary_hue="purple",
-        )
+        ),
     )
 
 

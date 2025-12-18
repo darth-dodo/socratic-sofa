@@ -16,6 +16,7 @@ A comprehensive tutorial that walks through creating, running, and understanding
 ## Overview
 
 This tutorial will guide you through:
+
 1. Setting up a philosophical question
 2. Running the dialogue system
 3. Analyzing the Socratic questioning
@@ -32,6 +33,7 @@ Before diving in, let's understand what makes this approach unique.
 ### What is the Socratic Method?
 
 The Socratic method is a form of philosophical inquiry developed by Socrates (470-399 BCE) that uses questions to:
+
 - Stimulate critical thinking
 - Expose contradictions in beliefs
 - Challenge unexamined assumptions
@@ -40,21 +42,25 @@ The Socratic method is a form of philosophical inquiry developed by Socrates (47
 ### Key Principles
 
 **1. Questions, Not Assertions**
+
 - Socrates never made direct claims
 - Instead posed questions that revealed truth
 - Example: "What is justice?" not "Justice is..."
 
 **2. Elenchus (Refutation through Questioning)**
+
 - Test beliefs by exposing contradictions
 - Show when assumptions conflict
 - Example: "If all knowledge comes from experience, how do we know mathematical truths?"
 
 **3. Intellectual Humility**
+
 - Profess ignorance ("I know that I know nothing")
 - Avoid claiming expertise
 - Guide without imposing conclusions
 
 **4. Progressive Inquiry**
+
 - Questions build systematically
 - Pattern: Definition → Assumption → Contradiction → Insight
 - Each question flows from previous answers
@@ -62,10 +68,12 @@ The Socratic method is a form of philosophical inquiry developed by Socrates (47
 ### How Socratic Sofa Implements This
 
 **Two AI Agents**:
+
 1. **Socratic Philosopher**: Poses questions following the authentic method
 2. **Dialectic Moderator**: Evaluates quality and authenticity of inquiry
 
 **Four-Stage Process**:
+
 1. Topic selection
 2. First line of questioning (Proposition)
 3. Alternative line of questioning (Opposition)
@@ -80,6 +88,7 @@ Let's create a complete Socratic dialogue on the topic: "What is artificial inte
 Choose your interface:
 
 **Web Interface** (Recommended for this tutorial):
+
 ```bash
 cd socratic-sofa/socratic_sofa
 uv run socratic_web
@@ -88,6 +97,7 @@ uv run socratic_web
 Open browser to `http://localhost:7860`
 
 **Command Line Interface**:
+
 ```bash
 # First, let's modify the default topic in main.py
 cd socratic-sofa/socratic_sofa
@@ -100,11 +110,13 @@ For CLI, you can modify `src/socratic_sofa/main.py` line 21 to change the defaul
 For this tutorial, let's use: **"What is artificial intelligence?"**
 
 **In Web Interface**:
+
 1. Find the "Or Enter Your Own Topic" text box
 2. Type: `What is artificial intelligence?`
 3. Click "🧠 Begin Socratic Dialogue"
 
 **Why this topic?**
+
 - Philosophically rich (multiple interpretations)
 - Contemporary relevance
 - Invites examination of concepts like "intelligence," "consciousness," and "thinking"
@@ -119,6 +131,7 @@ The system will process through four stages:
 The AI confirms or refines your topic.
 
 **Expected output**:
+
 ```markdown
 # Topic
 
@@ -133,6 +146,7 @@ to human intelligence?
 The first line of Socratic questioning begins.
 
 **Example output**:
+
 ```markdown
 ## 🔵 First Line of Inquiry
 
@@ -162,6 +176,7 @@ The first line of Socratic questioning begins.
 ```
 
 **Notice the pattern**:
+
 - Question 1: Clarifies definition ("what do we mean by intelligence?")
 - Questions 2-3: Probes assumptions (consciousness, understanding)
 - Questions 4-5: Reveals potential contradictions
@@ -172,6 +187,7 @@ The first line of Socratic questioning begins.
 A different angle of questioning.
 
 **Example output**:
+
 ```markdown
 ## 🟢 Alternative Line of Inquiry
 
@@ -203,6 +219,7 @@ A different angle of questioning.
 ```
 
 **Notice the difference**:
+
 - Challenges the comparison framework itself
 - Explores embodiment and collective intelligence
 - Questions cultural assumptions
@@ -213,27 +230,32 @@ A different angle of questioning.
 The Moderator evaluates both inquiries.
 
 **Example output**:
+
 ```markdown
 ## ⚖️ Dialectic Evaluation
 
 ### First Inquiry Assessment
 
 **Question Quality**: 4.5/5 (36%)
+
 - Questions demonstrate strong logical progression
 - Clear and precisely formulated
 - Build effectively on each other
 
 **Elenctic Effectiveness**: 4/5 (20%)
+
 - Successfully reveals contradictions in common assumptions
 - Questions 4-5 effectively challenge anthropocentric bias
 - Could probe deeper into specific contradictions
 
 **Philosophical Insight**: 4/5 (16%)
+
 - Touches on deep issues: consciousness, simulation vs. reality
 - Explores epistemological challenges effectively
 - Room for more metaphysical depth
 
 **Socratic Fidelity**: 5/5 (15%)
+
 - Maintains questioning form throughout
 - Demonstrates intellectual humility
 - Avoids assertions and predetermined conclusions
@@ -243,21 +265,25 @@ The Moderator evaluates both inquiries.
 ### Alternative Inquiry Assessment
 
 **Question Quality**: 5/5 (40%)
+
 - Exceptional depth and originality
 - Questions challenge fundamental frameworks
 - Sophisticated philosophical moves
 
 **Elenctic Effectiveness**: 5/5 (25%)
+
 - Brilliantly exposes hidden assumptions
 - Reveals contradictions in conceptual frameworks
 - Effective use of reductio ad absurdum
 
 **Philosophical Insight**: 5/5 (20%)
+
 - Profound engagement with embodiment and emergence
 - Introduces cultural and contextual dimensions
 - Advances philosophical understanding significantly
 
 **Socratic Fidelity**: 5/5 (15%)
+
 - Exemplary Socratic technique
 - Perfect balance of humility and guidance
 - No trace of assertion or didacticism
@@ -267,6 +293,7 @@ The Moderator evaluates both inquiries.
 ### Comparative Analysis
 
 The second inquiry demonstrates superior philosophical depth by:
+
 1. Challenging the comparison framework itself rather than working within it
 2. Introducing dimensions (embodiment, culture, context) absent from first inquiry
 3. Using more sophisticated elenctic techniques to expose deeper contradictions
@@ -313,6 +340,7 @@ cat outputs/04_judgment.md
 ```
 
 These markdown files can be:
+
 - Shared with others
 - Used in research or teaching
 - Analyzed for patterns
@@ -331,12 +359,14 @@ or merely simulates it?
 ```
 
 **What makes this Socratic**:
+
 - ✅ **Poses dilemma**: Forces examination of assumptions
 - ✅ **No hidden answer**: Genuine question, not rhetorical
 - ✅ **Reveals contradiction**: Between behavior and experience
 - ✅ **Invites reflection**: Requires thinking, not just answering
 
 **What would NOT be Socratic**:
+
 - ❌ "Intelligence requires consciousness, doesn't it?" (Leading question)
 - ❌ "AI cannot truly be intelligent because..." (Assertion)
 - ❌ "What are the types of AI?" (Factual, not philosophical)
@@ -356,6 +386,7 @@ Notice the pattern in the first inquiry:
 ```
 
 This follows the classic Socratic progression:
+
 - Start with conceptual clarity
 - Probe foundational assumptions
 - Expose tensions and contradictions
@@ -366,26 +397,31 @@ This follows the classic Socratic progression:
 The Dialectic Moderator uses four criteria:
 
 **Question Quality (40% weight)**
+
 - Are questions clear and precise?
 - Do they build logically on each other?
 - Are they philosophically interesting?
 
 **Elenctic Effectiveness (25% weight)**
+
 - Do questions reveal contradictions?
 - Do they challenge assumptions effectively?
 - Do they use proper refutation techniques?
 
 **Philosophical Insight (20% weight)**
+
 - Do questions advance understanding?
 - Do they engage with deep issues?
 - Do they open new avenues of inquiry?
 
 **Socratic Fidelity (15% weight)**
+
 - Are they truly questions, not assertions?
 - Is intellectual humility maintained?
 - Does it avoid leading to predetermined conclusions?
 
 **Score interpretation**:
+
 - 90-100%: Exemplary Socratic dialogue
 - 80-89%: Strong questioning with minor improvements possible
 - 70-79%: Good attempt, some areas need work
@@ -409,6 +445,7 @@ crew = Crew(
 ```
 
 **Sequential process**:
+
 1. Socratic Philosopher proposes/confirms topic
 2. Socratic Philosopher performs first inquiry
 3. Socratic Philosopher performs alternative inquiry
@@ -419,12 +456,14 @@ crew = Crew(
 Agents are defined in `config/agents.yaml`:
 
 **Socratic Philosopher**:
+
 - Role: Master of Socratic questioning
 - Goal: Guide discovery through questions
 - Backstory: Trained in elenchus and dialectic method
 - Principles: Intellectual humility, systematic questioning
 
 **Dialectic Moderator**:
+
 - Role: Expert in Socratic dialectic
 - Goal: Evaluate authenticity and effectiveness
 - Evaluation criteria: 4 weighted dimensions
@@ -435,22 +474,26 @@ Agents are defined in `config/agents.yaml`:
 Tasks are defined in `config/tasks.yaml`:
 
 **propose_topic**:
+
 - Input: User's topic (or empty for AI selection)
 - Output: Refined philosophical question
 - Agent: Socratic Philosopher
 
 **propose** (First Inquiry):
+
 - Input: Topic + current year
 - Output: 5-7 Socratic questions
 - Pattern: Definition → Assumption → Contradiction → Insight
 - Agent: Socratic Philosopher
 
 **oppose** (Alternative Inquiry):
+
 - Input: Topic + context from first inquiry
 - Output: 5-7 questions from different angle
 - Agent: Socratic Philosopher
 
 **judge_task** (Evaluation):
+
 - Input: Both inquiries
 - Output: Scores and comparative analysis
 - Agent: Dialectic Moderator
@@ -458,6 +501,7 @@ Tasks are defined in `config/tasks.yaml`:
 #### 4. LLM Backend
 
 Socratic Sofa uses **Claude Sonnet 4.5** via Anthropic API:
+
 - Advanced reasoning capabilities
 - Strong performance on philosophical content
 - Follows complex instructions for Socratic method
@@ -488,16 +532,19 @@ Evaluation + Scores → outputs/04_judgment.md
 ### Why This Architecture?
 
 **Separation of concerns**:
+
 - Questioner focuses on inquiry
 - Moderator focuses on evaluation
 - No single agent does both (avoids bias)
 
 **Sequential process**:
+
 - Each stage builds on previous
 - Context flows naturally
 - Maintains coherent dialogue arc
 
 **File-based output**:
+
 - Easy to review and share
 - Permanent record of dialogue
 - Markdown format for readability
@@ -575,6 +622,7 @@ my_topics:
 ### Choosing Topics
 
 **Good philosophical topics**:
+
 - ✅ Open-ended ("What is...?", "Can we...?", "Should we...?")
 - ✅ Invite multiple perspectives
 - ✅ Have real-world relevance
@@ -582,12 +630,14 @@ my_topics:
 - ✅ Allow progressive deepening
 
 **Examples**:
+
 - "What is consciousness?"
 - "Can machines be creative?"
 - "Should we pursue immortality?"
 - "What are our obligations to future generations?"
 
 **Avoid**:
+
 - ❌ Factual questions ("What year did Socrates die?")
 - ❌ Yes/no questions without depth ("Is AI good?")
 - ❌ Questions with settled answers ("What is 2+2?")
@@ -615,18 +665,21 @@ When reviewing output, ask:
 ### Using the Results
 
 **Educational contexts**:
+
 - Discussion starters for philosophy classes
 - Examples of Socratic questioning
 - Critical thinking exercises
 - Comparative analysis assignments
 
 **Research contexts**:
+
 - Exploring conceptual spaces
 - Generating research questions
 - Identifying assumptions in theories
 - Mapping philosophical terrain
 
 **Personal reflection**:
+
 - Deep thinking on important topics
 - Examining your own beliefs
 - Practicing philosophical inquiry
@@ -639,11 +692,13 @@ When reviewing output, ask:
 **Problem**: Output lacks philosophical depth
 
 **Solutions**:
+
 1. Use more sophisticated topic phrasing
    - Instead of: "What is AI?"
    - Try: "What is the relationship between computational processes and genuine intelligence?"
 
 2. Modify agent configuration to emphasize depth:
+
 ```yaml
 socratic_questioner:
   goal: >
@@ -656,12 +711,14 @@ socratic_questioner:
 **Problem**: Output includes statements instead of pure questions
 
 **Example of problem**:
+
 ```
 1. Intelligence clearly requires consciousness.
    How does this affect our view of AI?
 ```
 
 **Solution**: This indicates the agent isn't following instructions properly. Try:
+
 1. Verify you're using Claude Sonnet 4.5 (not an older model)
 2. Check that agents.yaml emphasizes "never assert direct claims"
 3. Restart the dialogue with clearer topic
@@ -703,6 +760,7 @@ judge:
 **Expected time**: 2-3 minutes per dialogue
 
 **If consistently longer**:
+
 1. Check internet connection speed
 2. Verify Anthropic API status
 3. Consider using web interface (shows progress)
@@ -713,6 +771,7 @@ judge:
 **Problem**: Generated markdown files are incomplete
 
 **Solutions**:
+
 ```bash
 # Ensure outputs directory exists with correct permissions
 mkdir -p outputs
@@ -732,6 +791,7 @@ You now understand how Socratic Sofa works! Here's what to explore next:
 ### 1. Experiment with Different Topics
 
 Try topics from different philosophical domains:
+
 - **Ethics**: Moral dilemmas, virtue, justice
 - **Epistemology**: Knowledge, truth, skepticism
 - **Metaphysics**: Reality, existence, causation
@@ -749,6 +809,7 @@ Try topics from different philosophical domains:
 ### 3. Deploy Your Instance
 
 Share Socratic Sofa with others:
+
 - Deploy to Hugging Face Spaces (free)
 - Run on local network for classroom use
 - Integrate into educational platforms
@@ -759,6 +820,7 @@ Share Socratic Sofa with others:
 ### 4. Contribute
 
 Help improve Socratic Sofa:
+
 - Report issues or bugs
 - Suggest new features
 - Share interesting dialogues
@@ -767,6 +829,7 @@ Help improve Socratic Sofa:
 ### 5. Deep Dive into CrewAI
 
 Learn more about the underlying framework:
+
 - [CrewAI Documentation](https://docs.crewai.com)
 - [Agent configuration patterns](https://docs.crewai.com/concepts/agents)
 - [Task orchestration](https://docs.crewai.com/concepts/tasks)
@@ -810,6 +873,6 @@ You've learned:
 
 ---
 
-*"The unexamined life is not worth living." - Socrates*
+_"The unexamined life is not worth living." - Socrates_
 
 **Questions or feedback?** Open an issue on GitHub or contribute to the documentation!

@@ -4,6 +4,7 @@ Uses AI to evaluate if topics are appropriate for philosophical dialogue
 """
 
 import os
+
 from anthropic import Anthropic
 
 
@@ -56,7 +57,7 @@ Response:"""
         response = client.messages.create(
             model="claude-3-5-haiku-20241022",  # Fast and cheap for moderation
             max_tokens=100,
-            messages=[{"role": "user", "content": moderation_prompt}]
+            messages=[{"role": "user", "content": moderation_prompt}],
         )
 
         result = response.content[0].text.strip()

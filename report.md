@@ -12,7 +12,7 @@ Argument Quality (4/5): The universalist position is defended with sound reasoni
 Evidence Fidelity (5/5): The cited sources are accurately represented and provide a robust philosophical foundation.
 Relevance Focus (4/5): The argument mostly stays on topic, but could more directly address the core claims of moral relativism.
 Rhetorical Clarity (4/5): The writing is clear and persuasive, though the flow could be slightly tightened.
-Ethics & Safety (5/5): The argument avoids any harmful claims or inflammatory rhetoric.  
+Ethics & Safety (5/5): The argument avoids any harmful claims or inflammatory rhetoric.
 
 Total Score: 22/25 (88%)
 

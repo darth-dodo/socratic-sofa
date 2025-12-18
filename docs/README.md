@@ -50,16 +50,19 @@ Technical API documentation for developers.
 ## 🎯 Quick Links
 
 ### For Users
+
 - [Installation Guide](getting-started/installation.md) → [Quickstart](getting-started/quickstart.md) → [First Dialogue](getting-started/first-dialogue.md)
 - [Web Interface Guide](user-guide/web-interface.md)
 - [Topic Library](user-guide/topic-library.md)
 
 ### For Developers
+
 - [Development Setup](development/setup.md) → [Contributing](development/contributing.md)
 - [Architecture Overview](architecture/overview.md)
 - [API Reference](api/)
 
 ### For Deployers
+
 - [Deployment Guide](development/deployment.md)
 - [System Architecture](architecture/overview.md)
 

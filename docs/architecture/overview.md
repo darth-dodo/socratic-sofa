@@ -72,6 +72,7 @@ Socratic Sofa is an AI-powered philosophical dialogue system that implements the
 ### Request Flow
 
 1. **Topic Input Phase**
+
    ```
    User → Dropdown Selection OR Custom Input
         → Topic Selection Handler
@@ -79,6 +80,7 @@ Socratic Sofa is an AI-powered philosophical dialogue system that implements the
    ```
 
 2. **Content Moderation Phase**
+
    ```
    Final Topic → is_topic_appropriate()
                → Claude 3.5 Haiku API Call
@@ -87,6 +89,7 @@ Socratic Sofa is an AI-powered philosophical dialogue system that implements the
    ```
 
 3. **Dialogue Generation Phase**
+
    ```
    Approved Topic → SocraticSofa Crew Kickoff
                   → Sequential Task Execution:
@@ -127,11 +130,13 @@ Final Evaluation & Scores
 ### CrewAI Framework
 
 **Process Type**: Sequential
+
 - Tasks execute in strict order
 - Each task receives context from previous tasks
 - Output from one task becomes input for the next
 
 **Agent Assignment**:
+
 - `propose_topic` → Socratic Philosopher
 - `propose` → Socratic Philosopher
 - `oppose` → Socratic Philosopher
@@ -142,18 +147,21 @@ Final Evaluation & Scores
 ### Web Interface (Gradio)
 
 **Interface Structure**:
+
 - Single-column layout optimized for mobile
 - Responsive CSS with mobile breakpoints
 - Touch-friendly button sizing (min 48px height)
 - Progressive disclosure of information
 
 **User Interaction Flow**:
+
 1. Topic selection via dropdown or text input
 2. Content moderation feedback (if rejected)
 3. Progress indication during execution (2-3 minutes)
 4. Staged output display (Topic → Inquiries → Evaluation)
 
 **Theme Configuration**:
+
 - Primary: Indigo
 - Secondary: Purple
 - Soft theme for philosophical aesthetic
@@ -161,19 +169,23 @@ Final Evaluation & Scores
 ## Technology Stack
 
 ### Core Framework
+
 - **CrewAI**: Multi-agent orchestration framework
 - **Python 3.11+**: Runtime environment
 - **Anthropic Claude**: AI model for agents and moderation
 
 ### AI Models
+
 - **Claude Opus/Sonnet**: Main dialogue generation (via CrewAI)
 - **Claude 3.5 Haiku**: Fast content moderation (direct API)
 
 ### Web Framework
+
 - **Gradio**: Web interface and UI components
 - **YAML**: Configuration management (agents, tasks, topics)
 
 ### File System
+
 - **Markdown**: Output format for all generated content
 - **outputs/**: Directory for sequential task outputs
 
@@ -182,6 +194,7 @@ Final Evaluation & Scores
 ### Why Sequential Process?
 
 The Socratic method inherently requires sequential reasoning where each question builds upon previous ones. Sequential processing ensures:
+
 - Logical progression of inquiry
 - Context preservation across dialogues
 - Proper setup for evaluation phase
@@ -190,12 +203,14 @@ The Socratic method inherently requires sequential reasoning where each question
 ### Why Two Separate Claude Instances?
 
 **Content Moderation** (Claude 3.5 Haiku):
+
 - Fast response time (<1 second)
 - Cost-effective for simple binary decisions
 - Independent from philosophical reasoning
 - Fail-open design for better UX
 
 **Dialogue Generation** (Claude Opus/Sonnet via CrewAI):
+
 - Deep reasoning capabilities
 - Better at maintaining philosophical rigor
 - Handles complex multi-turn context
@@ -238,12 +253,14 @@ The Socratic method inherently requires sequential reasoning where each question
 ### Content Moderation
 
 **AI-Based Filtering**:
+
 - Reject explicit sexual/violent content
 - Block hate speech and discrimination
 - Filter illegal activity promotion
 - Allow legitimate philosophical inquiry
 
 **Fail-Open Design**:
+
 - Moderation failures allow topic through
 - Better UX than blocking all requests
 - Logged for monitoring and improvement
@@ -251,6 +268,7 @@ The Socratic method inherently requires sequential reasoning where each question
 ### API Key Management
 
 **Environment Variables**:
+
 - `ANTHROPIC_API_KEY`: Required for both moderation and dialogue
 - Not stored in code or configuration files
 - Validated at startup
@@ -306,6 +324,7 @@ python -m socratic_sofa.gradio_app
 ### Production Deployment
 
 **Container-Based**:
+
 ```
 Docker → Gunicorn → Gradio App
        → Health checks
@@ -314,6 +333,7 @@ Docker → Gunicorn → Gradio App
 ```
 
 **Environment Requirements**:
+
 - Python 3.11+ runtime
 - ANTHROPIC_API_KEY environment variable
 - 1GB+ RAM recommended

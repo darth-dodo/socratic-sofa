@@ -14,10 +14,10 @@ The main crew class that manages the Socratic dialogue process using specialized
 
 #### Attributes
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `agents` | `List[BaseAgent]` | List of AI agents participating in the dialogue |
-| `tasks` | `List[Task]` | List of sequential tasks to execute |
+| Attribute | Type              | Description                                     |
+| --------- | ----------------- | ----------------------------------------------- |
+| `agents`  | `List[BaseAgent]` | List of AI agents participating in the dialogue |
+| `tasks`   | `List[Task]`      | List of sequential tasks to execute             |
 
 ---
 
@@ -36,6 +36,7 @@ Creates the primary Socratic philosopher agent responsible for conducting philos
 **Description**: This agent is trained in the Socratic method and guides philosophical inquiry through systematic questioning, exposing contradictions, and maintaining intellectual humility.
 
 **Example**:
+
 ```python
 crew = SocraticSofa()
 questioner = crew.socratic_questioner()
@@ -57,6 +58,7 @@ Creates the dialectic moderator agent that evaluates the quality of philosophica
 **Description**: This agent assesses whether the dialogue follows authentic Socratic principles, evaluates the effectiveness of questioning, and provides critical feedback on the dialectic process.
 
 **Example**:
+
 ```python
 crew = SocraticSofa()
 judge_agent = crew.judge()
@@ -82,6 +84,7 @@ Task for proposing or refining the philosophical topic for discussion.
 **Description**: Analyzes and refines the input topic, ensuring it's suitable for Socratic inquiry. If no topic is provided, the AI selects an appropriate philosophical question.
 
 **Example**:
+
 ```python
 task = crew.propose_topic()
 # Task executes automatically as part of sequential crew process
@@ -104,6 +107,7 @@ Task for conducting the first line of Socratic inquiry.
 **Description**: The socratic_questioner agent conducts a series of probing questions following the Socratic method: establishing definitions, examining assumptions, revealing contradictions, and moving toward deeper understanding.
 
 **Example**:
+
 ```python
 task = crew.propose()
 # Depends on propose_topic() output
@@ -126,6 +130,7 @@ Task for conducting an alternative line of Socratic inquiry from a different ang
 **Description**: Explores the same topic from a contrasting perspective, revealing additional dimensions and contradictions through Socratic questioning. This creates a richer dialectic by examining multiple viewpoints.
 
 **Example**:
+
 ```python
 task = crew.oppose()
 # Depends on propose() output
@@ -148,6 +153,7 @@ Task for evaluating the quality of the Socratic dialogue.
 **Description**: The judge agent evaluates whether the dialogue followed authentic Socratic principles, assesses the effectiveness of questioning, and provides critical feedback on both lines of inquiry.
 
 **Example**:
+
 ```python
 task = crew.judge_task()
 # Depends on both propose() and oppose() outputs
@@ -164,6 +170,7 @@ Creates and returns the configured Crew instance.
 **Returns**: `Crew`
 
 **Configuration**:
+
 - **agents**: All agents defined in the class
 - **tasks**: All tasks defined in the class
 - **process**: `Process.sequential` (tasks execute in order)
@@ -172,6 +179,7 @@ Creates and returns the configured Crew instance.
 **Description**: Assembles the complete crew with agents and tasks, configured for sequential execution. This is the main method for initializing the Socratic dialogue system.
 
 **Example**:
+
 ```python
 # Initialize and run the crew
 from socratic_sofa.crew import SocraticSofa

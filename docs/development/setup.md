@@ -41,16 +41,19 @@ Complete guide for setting up a development environment for Socratic Sofa.
 UV is a fast Python package installer and resolver that replaces pip and manages virtual environments.
 
 **macOS/Linux**:
+
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 **Windows (PowerShell)**:
+
 ```powershell
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
 **Verify installation**:
+
 ```bash
 uv --version
 ```
@@ -70,12 +73,14 @@ uv sync
 ```
 
 This command:
+
 - Creates a `.venv/` directory with an isolated Python environment
 - Installs all dependencies specified in `pyproject.toml`
 - Locks dependencies to ensure reproducible builds
 - Takes 1-2 minutes on first run
 
 **What gets installed**:
+
 - `anthropic>=0.75.0` - Claude AI API client
 - `crewai[tools]==1.7.0` - Multi-agent orchestration framework
 - `gradio>=6.1.0` - Web interface framework
@@ -104,6 +109,7 @@ ANTHROPIC_API_KEY=sk-ant-api03-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 **Security best practices**:
+
 - Never commit `.env` to version control (already in `.gitignore`)
 - Use different API keys for development/production
 - Rotate keys periodically
@@ -116,6 +122,7 @@ make check-api
 ```
 
 Expected output:
+
 ```
 🔑 Checking API configuration...
 ✅ API key configured
@@ -169,16 +176,19 @@ Create `.vscode/settings.json`:
 The project uses **Ruff** for both linting and formatting (replaces Black, isort, flake8, pylint).
 
 **Check code quality**:
+
 ```bash
 make lint
 ```
 
 **Format code**:
+
 ```bash
 make format
 ```
 
 **Manual ruff usage**:
+
 ```bash
 # Lint specific files
 uv run ruff check src/socratic_sofa/main.py
@@ -225,6 +235,7 @@ make dev
 ```
 
 Expected behavior:
+
 - Crew starts execution
 - Four agents run sequentially: propose_topic → propose → oppose → judge_task
 - Outputs saved to `outputs/*.md`
@@ -239,6 +250,7 @@ make web
 ```
 
 Expected output:
+
 ```
 🌐 Launching Gradio web interface...
 📍 Open http://localhost:7860 in your browser
@@ -246,6 +258,7 @@ Running on local URL:  http://0.0.0.0:7860
 ```
 
 **Test the interface**:
+
 1. Open http://localhost:7860 in your browser
 2. Select or enter a philosophical topic
 3. Click "Begin Socratic Dialogue"
@@ -258,6 +271,7 @@ tree -L 3 -I '__pycache__|*.pyc|.venv'
 ```
 
 Expected structure:
+
 ```
 socratic_sofa/
 ├── outputs/
@@ -291,6 +305,7 @@ socratic_sofa/
 **Problem**: `uv: command not found`
 
 **Solutions**:
+
 ```bash
 # Ensure UV is in PATH
 export PATH="$HOME/.cargo/bin:$PATH"
@@ -307,6 +322,7 @@ uv --version
 **Problem**: `Requires Python >=3.10, <3.14`
 
 **Solutions**:
+
 ```bash
 # Check current version
 python --version
@@ -324,6 +340,7 @@ uv sync
 **Problem**: `ANTHROPIC_API_KEY not found`
 
 **Solutions**:
+
 ```bash
 # Verify .env exists and contains key
 cat .env
@@ -340,6 +357,7 @@ make check-api
 **Problem**: `Failed to download/install package`
 
 **Solutions**:
+
 ```bash
 # Clear UV cache
 rm -rf ~/.cache/uv
@@ -359,6 +377,7 @@ uv sync -v
 **Problem**: `Port 7860 is already in use`
 
 **Solutions**:
+
 ```bash
 # Find process using port
 lsof -i :7860
@@ -375,6 +394,7 @@ kill -9 <PID>
 **Problem**: `ModuleNotFoundError: No module named 'socratic_sofa'`
 
 **Solutions**:
+
 ```bash
 # Ensure you're in project directory
 pwd
@@ -391,6 +411,7 @@ uv run python -c "import socratic_sofa; print('OK')"
 **Problem**: `YAML configuration not loading`
 
 **Solutions**:
+
 ```bash
 # Verify YAML syntax
 python -c "import yaml; yaml.safe_load(open('src/socratic_sofa/config/agents.yaml'))"
@@ -407,6 +428,7 @@ find src/socratic_sofa/config/ -name "*.yaml"
 #### Slow Response Times
 
 **Causes and solutions**:
+
 - **API Rate Limits**: Check Anthropic Console for rate limits
 - **Network Latency**: Test connection to api.anthropic.com
 - **Model Selection**: Ensure using `claude-sonnet-4-5` not slower models
@@ -415,6 +437,7 @@ find src/socratic_sofa/config/ -name "*.yaml"
 #### Memory Issues
 
 **Solutions**:
+
 ```bash
 # Monitor memory usage
 top -p $(pgrep -f socratic_sofa)
@@ -428,6 +451,7 @@ top -p $(pgrep -f socratic_sofa)
 If you encounter issues not covered here:
 
 1. **Check logs**: Run with verbose mode
+
    ```bash
    uv run socratic_sofa --verbose
    ```

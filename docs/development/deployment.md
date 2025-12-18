@@ -22,6 +22,7 @@ Comprehensive guide for deploying Socratic Sofa to production environments.
 ### Deployment Requirements
 
 **Minimum Requirements**:
+
 - Python 3.10-3.13
 - 512MB RAM (1GB+ recommended)
 - 500MB disk space
@@ -29,6 +30,7 @@ Comprehensive guide for deploying Socratic Sofa to production environments.
 - HTTPS support (required for secure API key handling)
 
 **Application Characteristics**:
+
 - **Type**: Web application (Gradio interface)
 - **Runtime**: Python with UV package manager
 - **Dependencies**: anthropic, crewai, gradio, pyyaml
@@ -59,15 +61,15 @@ Comprehensive guide for deploying Socratic Sofa to production environments.
 
 ## Platform Comparison
 
-| Feature | Hugging Face | Render | Railway | Fly.io | Docker |
-|---------|-------------|---------|---------|--------|--------|
-| **Free Tier** | Yes (2 vCPU) | Yes (512MB) | Yes ($5 credit) | Yes (3 apps) | Self-hosted |
-| **Setup Difficulty** | ⭐ Easy | ⭐⭐ Medium | ⭐⭐ Medium | ⭐⭐⭐ Hard | ⭐⭐⭐⭐ Expert |
-| **Build Time** | 2-3 min | 5-7 min | 3-5 min | 3-5 min | Local |
-| **Auto-scaling** | Limited | Yes | Yes | Yes | Manual |
-| **Custom Domain** | Limited | Yes (paid) | Yes | Yes | Yes |
-| **Cold Starts** | 30-60s | 30s | 15s | 10s | N/A |
-| **Best For** | ML demos | Web apps | Hobby projects | Production | Any |
+| Feature              | Hugging Face | Render      | Railway         | Fly.io       | Docker          |
+| -------------------- | ------------ | ----------- | --------------- | ------------ | --------------- |
+| **Free Tier**        | Yes (2 vCPU) | Yes (512MB) | Yes ($5 credit) | Yes (3 apps) | Self-hosted     |
+| **Setup Difficulty** | ⭐ Easy      | ⭐⭐ Medium | ⭐⭐ Medium     | ⭐⭐⭐ Hard  | ⭐⭐⭐⭐ Expert |
+| **Build Time**       | 2-3 min      | 5-7 min     | 3-5 min         | 3-5 min      | Local           |
+| **Auto-scaling**     | Limited      | Yes         | Yes             | Yes          | Manual          |
+| **Custom Domain**    | Limited      | Yes (paid)  | Yes             | Yes          | Yes             |
+| **Cold Starts**      | 30-60s       | 30s         | 15s             | 10s          | N/A             |
+| **Best For**         | ML demos     | Web apps    | Hobby projects  | Production   | Any             |
 
 ### Recommendation by Use Case
 
@@ -113,6 +115,7 @@ Hugging Face Spaces is the recommended platform for quick deployment and ML appl
 3. **Create Requirements File**:
 
    Create `requirements.txt`:
+
    ```txt
    anthropic>=0.75.0
    crewai[tools]==1.7.0
@@ -123,6 +126,7 @@ Hugging Face Spaces is the recommended platform for quick deployment and ML appl
 4. **Create App File**:
 
    Create `app.py` (copy from `src/socratic_sofa/gradio_app.py`):
+
    ```python
    #!/usr/bin/env python
    """
@@ -221,10 +225,10 @@ colorTo: purple
 sdk: gradio
 sdk_version: 6.1.0
 app_file: app.py
-pinned: true              # Pin to your profile
+pinned: true # Pin to your profile
 license: mit
 duplicated_from: null
-python_version: 3.11      # Specify Python version
+python_version: 3.11 # Specify Python version
 ---
 ```
 
@@ -261,6 +265,7 @@ Render provides a modern platform-as-a-service with excellent free tier.
 1. **Prepare Repository**:
 
    Add `render.yaml` to repository root:
+
    ```yaml
    services:
      - type: web
@@ -271,7 +276,7 @@ Render provides a modern platform-as-a-service with excellent free tier.
        startCommand: "uv run socratic_web"
        envVars:
          - key: ANTHROPIC_API_KEY
-           sync: false  # Set manually in dashboard
+           sync: false # Set manually in dashboard
          - key: PYTHON_VERSION
            value: "3.12"
    ```
@@ -301,11 +306,12 @@ Render provides a modern platform-as-a-service with excellent free tier.
 ### Automatic Deploys
 
 Enable auto-deploy on push:
+
 ```yaml
 # render.yaml
 services:
   - type: web
-    autoDeploy: true  # Deploy on every push
+    autoDeploy: true # Deploy on every push
     branch: main
 ```
 
@@ -329,6 +335,7 @@ Railway offers a developer-friendly platform with $5 free credit monthly.
 ### Deployment Steps
 
 1. **Install Railway CLI** (optional):
+
    ```bash
    npm install -g @railway/cli
    railway login
@@ -343,6 +350,7 @@ Railway offers a developer-friendly platform with $5 free credit monthly.
 3. **Configure Build**:
 
    Create `railway.toml` in repository:
+
    ```toml
    [build]
    builder = "NIXPACKS"
@@ -405,6 +413,7 @@ Fly.io provides modern infrastructure with excellent performance and global depl
 ### Deployment Steps
 
 1. **Install flyctl**:
+
    ```bash
    # macOS
    brew install flyctl
@@ -420,6 +429,7 @@ Fly.io provides modern infrastructure with excellent performance and global depl
    ```
 
 2. **Create Fly App**:
+
    ```bash
    cd socratic_sofa
    flyctl launch
@@ -434,6 +444,7 @@ Fly.io provides modern infrastructure with excellent performance and global depl
 3. **Configure fly.toml**:
 
    Edit generated `fly.toml`:
+
    ```toml
    app = "socratic-sofa"
    primary_region = "sjc"
@@ -466,16 +477,19 @@ Fly.io provides modern infrastructure with excellent performance and global depl
    ```
 
 4. **Create Procfile**:
+
    ```bash
    echo "web: uv run socratic_web" > Procfile
    ```
 
 5. **Set Secrets**:
+
    ```bash
    flyctl secrets set ANTHROPIC_API_KEY=your_key_here
    ```
 
 6. **Deploy**:
+
    ```bash
    flyctl deploy
 
@@ -567,7 +581,7 @@ CMD ["uv", "run", "socratic_web"]
 Create `docker-compose.yml`:
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   socratic-sofa:
