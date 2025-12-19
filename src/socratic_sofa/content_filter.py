@@ -77,14 +77,21 @@ Response:"""
         return True, ""
 
 
-def get_alternative_suggestions() -> list[str]:
+def get_alternative_suggestions(rejected_topic: str = "") -> list[str]:
     """
     Provide alternative philosophical topics when a topic is rejected.
 
+    Attempts to provide thematically related alternatives based on the rejected topic,
+    falling back to general philosophical questions if no theme is detected.
+
+    Args:
+        rejected_topic: The topic that was rejected (optional)
+
     Returns:
-        List of suggested alternative topics
+        List of suggested alternative topics, potentially themed to the rejected topic
     """
-    return [
+    # Default philosophical questions
+    default_suggestions = [
         "What is justice?",
         "What is the good life?",
         "Is morality relative or universal?",
@@ -94,3 +101,200 @@ def get_alternative_suggestions() -> list[str]:
         "What is truth?",
         "Is beauty objective?",
     ]
+
+    # If no rejected topic provided, return defaults
+    if not rejected_topic or not rejected_topic.strip():
+        return default_suggestions
+
+    # Thematic alternative suggestions based on keywords
+    topic_lower = rejected_topic.lower()
+
+    # Technology and AI themes
+    if any(
+        word in topic_lower
+        for word in ["ai", "robot", "technology", "computer", "digital", "internet", "social media"]
+    ):
+        return [
+            "Can AI have rights?",
+            "Should we fear artificial intelligence?",
+            "What is consciousness?",
+            "Can machines be creative?",
+            "What makes us human in a digital age?",
+            "Is privacy a fundamental right?",
+            "How should we regulate technology?",
+            "What is the nature of intelligence?",
+        ]
+
+    # Ethics and morality themes
+    if any(
+        word in topic_lower
+        for word in [
+            "moral",
+            "ethics",
+            "right",
+            "wrong",
+            "should",
+            "ought",
+            "good",
+            "bad",
+            "virtue",
+        ]
+    ):
+        return [
+            "Is morality relative or universal?",
+            "What is the good life?",
+            "Can morality exist without religion?",
+            "What is justice?",
+            "Are there universal human rights?",
+            "Is utilitarianism the best ethical framework?",
+            "What role should empathy play in ethics?",
+            "Can an action be both right and wrong?",
+        ]
+
+    # Politics and society themes
+    if any(
+        word in topic_lower
+        for word in [
+            "government",
+            "politics",
+            "society",
+            "democracy",
+            "freedom",
+            "liberty",
+            "law",
+            "rights",
+        ]
+    ):
+        return [
+            "What is justice?",
+            "What is the ideal form of government?",
+            "Are there limits to freedom of speech?",
+            "What is the social contract?",
+            "Should voting be mandatory?",
+            "What role should government play in our lives?",
+            "Are universal human rights possible?",
+            "Can democracy survive the digital age?",
+        ]
+
+    # Mind and consciousness themes
+    if any(
+        word in topic_lower
+        for word in [
+            "mind",
+            "consciousness",
+            "brain",
+            "thought",
+            "awareness",
+            "perception",
+            "mental",
+            "cognitive",
+        ]
+    ):
+        return [
+            "What is consciousness?",
+            "Do we have free will?",
+            "Is the mind separate from the brain?",
+            "What is the nature of reality?",
+            "Can we trust our perceptions?",
+            "What is the self?",
+            "Are our thoughts truly our own?",
+            "What is subjective experience?",
+        ]
+
+    # Existential and meaning themes
+    if any(
+        word in topic_lower
+        for word in [
+            "meaning",
+            "purpose",
+            "life",
+            "death",
+            "existence",
+            "existential",
+            "absurd",
+            "suffer",
+        ]
+    ):
+        return [
+            "What is the good life?",
+            "What makes life meaningful?",
+            "Is there inherent meaning in the universe?",
+            "How should we face mortality?",
+            "Can we create our own purpose?",
+            "What is happiness?",
+            "Is suffering necessary for meaning?",
+            "What is the examined life?",
+        ]
+
+    # Knowledge and truth themes
+    if any(
+        word in topic_lower
+        for word in [
+            "truth",
+            "knowledge",
+            "belief",
+            "fact",
+            "science",
+            "evidence",
+            "prove",
+            "certain",
+        ]
+    ):
+        return [
+            "What is truth?",
+            "Can we know anything with certainty?",
+            "What is the relationship between science and philosophy?",
+            "Is objective truth possible?",
+            "What is knowledge?",
+            "Can faith and reason coexist?",
+            "What are the limits of human knowledge?",
+            "How do we distinguish truth from opinion?",
+        ]
+
+    # Aesthetic and beauty themes
+    if any(
+        word in topic_lower
+        for word in ["art", "beauty", "aesthetic", "music", "creative", "culture"]
+    ):
+        return [
+            "Is beauty objective?",
+            "What is art?",
+            "Can machines be creative?",
+            "What is the purpose of art?",
+            "Is there a universal aesthetic?",
+            "What makes something beautiful?",
+            "Can art be immoral?",
+            "What is the value of aesthetic experience?",
+        ]
+
+    # If no theme detected, return defaults
+    return default_suggestions
+
+
+def get_rejection_guidelines() -> str:
+    """
+    Provide general guidelines about what makes topics appropriate for philosophical discourse.
+
+    Returns:
+        Markdown-formatted string explaining content guidelines
+    """
+    return """
+**Our Guidelines for Philosophical Discourse**
+
+We welcome questions that:
+- Explore ethics, morality, and values through reasoned inquiry
+- Question fundamental assumptions about society, knowledge, or existence
+- Examine difficult topics with intellectual rigor and good faith
+- Seek understanding through the Socratic method
+
+We filter out topics that:
+- Contain explicit sexual or violent content
+- Include hate speech or discriminatory language
+- Promote illegal activities (policy questions about legalization are welcome)
+- Appear designed to provoke rather than explore
+
+**The Difference**: "Should drugs be legalized?" explores policy and ethics ✓
+vs. explicit content about drug use ✗
+
+If your topic was rejected, try rephrasing it as a philosophical question that explores underlying principles, values, or reasoning rather than specific content.
+"""

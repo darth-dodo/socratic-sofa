@@ -8,36 +8,40 @@
 
 ## 📊 Project Health
 
-| Metric | Status | Target |
-|--------|--------|--------|
-| **Test Coverage** | 80%+ | 80%+ |
-| **CI/CD** | ✅ Automated | GitHub Actions |
-| **Deployment** | ✅ Live | HuggingFace Spaces |
-| **Documentation** | ✅ Complete | Comprehensive |
-| **Code Quality** | ✅ High | Pre-commit hooks |
+| Metric            | Status       | Target             |
+| ----------------- | ------------ | ------------------ |
+| **Test Coverage** | 80%+         | 80%+               |
+| **CI/CD**         | ✅ Automated | GitHub Actions     |
+| **Deployment**    | ✅ Live      | HuggingFace Spaces |
+| **Documentation** | ✅ Complete  | Comprehensive      |
+| **Code Quality**  | ✅ High      | Pre-commit hooks   |
 
 ---
 
 ## 🎯 Core Features (Implemented)
 
 ### ✅ Multi-Agent System
+
 - **Socratic Philosopher Agent**: Asks probing questions following authentic Socratic method
 - **Dialectic Moderator Agent**: Evaluates quality and effectiveness of inquiries
 - **Sequential Workflow**: Topic → First Inquiry → Second Inquiry → Evaluation
 
 ### ✅ Differentiation System
+
 - **Context-Aware Second Inquiry**: Receives first inquiry as context
 - **Bonus Scoring**: Up to +10% for genuinely different philosophical angles
 - **Repetition Penalty**: Up to -15% for overlapping questions/themes
 - **Explicit Instructions**: Tasks guide agents to explore different perspectives
 
 ### ✅ Philosophical Traditions
+
 - **Greek Philosophy**: Platonic forms, Aristotelian ethics, Stoic virtue
 - **Eastern Philosophy**: Buddhist impermanence, Confucian virtue, Taoist naturalism
 - **Modern Western**: Kantian duty, Utilitarian consequences, Existentialist freedom
 - **Contemporary**: Feminist ethics, Environmental philosophy, Philosophy of technology
 
 ### ✅ Topic Library
+
 - **100 Curated Topics** across 7 categories:
   - Classics (10 topics)
   - Ethics & Morality (10 topics)
@@ -51,12 +55,14 @@
 - **Custom Topics**: Enter your own philosophical questions
 
 ### ✅ Content Moderation
+
 - **AI-Powered Filtering**: Claude 3.5 Haiku for fast moderation
 - **Appropriate Discourse**: Blocks inappropriate content while allowing legitimate inquiry
 - **Alternative Suggestions**: Provides alternative topics when content is rejected
 - **Fail-Open Design**: Better UX with logged moderation failures
 
 ### ✅ Web Interface
+
 - **Gradio 6.1.0**: Modern, responsive web UI
 - **Mobile-First Design**: Touch-friendly on all devices
 - **Streaming Output**: Real-time task completion feedback
@@ -64,6 +70,7 @@
 - **Markdown Rendering**: Formatted evaluation with tables and emojis
 
 ### ✅ Testing & Quality
+
 - **80%+ Code Coverage**: Comprehensive pytest suite
 - **Pre-commit Hooks**: Automated code quality checks
 - **Linting**: Ruff for code style and security
@@ -71,6 +78,7 @@
 - **Dead Code Detection**: Vulture for unused code
 
 ### ✅ CI/CD Pipeline
+
 - **GitHub Actions**: Automated testing on push/PR
 - **Deployment**: Auto-deploy to HuggingFace Spaces on main branch
 - **Coverage Enforcement**: Tests must maintain 80%+ coverage
@@ -81,12 +89,14 @@
 ## 🚀 Deployment
 
 ### Production Environment
+
 - **Platform**: HuggingFace Spaces
 - **URL**: https://huggingface.co/spaces/darth-dodo/socratic-sofa
 - **Runtime**: Gradio SDK 6.1.0, Python 3.12
 - **Status**: ✅ Live and operational
 
 ### Deployment Workflow
+
 1. Developer pushes to `main` branch
 2. GitHub Actions runs CI tests (linting, formatting, pytest)
 3. On success, triggers deployment workflow
@@ -99,6 +109,7 @@
 ## 📦 Technology Stack
 
 ### Core Framework
+
 - **CrewAI 1.7.0**: Multi-agent orchestration
 - **Anthropic Claude**: AI models
   - Sonnet 4.5: Main dialogue generation
@@ -106,6 +117,7 @@
 - **Gradio 6.1.0**: Web interface
 
 ### Development Tools
+
 - **UV**: Fast package manager
 - **pytest**: Testing framework
 - **ruff**: Linting and formatting
@@ -113,6 +125,7 @@
 - **pre-commit**: Git hooks
 
 ### DevOps
+
 - **GitHub Actions**: CI/CD pipeline
 - **HuggingFace Spaces**: Hosting platform
 - **Docker**: Container support (optional)
@@ -122,6 +135,7 @@
 ## 📈 Recent Improvements (v0.2.0)
 
 ### Major Features
+
 1. **Differentiation Scoring System**
    - Second inquiry evaluated for uniqueness
    - Bonus points for different philosophical angles
@@ -153,6 +167,7 @@
 ## 🔄 Development Workflow
 
 ### Making Changes
+
 ```bash
 # 1. Create feature branch
 git checkout -b feature/my-improvement
@@ -172,7 +187,9 @@ git push origin feature/my-improvement
 ```
 
 ### Quality Gates
+
 All PRs must pass:
+
 - ✅ Linting (ruff)
 - ✅ Formatting (ruff)
 - ✅ Tests (pytest)
@@ -184,6 +201,7 @@ All PRs must pass:
 ## 📚 Documentation
 
 ### Available Documentation
+
 - ✅ **README.md**: Project overview and quick start
 - ✅ **Installation Guide**: Step-by-step setup instructions
 - ✅ **Architecture Overview**: System design and components
@@ -195,6 +213,7 @@ All PRs must pass:
 - ✅ **Changelog**: Version history and updates
 
 ### Documentation Coverage
+
 - Getting Started: 100%
 - User Guides: 100%
 - Architecture: 100%
@@ -208,6 +227,7 @@ All PRs must pass:
 See [TASKS.md](../TASKS.md) for planned features.
 
 ### Potential Enhancements
+
 - Multi-turn dialogue continuation
 - User authentication and history
 - Export dialogues as PDF/HTML
@@ -221,11 +241,13 @@ See [TASKS.md](../TASKS.md) for planned features.
 ## 📞 Support & Contact
 
 ### Getting Help
+
 - **Documentation**: [docs/](.)
 - **GitHub Issues**: Report bugs or request features
 - **Live Demo**: Try at [HuggingFace Spaces](https://huggingface.co/spaces/darth-dodo/socratic-sofa)
 
 ### Contributing
+
 See [development/contributing.md](development/contributing.md) for guidelines.
 
 ---

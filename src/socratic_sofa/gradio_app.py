@@ -13,7 +13,11 @@ from threading import Thread
 import gradio as gr
 import yaml
 
-from socratic_sofa.content_filter import get_alternative_suggestions, is_topic_appropriate
+from socratic_sofa.content_filter import (
+    get_alternative_suggestions,
+    get_rejection_guidelines,
+    is_topic_appropriate,
+)
 from socratic_sofa.crew import SocraticSofa
 
 
@@ -122,10 +126,24 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
     # Content moderation check
     is_appropriate, rejection_reason = is_topic_appropriate(final_topic)
     if not is_appropriate:
-        error_msg = f"⚠️ {rejection_reason}\n\n"
-        error_msg += "**Suggested topics:**\n"
-        for suggestion in get_alternative_suggestions():
+        # Create a friendlier rejection message with info/warning styling
+        error_msg = "## 💭 Let's Explore Something Different\n\n"
+        error_msg += f"We couldn't proceed with this topic. {rejection_reason}\n\n"
+        error_msg += "### 🌟 Try These Related Topics Instead\n\n"
+
+        # Get thematically related suggestions
+        suggestions = get_alternative_suggestions(final_topic)
+        for suggestion in suggestions[:5]:  # Show top 5 suggestions
             error_msg += f"- {suggestion}\n"
+
+        error_msg += "\n---\n\n"
+        error_msg += "<details>\n"
+        error_msg += (
+            "<summary><strong>📖 Why was this rejected? (Click to expand)</strong></summary>\n\n"
+        )
+        error_msg += get_rejection_guidelines()
+        error_msg += "\n</details>"
+
         yield error_msg, error_msg, error_msg, error_msg
         return
 
