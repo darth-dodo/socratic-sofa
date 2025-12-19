@@ -41,6 +41,7 @@ class SocraticSofa:
     def oppose(self) -> Task:
         return Task(
             config=self.tasks_config["oppose"],
+            context=[self.propose_topic(), self.propose()],  # Provide first inquiry as context
             callback=self.task_callback,  # type: ignore[index]
         )
 
@@ -48,6 +49,7 @@ class SocraticSofa:
     def judge_task(self) -> Task:
         return Task(
             config=self.tasks_config["judge_task"],  # type: ignore[index]
+            context=[self.propose_topic(), self.propose(), self.oppose()],  # Both inquiries
             callback=self.task_callback,
         )
 
