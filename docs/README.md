@@ -47,11 +47,23 @@ Technical API documentation for developers.
 - **[Gradio App API](api/gradio-app.md)** - Web interface functions and parameters
 - **[Content Filter API](api/content-filter.md)** - Content moderation functions and categories
 
+## 🆕 What's New
+
+See [CHANGELOG.md](CHANGELOG.md) for recent updates and improvements.
+
+**Latest (v0.2.0)**:
+
+- Differentiation scoring for second inquiry (bonus +10%)
+- Philosophical traditions integration (Greek, Eastern, Modern, Contemporary)
+- 80%+ test coverage with automated CI/CD
+- Markdown-formatted judge evaluations
+
 ## 🎯 Quick Links
 
 ### For Users
 
 - [Installation Guide](getting-started/installation.md) → [Quickstart](getting-started/quickstart.md) → [First Dialogue](getting-started/first-dialogue.md)
+- [Live Demo](https://huggingface.co/spaces/darth-dodo/socratic-sofa) - Try it now!
 - [Web Interface Guide](user-guide/web-interface.md)
 - [Topic Library](user-guide/topic-library.md)
 
@@ -89,6 +101,12 @@ Found a typo or want to improve the docs? We welcome contributions!
 
 ---
 
-**Last Updated**: December 2025
-**Version**: 0.1.0
+**Last Updated**: December 19, 2024
+**Version**: 0.2.0
 **License**: MIT
+
+## 🔗 Project Links
+
+- **Live Demo**: [HuggingFace Spaces](https://huggingface.co/spaces/darth-dodo/socratic-sofa)
+- **GitHub**: [socratic-sofa](https://github.com/darth-dodo/socratic-sofa)
+- **Changelog**: [What's New](CHANGELOG.md)

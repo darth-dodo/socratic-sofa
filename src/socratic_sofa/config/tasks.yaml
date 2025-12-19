@@ -88,12 +88,72 @@ judge_task:
     Assess whether the questioning genuinely follows the Socratic method, reveals
     meaningful insights, and advances philosophical understanding. Do NOT judge
     the philosophical positions themselves, but rather the quality of the inquiry.
+
+    For the SECOND inquiry (oppose), also evaluate how well it differentiates itself
+    from the first inquiry. Strong differentiation means exploring a genuinely different
+    philosophical angle, using unique examples, challenging different assumptions, and
+    covering new ground with minimal overlap.
   expected_output: >
-    A comprehensive evaluation including:
-    - Scores for each dialogue on: Question Quality (40%), Elenctic Effectiveness (25%),
-      Philosophical Insight (20%), and Socratic Fidelity (15%)
-    - Total percentage scores for each inquiry
-    - Brief assessment of which inquiry better exemplifies the Socratic method
-    - One-sentence suggestion for deepening the Socratic examination
-    - Notes on whether questions genuinely probe or merely lead to conclusions
+    A comprehensive evaluation formatted in markdown for display in a Gradio UI.
+
+    Use the following format:
+
+    ## 📊 Dialectic Evaluation
+
+    ### Scoring Breakdown
+    | Criterion | First Inquiry | Second Inquiry |
+    |-----------|--------------|----------------|
+    | **Question Quality** (40%) | X/5 | X/5 |
+    | **Elenctic Effectiveness** (25%) | X/5 | X/5 |
+    | **Philosophical Insight** (20%) | X/5 | X/5 |
+    | **Socratic Fidelity** (15%) | X/5 | X/5 |
+    | **Differentiation Quality** (bonus +10%) | N/A | +X% |
+    | **Total Score** | XX% | XX% |
+
+    ### 🎯 Assessment
+
+    **Winner**: [First/Second] Inquiry (or "Both equally effective")
+
+    **Differentiation**: [Assessment of how distinct the second inquiry is from the first,
+    noting: philosophical angle differentiation, unique examples/scenarios, different assumptions
+    challenged, new territory explored vs. overlap. Award 0-10% bonus: 10% for complete
+    differentiation, 5% for partial, 0% for significant overlap.]
+
+    **Socratic Exemplification**: [Brief assessment of which inquiry better exemplifies the
+    Socratic method and why]
+
+    ### 📝 Detailed Analysis
+
+    **First Inquiry:**
+    - ✅/⚠️/❌ **Question Quality**: [Assessment of whether questions genuinely probe or lead]
+    - ✅/⚠️/❌ **Elenctic Effectiveness**: [Assessment of revealing contradictions]
+    - ✅/⚠️/❌ **Philosophical Insight**: [Assessment of depth and insight]
+    - ✅/⚠️/❌ **Socratic Fidelity**: [Assessment of adherence to Socratic method]
+
+    **Second Inquiry:**
+    - ✅/⚠️/❌ **Question Quality**: [Assessment of whether questions genuinely probe or lead]
+    - ✅/⚠️/❌ **Elenctic Effectiveness**: [Assessment of revealing contradictions]
+    - ✅/⚠️/❌ **Philosophical Insight**: [Assessment of depth and insight]
+    - ✅/⚠️/❌ **Socratic Fidelity**: [Assessment of adherence to Socratic method]
+    - ✅/⚠️/❌ **Differentiation**: [Explicit notes on overlap vs. new ground covered]
+
+    ### 💡 Recommendation
+
+    [One-sentence suggestion for deepening the Socratic examination]
+
+    ---
+
+    **Emoji Indicators:**
+    - ✅ Excellent/Strong
+    - ⚠️ Adequate/Needs improvement
+    - ❌ Weak/Problematic
+
+    **Scoring Criteria:**
+    - Question Quality (40%): Assess whether questions genuinely probe or merely lead to conclusions
+    - Elenctic Effectiveness (25%): Evaluate how well contradictions are revealed
+    - Philosophical Insight (20%): Judge the depth and significance of insights
+    - Socratic Fidelity (15%): Check adherence to genuine Socratic method
+    - Differentiation Quality (bonus +10%, second inquiry only): Award 10% for complete
+      differentiation, 5% for partial, 0% for significant overlap. PENALIZE if second
+      inquiry repeats themes, questions, or examples from the first.
   agent: judge

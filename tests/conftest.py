@@ -4,8 +4,8 @@ This module provides common fixtures and configuration for all tests.
 """
 
 import os
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 import pytest
 

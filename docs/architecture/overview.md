@@ -176,8 +176,14 @@ Final Evaluation & Scores
 
 ### AI Models
 
-- **Claude Opus/Sonnet**: Main dialogue generation (via CrewAI)
+- **Claude Sonnet 4.5**: Main dialogue generation (via CrewAI)
 - **Claude 3.5 Haiku**: Fast content moderation (direct API)
+
+### Package Management
+
+- **UV**: Fast Python package manager for dependency installation and virtual environment management
+- **pytest**: Testing framework with 80%+ code coverage
+- **GitHub Actions**: CI/CD pipeline for automated testing and deployment
 
 ### Web Framework
 
@@ -199,6 +205,34 @@ The Socratic method inherently requires sequential reasoning where each question
 - Context preservation across dialogues
 - Proper setup for evaluation phase
 - Natural flow matching human philosophical dialogue
+- Differentiation between first and second inquiries through context awareness
+
+### Recent Architectural Improvements
+
+**Differentiation Scoring System**:
+
+- Second inquiry (`oppose` task) receives context from first inquiry
+- Judge agent evaluates uniqueness and awards bonus points (0-10%)
+- Repetition penalty system (up to -15%) for overlapping content
+- Explicit instructions in tasks to ensure different philosophical angles
+
+**Philosophical Traditions Integration**:
+
+- Agents backstory updated to include Greek, Eastern, Modern Western, and Contemporary philosophy
+- Questions can draw from diverse philosophical frameworks
+- Maintains Socratic method while enriching perspectives
+
+**Content Moderation Enhancement**:
+
+- AI-powered filtering before dialogue generation
+- Fast response using Claude 3.5 Haiku
+- Allows legitimate philosophical inquiry while blocking inappropriate content
+
+**Streaming Output**:
+
+- Real-time task completion feedback
+- Progressive disclosure of dialogue stages
+- Improved user experience during 2-3 minute generation time
 
 ### Why Two Separate Claude Instances?
 

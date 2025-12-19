@@ -118,9 +118,7 @@ class TestIsTopicAppropriate:
     def test_api_exception_returns_true_fail_open(self, mocker, capsys):
         """Test that API exception returns (True, '') to fail open."""
         # Mock Anthropic to raise an exception
-        mocker.patch(
-            "socratic_sofa.content_filter.Anthropic", side_effect=Exception("API Error")
-        )
+        mocker.patch("socratic_sofa.content_filter.Anthropic", side_effect=Exception("API Error"))
 
         is_appropriate, reason = is_topic_appropriate("some topic")
 

@@ -34,6 +34,7 @@ class SocraticSofa:
     def propose(self) -> Task:
         return Task(
             config=self.tasks_config["propose"],
+            context=[self.propose_topic()],  # Access the resolved topic
             callback=self.task_callback,  # type: ignore[index]
         )
 
