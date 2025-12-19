@@ -3,8 +3,9 @@
 Unit tests for gradio_app.py helper functions.
 
 Tests cover:
-- load_topics(): Topic loading from YAML with error handling
+- Topic loading from YAML with error handling
 - handle_topic_selection(): Topic selection priority logic
+- Category filtering and random topic selection
 """
 
 from pathlib import Path
@@ -13,21 +14,29 @@ from unittest.mock import mock_open, patch
 import pytest
 import yaml
 
-from socratic_sofa.gradio_app import handle_topic_selection, load_topics
+from socratic_sofa.gradio_app import (
+    TOPICS,
+    get_categories,
+    get_random_topic,
+    get_topics_by_category,
+    get_topics_flat,
+    handle_topic_selection,
+    load_topics_data,
+)
 
 
 class TestLoadTopics:
-    """Test suite for load_topics() function."""
+    """Test suite for topic loading functions."""
 
     def test_returns_non_empty_list(self):
         """Should return a non-empty list of topics."""
-        topics = load_topics()
+        topics = TOPICS
         assert isinstance(topics, list)
         assert len(topics) > 0
 
     def test_topics_formatted_correctly(self):
         """Should format topics as '[Category] Topic'."""
-        topics = load_topics()
+        topics = TOPICS
 
         # Check that all topics follow the format
         for topic in topics:
@@ -44,7 +53,7 @@ class TestLoadTopics:
 
     def test_includes_multiple_categories(self):
         """Should include topics from multiple categories."""
-        topics = load_topics()
+        topics = TOPICS
 
         # Extract unique category names
         categories = set()
@@ -68,10 +77,11 @@ class TestLoadTopics:
         # Mock open to raise exception
         mocker.patch("builtins.open", side_effect=FileNotFoundError("File not found"))
 
-        topics = load_topics()
+        topics_data = load_topics_data()
 
-        # Should return default fallback topics
-        assert topics == ["What is justice?", "What is happiness?", "What is truth?"]
+        # Should return default fallback topics data
+        assert "fallback" in topics_data
+        assert topics_data["fallback"]["name"] == "Philosophy"
 
     def test_fallback_on_yaml_parse_error(self, mocker):
         """Should return default topics when YAML parsing fails."""
@@ -82,20 +92,67 @@ class TestLoadTopics:
         # Mock yaml.safe_load to raise exception
         mocker.patch("yaml.safe_load", side_effect=yaml.YAMLError("Parse error"))
 
-        topics = load_topics()
+        topics_data = load_topics_data()
 
         # Should return default fallback topics
-        assert topics == ["What is justice?", "What is happiness?", "What is truth?"]
+        assert "fallback" in topics_data
 
     def test_fallback_on_generic_exception(self, mocker):
         """Should return default topics on any unexpected exception."""
         # Mock to raise a generic exception
         mocker.patch("builtins.open", side_effect=Exception("Unexpected error"))
 
-        topics = load_topics()
+        topics_data = load_topics_data()
 
         # Should return default fallback topics
-        assert topics == ["What is justice?", "What is happiness?", "What is truth?"]
+        assert "fallback" in topics_data
+
+
+class TestCategoryFunctions:
+    """Test suite for category filtering functions."""
+
+    def test_get_categories_returns_list(self):
+        """Should return list of categories with 'All Categories' first."""
+        topics_data = load_topics_data()
+        categories = get_categories(topics_data)
+
+        assert isinstance(categories, list)
+        assert categories[0] == "All Categories"
+        assert "Classic Philosophy" in categories
+
+    def test_get_topics_flat_returns_formatted_list(self):
+        """Should return flat list with category prefixes."""
+        topics_data = load_topics_data()
+        topics = get_topics_flat(topics_data)
+
+        assert len(topics) > 0
+        for topic in topics:
+            assert "[" in topic and "]" in topic
+
+    def test_get_topics_by_category_all(self):
+        """Should return all topics for 'All Categories'."""
+        topics_data = load_topics_data()
+        topics = get_topics_by_category(topics_data, "All Categories")
+
+        assert "✨ Let AI choose" in topics
+        assert len(topics) > 50  # Many topics
+
+    def test_get_topics_by_category_specific(self):
+        """Should filter topics by specific category."""
+        topics_data = load_topics_data()
+        topics = get_topics_by_category(topics_data, "Classic Philosophy")
+
+        assert "✨ Let AI choose" in topics
+        for topic in topics[1:]:  # Skip AI choose
+            assert "[Classic Philosophy]" in topic
+
+    def test_get_random_topic_returns_valid_topic(self):
+        """Should return a random topic from the library."""
+        topics_data = load_topics_data()
+        random_topic = get_random_topic(topics_data)
+
+        assert isinstance(random_topic, str)
+        assert "[" in random_topic and "]" in random_topic
 
 
 class TestHandleTopicSelection:
