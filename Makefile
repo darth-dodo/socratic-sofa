@@ -39,7 +39,11 @@ clean:  ## Clean generated files and caches
 
 test:  ## Run tests
 	@echo "🧪 Running tests..."
-	uv run pytest tests/ -v
+	uv run --extra test pytest
+
+test-cov:  ## Run tests with coverage
+	@echo "🧪 Running tests with coverage..."
+	uv run --extra test pytest --cov=src/socratic_sofa --cov-report=term-missing
 
 lint:  ## Run linting checks
 	@echo "🔍 Running linting..."
