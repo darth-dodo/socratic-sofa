@@ -4,6 +4,7 @@ Socratic Sofa - Gradio Web Interface
 A philosophical dialogue system powered by CrewAI and the Socratic method
 """
 
+import random
 from datetime import datetime
 from pathlib import Path
 from queue import Queue
@@ -17,27 +18,59 @@ from socratic_sofa.crew import SocraticSofa
 
 
 # Load topics from YAML
-def load_topics():
-    """Load topic library from topics.yaml"""
+def load_topics_data():
+    """Load topic library from topics.yaml and return structured data."""
     topics_file = Path(__file__).parent / "topics.yaml"
     try:
         with open(topics_file) as f:
-            topics_data = yaml.safe_load(f)
-
-        # Flatten topics into a list with category labels
-        all_topics = []
-        for category_key, category_data in topics_data.items():
-            category_name = category_data["name"]
-            for topic in category_data["topics"]:
-                all_topics.append(f"[{category_name}] {topic}")
-
-        return all_topics
+            return yaml.safe_load(f)
     except Exception as e:
         print(f"Error loading topics: {e}")
-        return ["What is justice?", "What is happiness?", "What is truth?"]
+        return {
+            "fallback": {
+                "name": "Philosophy",
+                "topics": ["What is justice?", "What is happiness?", "What is truth?"],
+            }
+        }
 
 
-TOPICS = load_topics()
+def get_topics_flat(topics_data: dict) -> list[str]:
+    """Flatten topics into a list with category labels."""
+    all_topics = []
+    for category_data in topics_data.values():
+        category_name = category_data["name"]
+        for topic in category_data["topics"]:
+            all_topics.append(f"[{category_name}] {topic}")
+    return all_topics
+
+
+def get_categories(topics_data: dict) -> list[str]:
+    """Get list of category names."""
+    return ["All Categories"] + [data["name"] for data in topics_data.values()]
+
+
+def get_topics_by_category(topics_data: dict, category: str) -> list[str]:
+    """Get topics filtered by category."""
+    if category == "All Categories":
+        return ["✨ Let AI choose"] + get_topics_flat(topics_data)
+
+    for data in topics_data.values():
+        if data["name"] == category:
+            return ["✨ Let AI choose"] + [f"[{category}] {t}" for t in data["topics"]]
+
+    return ["✨ Let AI choose"] + get_topics_flat(topics_data)
+
+
+def get_random_topic(topics_data: dict) -> str:
+    """Get a random topic from the library."""
+    all_topics = get_topics_flat(topics_data)
+    return random.choice(all_topics) if all_topics else "What is justice?"  # noqa: S311
+
+
+# Load topics data
+TOPICS_DATA = load_topics_data()
+TOPICS = get_topics_flat(TOPICS_DATA)
+CATEGORIES = get_categories(TOPICS_DATA)
 
 
 def handle_topic_selection(dropdown_value: str = None, textbox_value: str = None) -> str:
@@ -293,6 +326,22 @@ CUSTOM_CSS = """
             color: #6366f1;
             font-style: italic;
         }
+
+        /* Example suggestions styling */
+        .example-suggestions {
+            opacity: 0.7;
+            margin-top: -8px !important;
+            margin-bottom: 12px !important;
+        }
+
+        .example-suggestions small {
+            font-size: 0.85rem;
+        }
+
+        /* Random button styling */
+        .secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
     """
 
 # Create the Gradio interface
@@ -313,19 +362,22 @@ with gr.Blocks(title="Socratic Sofa - Philosophical Dialogue") as demo:
         gr.Markdown(
             """
             ### How It Works
-            1. **Choose Topic**: Pick from library or write your own
+            1. **Choose Topic**: Pick from library, get a random one, or write your own
             2. **First Inquiry**: Explore through Socratic questions
             3. **Alternative Inquiry**: Examine from a different angle
             4. **Evaluation**: Judge the quality of philosophical inquiry
-
-            ### The Socratic Method
-            - Uses questions to stimulate critical thinking
-            - Exposes contradictions through elenchus
-            - Maintains intellectual humility
-            - Progresses: definition → assumption → contradiction → insight
             """
         )
 
+        # Category filter
+        category_dropdown = gr.Dropdown(
+            choices=CATEGORIES,
+            value="All Categories",
+            label="🏷️ Filter by Category",
+            info="Narrow down topics by philosophical domain",
+        )
+
+        # Topic selection with filtered choices
         topic_dropdown = gr.Dropdown(
             choices=["✨ Let AI choose"] + TOPICS,
             value="✨ Let AI choose",
@@ -333,10 +385,23 @@ with gr.Blocks(title="Socratic Sofa - Philosophical Dialogue") as demo:
             info="Pick a classic question or choose your own below",
         )
 
+        # Random topic button
+        random_button = gr.Button("🎲 Random Topic", variant="secondary", size="sm")
+
+        # Custom topic input
         topic_input = gr.Textbox(
-            label="Or Enter Your Own Topic",
-            placeholder="E.g., 'Should we colonize Mars?' (leave empty to use dropdown selection)",
+            label="✍️ Or Enter Your Own Topic",
+            placeholder="E.g., 'Should we colonize Mars?' or 'What is the nature of time?'",
             lines=2,
+            max_lines=4,
+        )
+
+        # Example suggestions
+        gr.Markdown(
+            """
+            <small>**Try these:** "Is consciousness an illusion?" • "Can AI be creative?" • "What makes life meaningful?"</small>
+            """,
+            elem_classes=["example-suggestions"],
         )
 
         run_button = gr.Button("🧠 Begin Socratic Dialogue", variant="primary", size="lg")
@@ -348,6 +413,42 @@ with gr.Blocks(title="Socratic Sofa - Philosophical Dialogue") as demo:
             Results will stream progressively as each stage completes.
             """
         )
+
+    # Event handlers for input improvements
+    def update_topics_by_category(category):
+        """Update topic dropdown based on category selection."""
+        topics = get_topics_by_category(TOPICS_DATA, category)
+        return gr.update(choices=topics, value="✨ Let AI choose")
+
+    def select_random_topic():
+        """Select a random topic and update the dropdown."""
+        random_topic = get_random_topic(TOPICS_DATA)
+        return gr.update(value=random_topic), ""
+
+    def clear_custom_on_dropdown_change(dropdown_value):
+        """Clear custom input when dropdown is explicitly selected."""
+        if dropdown_value and dropdown_value != "✨ Let AI choose":
+            return ""
+        return gr.update()
+
+    # Connect event handlers
+    category_dropdown.change(
+        fn=update_topics_by_category,
+        inputs=[category_dropdown],
+        outputs=[topic_dropdown],
+    )
+
+    random_button.click(
+        fn=select_random_topic,
+        inputs=[],
+        outputs=[topic_dropdown, topic_input],
+    )
+
+    topic_dropdown.change(
+        fn=clear_custom_on_dropdown_change,
+        inputs=[topic_dropdown],
+        outputs=[topic_input],
+    )
 
     with gr.Row():
         with gr.Column():
