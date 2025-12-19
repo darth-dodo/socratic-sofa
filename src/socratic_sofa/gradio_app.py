@@ -421,9 +421,14 @@ with gr.Blocks(title="Socratic Sofa - Philosophical Dialogue") as demo:
         return gr.update(choices=topics, value="✨ Let AI choose")
 
     def select_random_topic():
-        """Select a random topic and update the dropdown."""
+        """Select a random topic and reset to all categories."""
         random_topic = get_random_topic(TOPICS_DATA)
-        return gr.update(value=random_topic), ""
+        all_topics = ["✨ Let AI choose"] + get_topics_flat(TOPICS_DATA)
+        return (
+            gr.update(value="All Categories"),  # Reset category filter
+            gr.update(choices=all_topics, value=random_topic),  # Update dropdown with all topics
+            "",  # Clear custom input
+        )
 
     def clear_custom_on_dropdown_change(dropdown_value):
         """Clear custom input when dropdown is explicitly selected."""
@@ -441,7 +446,7 @@ with gr.Blocks(title="Socratic Sofa - Philosophical Dialogue") as demo:
     random_button.click(
         fn=select_random_topic,
         inputs=[],
-        outputs=[topic_dropdown, topic_input],
+        outputs=[category_dropdown, topic_dropdown, topic_input],
     )
 
     topic_dropdown.change(
