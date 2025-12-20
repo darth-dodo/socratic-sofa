@@ -16,6 +16,7 @@ tests/
 ## Running Tests
 
 ### Basic Test Execution
+
 ```bash
 # Run all tests
 make test
@@ -31,6 +32,7 @@ uv run --extra test pytest -vv
 ```
 
 ### Coverage Reports
+
 ```bash
 # Terminal coverage report
 make test-cov
@@ -47,6 +49,7 @@ open htmlcov/index.html
 The `conftest.py` module provides the following shared fixtures:
 
 ### Path Fixtures
+
 - `project_root` - Path to the project root directory
 - `src_root` - Path to the src/socratic_sofa directory
 - `config_dir` - Path to the config directory
@@ -54,22 +57,27 @@ The `conftest.py` module provides the following shared fixtures:
 - `temp_output_dir` - Temporary directory for test outputs
 
 ### Mock Fixtures
+
 - `mock_api_key` - Mock Anthropic API key for testing
 
 ### Sample Data Fixtures
+
 - `sample_topic` - Sample philosophical topic
 - `sample_inquiry` - Sample Socratic inquiry
 - `sample_response` - Sample response
 
 ### Environment Fixtures
+
 - `reset_env_vars` - Auto-used fixture for environment isolation
 
 ## Test Categories
 
 ### Content Filter Tests (`test_content_filter.py`)
+
 **Purpose**: Validate content safety and filtering mechanisms
 
 **Planned Tests**:
+
 - Inappropriate content detection
 - Offensive language filtering
 - Harmful content blocking
@@ -77,9 +85,11 @@ The `conftest.py` module provides the following shared fixtures:
 - Filter configuration and customization
 
 ### Crew Tests (`test_crew.py`)
+
 **Purpose**: Validate CrewAI crew coordination and agent interactions
 
 **Planned Tests**:
+
 - Crew initialization and configuration
 - Agent creation and setup
 - Task execution flow
@@ -88,9 +98,11 @@ The `conftest.py` module provides the following shared fixtures:
 - Error handling and recovery
 
 ### Gradio App Tests (`test_gradio_app.py`)
+
 **Purpose**: Validate web interface functionality
 
 **Planned Tests**:
+
 - Interface initialization
 - User input processing
 - Dialogue state management
@@ -101,11 +113,13 @@ The `conftest.py` module provides the following shared fixtures:
 ## Testing Best Practices
 
 ### Test Organization
+
 1. **One test class per component** - Group related tests in classes
 2. **Clear test names** - Use descriptive names that explain what's being tested
 3. **Arrange-Act-Assert pattern** - Structure tests with clear setup, execution, and verification
 
 ### Fixtures Usage
+
 ```python
 def test_with_fixtures(sample_topic, mock_api_key, temp_output_dir):
     """Example of using multiple fixtures."""
@@ -116,6 +130,7 @@ def test_with_fixtures(sample_topic, mock_api_key, temp_output_dir):
 ```
 
 ### Mocking External Services
+
 ```python
 def test_with_mocking(mocker):
     """Example of mocking external API calls."""
@@ -128,6 +143,7 @@ def test_with_mocking(mocker):
 ```
 
 ### Testing File I/O
+
 ```python
 def test_file_operations(temp_output_dir):
     """Example of testing file operations."""
@@ -173,6 +189,7 @@ addopts = "-v --tb=short"       # Default arguments
 ## Next Steps
 
 1. **Install test dependencies**:
+
    ```bash
    uv sync --extra test
    ```
@@ -183,6 +200,7 @@ addopts = "-v --tb=short"       # Default arguments
    - Implement `test_gradio_app.py` for UI validation
 
 3. **Run tests regularly** during development:
+
    ```bash
    make test-cov
    ```

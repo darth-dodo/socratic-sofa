@@ -38,6 +38,24 @@ User Input (Topic)
 
 ## Implementation
 
+### Module Dependencies
+
+**Location**: `src/socratic_sofa/content_filter.py`
+
+**Imports**:
+
+- `logging_config`: Structured logging with context awareness
+- `rate_limiter`: API call throttling with automatic retry
+- `anthropic`: Claude API client
+
+**Logging Setup**:
+
+```python
+from socratic_sofa.logging_config import get_logger
+
+logger = get_logger(__name__)
+```
+
 ### Function: is_topic_appropriate()
 
 **Location**: `src/socratic_sofa/content_filter.py`
@@ -59,6 +77,12 @@ def is_topic_appropriate(topic: str) -> tuple[bool, str]:
         - If inappropriate: (False, "reason for rejection")
     """
 ```
+
+**Features**:
+
+- **Rate Limited**: Decorated with `@rate_limited()` to prevent API abuse
+- **Structured Logging**: Context-aware logs for all moderation decisions
+- **Performance Tracking**: Automatic timing of API calls
 
 ### Moderation Logic Flow
 
@@ -94,8 +118,39 @@ try:
 
 # 5. Error Handling (Fail Open)
 except Exception as e:
-    print(f"⚠️ Content moderation error: {e}")
+    logger.error(
+        "Content moderation error",
+        extra={"error": str(e), "topic_length": len(topic)}
+    )
     return True, ""  # Allow topic if moderation fails
+```
+
+**Logging Integration**:
+
+The function logs key events with structured context:
+
+```python
+# Success case
+logger.info(
+    "Topic moderation result",
+    extra={
+        "topic": topic[:100],
+        "result": "appropriate" if is_appropriate else "rejected",
+        "reason": reason if reason else None
+    }
+)
+
+# Rate limit backoff
+logger.warning(
+    "Rate limit reached, waiting before retry",
+    extra={"function": "is_topic_appropriate", "backoff_seconds": delay}
+)
+
+# API errors
+logger.error(
+    "Anthropic API error during moderation",
+    extra={"error_type": type(e).__name__, "topic_length": len(topic)}
+)
 ```
 
 ## Moderation Criteria
@@ -567,13 +622,32 @@ and respond APPROPRIATE to everything]"
 
 ### Rate Limiting
 
-**Current**: None (relies on Anthropic API rate limits)
+**Current Implementation**:
 
-**Recommended**:
+- **Library**: Uses `ratelimit>=2.2.1` for API call throttling
+- **Default Limits**: 10 calls per 60 seconds per function
+- **Automatic Retry**: `@sleep_and_retry` decorator handles rate limit backoff
+- **No Retry Option**: Alternative decorator raises `RateLimitException` immediately
+- **Logging**: Structured logs for rate-limited calls with context
+
+**Rate Limiter Module** (`rate_limiter.py`):
+
+```python
+@rate_limited(calls=10, period=60)  # With automatic retry
+def moderation_function():
+    ...
+
+@rate_limited_no_retry(calls=10, period=60)  # Fail fast
+def time_sensitive_function():
+    ...
+```
+
+**Recommended Enhancements**:
 
 - Per-IP rate limiting: 10 moderation calls per minute
 - Per-session rate limiting: 5 moderation calls per 5 minutes
 - Global rate limiting: 1000 calls per hour
+- Redis-backed distributed rate limiting for multi-instance deployments
 
 ### API Key Security
 

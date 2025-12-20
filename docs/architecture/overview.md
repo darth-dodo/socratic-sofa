@@ -6,123 +6,98 @@ Socratic Sofa is an AI-powered philosophical dialogue system that implements the
 
 ## High-Level Architecture
 
-### System Components
+```mermaid
+flowchart TB
+    subgraph UI["User Interface (Gradio)"]
+        Topic["Topic Selection"]
+        Display["Dialogue Display"]
+    end
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         User Interface                          │
-│                     (Gradio Web Interface)                      │
-│  - Topic Selection (Library + Custom Input)                     │
-│  - Content Moderation Check                                     │
-│  - Real-time Dialogue Display                                   │
-└────────────────────┬────────────────────────────────────────────┘
-                     │
-                     ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                      Content Filter                             │
-│                   (AI-Powered Moderation)                       │
-│  - Claude 3.5 Haiku for Fast Moderation                        │
-│  - Topic Appropriateness Evaluation                            │
-│  - Alternative Suggestions                                      │
-└────────────────────┬────────────────────────────────────────────┘
-                     │
-                     ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                       CrewAI Orchestration                      │
-│                      (SocraticSofa Crew)                        │
-│  - Sequential Process Execution                                 │
-│  - Agent Coordination                                           │
-│  - Task Dependency Management                                   │
-└────────────────────┬────────────────────────────────────────────┘
-                     │
-        ┌────────────┴────────────┐
-        ↓                         ↓
-┌──────────────────┐      ┌──────────────────┐
-│  Agent Layer     │      │   Agent Layer    │
-│                  │      │                  │
-│  Socratic        │      │  Dialectic       │
-│  Philosopher     │      │  Moderator       │
-│                  │      │                  │
-│  - Questioning   │      │  - Evaluation    │
-│  - Elenchus      │      │  - Scoring       │
-│  - Inquiry       │      │  - Feedback      │
-└────────┬─────────┘      └────────┬─────────┘
-         │                         │
-         ↓                         ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                         Task Pipeline                           │
-│  1. propose_topic    → Select/Generate Topic                    │
-│  2. propose          → First Line of Inquiry (5-7 questions)    │
-│  3. oppose           → Alternative Inquiry (5-7 questions)      │
-│  4. judge_task       → Evaluate Both Dialogues                  │
-└────────────────────┬────────────────────────────────────────────┘
-                     │
-                     ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                       Output Storage                            │
-│  - 01_topic.md       (Topic Definition)                         │
-│  - 02_proposition.md (First Dialogue)                           │
-│  - 03_opposition.md  (Alternative Dialogue)                     │
-│  - 04_judgment.md    (Evaluation & Scores)                      │
-└─────────────────────────────────────────────────────────────────┘
+    subgraph Filter["Content Filter"]
+        Mod["AI Moderation"]
+        Rate["Rate Limiter"]
+    end
+
+    subgraph Crew["CrewAI Orchestration"]
+        SP["Socratic Philosopher"]
+        DM["Dialectic Moderator"]
+    end
+
+    subgraph Tasks["Task Pipeline"]
+        T1["1. propose_topic"]
+        T2["2. propose"]
+        T3["3. oppose"]
+        T4["4. judge_task"]
+    end
+
+    Topic --> Rate --> Mod
+    Mod -->|Approved| Crew
+    Mod -->|Rejected| Topic
+
+    SP --> T1 --> T2 --> T3
+    DM --> T4
+
+    Tasks --> Display
 ```
 
 ## Data Flow
 
-### Request Flow
+### Request Flow Diagram
 
-1. **Topic Input Phase**
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant G as Gradio UI
+    participant F as Content Filter
+    participant R as Rate Limiter
+    participant C as CrewAI
+    participant A as Claude API
 
-   ```
-   User → Dropdown Selection OR Custom Input
-        → Topic Selection Handler
-        → Final Topic Determination
-   ```
+    U->>G: Select/Enter Topic
+    G->>R: Check Rate Limit
+    R->>F: is_topic_appropriate()
+    F->>A: Claude 3.5 Haiku
+    A-->>F: APPROPRIATE/INAPPROPRIATE
 
-2. **Content Moderation Phase**
-
-   ```
-   Final Topic → is_topic_appropriate()
-               → Claude 3.5 Haiku API Call
-               → Evaluation (APPROPRIATE/INAPPROPRIATE)
-               → Pass Through OR Reject with Suggestions
-   ```
-
-3. **Dialogue Generation Phase**
-
-   ```
-   Approved Topic → SocraticSofa Crew Kickoff
-                  → Sequential Task Execution:
-                     1. propose_topic task
-                     2. propose task (First Inquiry)
-                     3. oppose task (Alternative Inquiry)
-                     4. judge_task (Evaluation)
-                  → Markdown Output Files
-   ```
-
-4. **Display Phase**
-   ```
-   Output Files → Read from outputs/ directory
-                → Format with Section Headers
-                → Render in Gradio Interface
-   ```
+    alt Topic Rejected
+        F-->>G: Show Suggestions
+        G-->>U: Alternative Topics
+    else Topic Approved
+        F-->>C: Start Crew
+        C->>A: propose_topic
+        A-->>C: Topic Result
+        C->>A: propose (First Inquiry)
+        A-->>C: Inquiry Result
+        C->>A: oppose (Alternative)
+        A-->>C: Alternative Result
+        C->>A: judge_task
+        A-->>C: Evaluation
+        C-->>G: Stream Results
+        G-->>U: Display Dialogue
+    end
+```
 
 ### Task Dependencies
 
-```
-propose_topic (Agent: Socratic Philosopher)
-      │
-      ↓
-propose (Agent: Socratic Philosopher)
-      │ [Context: Topic from propose_topic]
-      ↓
-oppose (Agent: Socratic Philosopher)
-      │ [Context: Topic + First Inquiry]
-      ↓
-judge_task (Agent: Dialectic Moderator)
-      │ [Context: Both Inquiries]
-      ↓
-Final Evaluation & Scores
+```mermaid
+flowchart TD
+    subgraph Agent1["Socratic Philosopher"]
+        PT["propose_topic"]
+        P["propose"]
+        O["oppose"]
+    end
+
+    subgraph Agent2["Dialectic Moderator"]
+        J["judge_task"]
+    end
+
+    PT -->|"Topic Context"| P
+    PT -->|"Topic Context"| O
+    P -->|"First Inquiry Context"| O
+    P -->|"First Inquiry"| J
+    O -->|"Alternative Inquiry"| J
+
+    J --> Result["Final Evaluation & Scores"]
 ```
 
 ## Component Interactions
@@ -137,57 +112,106 @@ Final Evaluation & Scores
 
 **Agent Assignment**:
 
-- `propose_topic` → Socratic Philosopher
-- `propose` → Socratic Philosopher
-- `oppose` → Socratic Philosopher
-- `judge_task` → Dialectic Moderator
+| Task            | Agent                | Purpose                 |
+| --------------- | -------------------- | ----------------------- |
+| `propose_topic` | Socratic Philosopher | Select/Generate Topic   |
+| `propose`       | Socratic Philosopher | First Line of Inquiry   |
+| `oppose`        | Socratic Philosopher | Alternative Inquiry     |
+| `judge_task`    | Dialectic Moderator  | Evaluate Both Dialogues |
 
-**Verbose Mode**: Enabled for debugging and transparency
+### Module Dependencies
 
-### Web Interface (Gradio)
+```mermaid
+flowchart LR
+    subgraph Core["Core Modules"]
+        CF[content_filter.py]
+        CR[crew.py]
+        GA[gradio_app.py]
+        MA[main.py]
+    end
 
-**Interface Structure**:
+    subgraph Support["Support Modules"]
+        LC[logging_config.py]
+        RL[rate_limiter.py]
+    end
 
-- Single-column layout optimized for mobile
-- Responsive CSS with mobile breakpoints
-- Touch-friendly button sizing (min 48px height)
-- Progressive disclosure of information
+    subgraph External["External"]
+        AN[Anthropic API]
+        CW[CrewAI]
+        GR[Gradio]
+    end
 
-**User Interaction Flow**:
+    LC --> CF
+    LC --> CR
+    LC --> GA
+    RL --> CF
 
-1. Topic selection via dropdown or text input
-2. Content moderation feedback (if rejected)
-3. Progress indication during execution (2-3 minutes)
-4. Staged output display (Topic → Inquiries → Evaluation)
+    CF --> GA
+    CR --> GA
+    CR --> MA
 
-**Theme Configuration**:
-
-- Primary: Indigo
-- Secondary: Purple
-- Soft theme for philosophical aesthetic
+    AN --> CF
+    AN --> CW
+    CW --> CR
+    GR --> GA
+```
 
 ## Technology Stack
 
-### Core Framework
+### Core Components
 
-- **CrewAI**: Multi-agent orchestration framework
-- **Python 3.11+**: Runtime environment
-- **Anthropic Claude**: AI model for agents and moderation
+```mermaid
+flowchart TB
+    subgraph Runtime["Runtime Environment"]
+        PY["Python 3.11+"]
+        UV["UV Package Manager"]
+    end
+
+    subgraph AI["AI Layer"]
+        Claude["Claude Sonnet 4.5"]
+        Haiku["Claude 3.5 Haiku"]
+        CrewAI["CrewAI Framework"]
+    end
+
+    subgraph Web["Web Layer"]
+        Gradio["Gradio Interface"]
+        YAML["YAML Config"]
+    end
+
+    subgraph Quality["Quality Tools"]
+        Pytest["pytest + 220 tests"]
+        PreCommit["pre-commit hooks"]
+        Ruff["ruff linter"]
+    end
+
+    subgraph Infra["Infrastructure"]
+        Logging["Structured Logging"]
+        RateLimit["Rate Limiting"]
+    end
+
+    PY --> AI
+    PY --> Web
+    UV --> PY
+    CrewAI --> Claude
+    Gradio --> CrewAI
+```
 
 ### AI Models
 
-- **Claude Opus/Sonnet**: Main dialogue generation (via CrewAI)
-- **Claude 3.5 Haiku**: Fast content moderation (direct API)
+| Model             | Purpose             | Characteristics                    |
+| ----------------- | ------------------- | ---------------------------------- |
+| Claude Sonnet 4.5 | Dialogue generation | Deep reasoning, multi-turn context |
+| Claude 3.5 Haiku  | Content moderation  | Fast (<1s), cost-effective         |
 
-### Web Framework
+### Quality Assurance
 
-- **Gradio**: Web interface and UI components
-- **YAML**: Configuration management (agents, tasks, topics)
-
-### File System
-
-- **Markdown**: Output format for all generated content
-- **outputs/**: Directory for sequential task outputs
+| Tool       | Purpose                  |
+| ---------- | ------------------------ |
+| pytest     | 220+ tests, 99% coverage |
+| pre-commit | Automated quality checks |
+| ruff       | Linting and formatting   |
+| bandit     | Security scanning        |
+| vulture    | Dead code detection      |
 
 ## Architectural Decisions
 
@@ -199,30 +223,27 @@ The Socratic method inherently requires sequential reasoning where each question
 - Context preservation across dialogues
 - Proper setup for evaluation phase
 - Natural flow matching human philosophical dialogue
+- Differentiation between first and second inquiries through context awareness
 
 ### Why Two Separate Claude Instances?
 
-**Content Moderation** (Claude 3.5 Haiku):
+```mermaid
+flowchart LR
+    subgraph Moderation["Content Moderation"]
+        H["Claude 3.5 Haiku"]
+        F["Fast: <1 second"]
+        C["Cost-effective"]
+    end
 
-- Fast response time (<1 second)
-- Cost-effective for simple binary decisions
-- Independent from philosophical reasoning
-- Fail-open design for better UX
+    subgraph Dialogue["Dialogue Generation"]
+        S["Claude Sonnet 4.5"]
+        D["Deep reasoning"]
+        Q["Quality-focused"]
+    end
 
-**Dialogue Generation** (Claude Opus/Sonnet via CrewAI):
-
-- Deep reasoning capabilities
-- Better at maintaining philosophical rigor
-- Handles complex multi-turn context
-- Optimized for quality over speed
-
-### Why Markdown Output Files?
-
-- **Portability**: Easy to share and archive dialogues
-- **Readability**: Human-readable format
-- **Versioning**: Git-friendly for dialogue tracking
-- **Rendering**: Direct support in Gradio interface
-- **Export**: Simple conversion to other formats
+    H --> F --> C
+    S --> D --> Q
+```
 
 ### Why Gradio?
 
@@ -232,104 +253,96 @@ The Socratic method inherently requires sequential reasoning where each question
 - **Python Integration**: Seamless with CrewAI
 - **Deployment**: Easy Hugging Face Spaces integration
 
-## Scalability Considerations
-
-### Current Limitations
-
-1. **Synchronous Execution**: Each dialogue blocks until complete (2-3 minutes)
-2. **File-Based Output**: Not suitable for high-concurrency scenarios
-3. **No Persistence**: No database for dialogue history
-4. **Single Instance**: No load balancing or redundancy
-
-### Potential Improvements
-
-1. **Async Processing**: Queue-based system with job status tracking
-2. **Database Storage**: PostgreSQL for dialogue persistence
-3. **Caching Layer**: Redis for topic library and common queries
-4. **Horizontal Scaling**: Multiple worker instances with load balancer
-
-## Security & Safety
-
-### Content Moderation
-
-**AI-Based Filtering**:
-
-- Reject explicit sexual/violent content
-- Block hate speech and discrimination
-- Filter illegal activity promotion
-- Allow legitimate philosophical inquiry
-
-**Fail-Open Design**:
-
-- Moderation failures allow topic through
-- Better UX than blocking all requests
-- Logged for monitoring and improvement
-
-### API Key Management
-
-**Environment Variables**:
-
-- `ANTHROPIC_API_KEY`: Required for both moderation and dialogue
-- Not stored in code or configuration files
-- Validated at startup
-
-### Input Validation
-
-**Topic Length**: Maximum 500 characters
-**Injection Prevention**: Prompt engineering in moderation system
-**Output Sanitization**: Markdown rendering with XSS protection
-
 ## Performance Characteristics
 
-### Expected Latency
+### Latency Profile
 
-- **Content Moderation**: <1 second
-- **Topic Selection**: <2 seconds (AI-generated topics)
-- **Dialogue Generation**: 120-180 seconds (full pipeline)
-- **UI Response**: <100ms (file reading and rendering)
+```mermaid
+gantt
+    title Dialogue Generation Timeline
+    dateFormat s
+    axisFormat %S
+
+    section Moderation
+    Rate Check           :a1, 0, 0.1s
+    Content Filter       :a2, after a1, 1s
+
+    section Dialogue
+    propose_topic        :b1, after a2, 30s
+    propose (5-7 questions) :b2, after b1, 45s
+    oppose (5-7 questions)  :b3, after b2, 45s
+    judge_task           :b4, after b3, 30s
+```
 
 ### Resource Usage
 
-- **Memory**: ~500MB per active dialogue
-- **CPU**: Moderate during generation, minimal during waiting
-- **Network**: API calls to Anthropic (rate limit aware)
-- **Storage**: ~10KB per dialogue (markdown files)
+| Resource | Expected Usage             |
+| -------- | -------------------------- |
+| Memory   | ~500MB per dialogue        |
+| CPU      | Moderate during generation |
+| Network  | Rate-limited API calls     |
 
 ## Monitoring & Observability
 
-### Current Logging
+### Logging Architecture
 
-- CrewAI verbose mode: Agent actions and task execution
-- Gradio console: Request handling and errors
-- Content filter: Moderation decisions and failures
+```mermaid
+flowchart TB
+    subgraph Sources["Log Sources"]
+        App["Application Code"]
+        Filter["Content Filter"]
+        Crew["CrewAI Agents"]
+    end
 
-### Recommended Additions
+    subgraph Logger["Logging Framework"]
+        LC["logging_config.py"]
+        JSON["JSON Formatter"]
+        Console["Console Formatter"]
+    end
 
-1. **Structured Logging**: JSON format with correlation IDs
-2. **Metrics Collection**: Dialogue completion rate, moderation accuracy
-3. **Error Tracking**: Sentry or similar for production issues
-4. **Performance Monitoring**: Response times, API latency
+    subgraph Output["Output Destinations"]
+        Dev["Development: Console"]
+        Prod["Production: JSON"]
+    end
+
+    Sources --> LC
+    LC --> JSON --> Prod
+    LC --> Console --> Dev
+```
+
+### Logging Features
+
+- **Context Propagation**: Session IDs, topic context, request metadata
+- **Performance Tracking**: Automatic timing for functions and operations
+- **Error Details**: Structured exception logging with traceback
+- **Log Levels**: DEBUG, INFO, WARNING, ERROR with configurable thresholds
 
 ## Deployment Architecture
 
 ### Local Development
 
-```
+```bash
 python -m socratic_sofa.gradio_app
   → Starts Gradio on 0.0.0.0:7860
   → Reads configurations from config/
-  → Outputs to outputs/ directory
 ```
 
 ### Production Deployment
 
-**Container-Based**:
+```mermaid
+flowchart LR
+    subgraph Container["Docker Container"]
+        G["Gunicorn"]
+        App["Gradio App"]
+    end
 
-```
-Docker → Gunicorn → Gradio App
-       → Health checks
-       → Auto-restart on failure
-       → Log aggregation
+    subgraph Services["External Services"]
+        API["Anthropic API"]
+        HF["Hugging Face Spaces"]
+    end
+
+    G --> App --> API
+    HF --> Container
 ```
 
 **Environment Requirements**:
@@ -337,27 +350,44 @@ Docker → Gunicorn → Gradio App
 - Python 3.11+ runtime
 - ANTHROPIC_API_KEY environment variable
 - 1GB+ RAM recommended
-- Persistent storage for outputs/
 
-## Future Architecture Enhancements
+## Security & Safety
 
-### Multi-User Support
+### Content Moderation Flow
 
-- Session-based output directories
-- User authentication and history
-- Concurrent dialogue handling
-- Rate limiting per user
+```mermaid
+flowchart TD
+    Input["User Topic Input"]
+    Length{"Length > 500?"}
+    AI["Claude 3.5 Haiku Check"]
+    Decision{"Appropriate?"}
+    Pass["Allow Topic"]
+    Reject["Reject + Suggestions"]
+    Fallback["Fail Open (on error)"]
 
-### Advanced Features
+    Input --> Length
+    Length -->|Yes| Reject
+    Length -->|No| AI
+    AI --> Decision
+    Decision -->|Yes| Pass
+    Decision -->|No| Reject
+    AI -->|Error| Fallback
+```
 
+### Security Measures
+
+| Layer      | Protection                    |
+| ---------- | ----------------------------- |
+| Input      | 500 char limit, rate limiting |
+| Moderation | AI-powered content filtering  |
+| API Keys   | Environment variables only    |
+| Output     | Markdown with XSS protection  |
+
+## Future Enhancements
+
+### Planned Features
+
+- **Multi-User Support**: Session-based dialogues, user authentication
 - **Dialogue Branching**: Follow-up questions on specific points
-- **Multi-Agent Debates**: More than two perspectives
-- **Historical Analysis**: Compare with famous philosophical texts
-- **Collaborative Mode**: Multiple users contributing to inquiry
-
-### Integration Points
-
 - **API Layer**: RESTful API for programmatic access
-- **Webhook Support**: Notify external systems on completion
 - **Export Options**: PDF, HTML, plain text formats
-- **Sharing**: Social media integration for dialogues

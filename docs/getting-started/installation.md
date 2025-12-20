@@ -196,9 +196,12 @@ Run a quick test to ensure the system works:
 ```bash
 # Test the CLI interface
 uv run python -c "from socratic_sofa.crew import SocraticSofa; print('Import successful!')"
+
+# Or run the web interface
+uv run socratic_web
 ```
 
-**Expected**: "Import successful!"
+**Expected**: "Import successful!" or web interface opens at http://localhost:7860
 
 ## Troubleshooting
 
@@ -428,8 +431,9 @@ Congratulations! You've successfully installed Socratic Sofa. Here's what to do 
 
 1. **Quick Start**: Try the [5-minute quickstart guide](./quickstart.md)
 2. **First Dialogue**: Follow the [first dialogue tutorial](./first-dialogue.md)
-3. **Explore Features**: Learn about customization in the main README
-4. **Deploy**: Consider deploying to Hugging Face Spaces or other platforms
+3. **Explore Features**: Learn about the [topic library](../user-guide/topic-library.md) and [web interface](../user-guide/web-interface.md)
+4. **Live Demo**: Try the deployed version at [HuggingFace Spaces](https://huggingface.co/spaces/darth-dodo/socratic-sofa)
+5. **Deploy**: Consider deploying your own instance using the [deployment guide](../development/deployment.md)
 
 ## Additional Resources
 

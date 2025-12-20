@@ -15,7 +15,7 @@ repos:
     rev: 5.13.2
     hooks:
       - id: isort
-        args: ['--profile=black', '--line-length=100']
+        args: ["--profile=black", "--line-length=100"]
 
   # Note: Black is disabled in favor of ruff-format (faster, consistent)
 
@@ -28,7 +28,7 @@ repos:
     rev: v0.8.4
     hooks:
       - id: ruff
-        args: ['--fix', '--exit-non-zero-on-fix']
+        args: ["--fix", "--exit-non-zero-on-fix"]
       - id: ruff-format
 
   # =============================================================================
@@ -40,16 +40,16 @@ repos:
     rev: 1.8.0
     hooks:
       - id: bandit
-        args: ['-r', '-ll', '-x', 'tests,outputs']  # Only medium+ severity
-        files: '^src/'
-        additional_dependencies: ['bandit[toml]']
+        args: ["-r", "-ll", "-x", "tests,outputs"] # Only medium+ severity
+        files: "^src/"
+        additional_dependencies: ["bandit[toml]"]
 
   # detect-secrets - Prevent secrets from being committed
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.5.0
     hooks:
       - id: detect-secrets
-        args: ['--baseline', '.secrets.baseline']
+        args: ["--baseline", ".secrets.baseline"]
         exclude: 'uv\.lock|\.env\.example|docs/|DEPLOYMENT'
 
   # =============================================================================
@@ -61,7 +61,7 @@ repos:
     rev: v5.0.0
     hooks:
       - id: check-added-large-files
-        args: ['--maxkb=500']
+        args: ["--maxkb=500"]
         exclude: 'uv\.lock'
 
   # Vulture - Find dead/unused Python code
@@ -69,7 +69,7 @@ repos:
     rev: v2.14
     hooks:
       - id: vulture
-        args: ['src/', '--min-confidence=90', '--exclude=tools/']
+        args: ["src/", "--min-confidence=90", "--exclude=tools/"]
 
   # =============================================================================
   # DEVELOPER EXPERIENCE
@@ -82,11 +82,11 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: mixed-line-ending
-        args: ['--fix=lf']
+        args: ["--fix=lf"]
 
       # File validation
       - id: check-yaml
-        args: ['--unsafe']  # Allow custom tags
+        args: ["--unsafe"] # Allow custom tags
       - id: check-json
       - id: check-toml
       - id: check-xml
@@ -100,7 +100,7 @@ repos:
       - id: check-merge-conflict
       - id: check-case-conflict
       - id: no-commit-to-branch
-        args: ['--branch', 'main', '--branch', 'master']
+        args: ["--branch", "main", "--branch", "master"]
 
       # Misc
       - id: detect-private-key
@@ -139,15 +139,15 @@ repos:
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
-        args: ['--strict']
+        args: ["--strict"]
 
 # CI configuration
 ci:
   autofix_commit_msg: |
     [pre-commit.ci] auto fixes from pre-commit hooks
   autofix_prs: true
-  autoupdate_branch: ''
-  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_branch: ""
+  autoupdate_commit_msg: "[pre-commit.ci] pre-commit autoupdate"
   autoupdate_schedule: weekly
-  skip: [mypy]  # Skip slow hooks in CI
+  skip: [mypy] # Skip slow hooks in CI
   submodules: false

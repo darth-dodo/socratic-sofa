@@ -4,9 +4,7 @@ Tests the run_socratic_dialogue_streaming generator function with mocked
 CrewAI components to avoid API calls.
 """
 
-from queue import Queue
-from threading import Thread
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import MagicMock, Mock
 
 import pytest
 
@@ -50,9 +48,7 @@ class TestRunSocraticDialogueStreaming:
     @pytest.fixture
     def mock_content_filter_appropriate(self, mocker):
         """Mock content filter to return appropriate."""
-        mocker.patch(
-            "socratic_sofa.gradio_app.is_topic_appropriate", return_value=(True, None)
-        )
+        mocker.patch("socratic_sofa.gradio_app.is_topic_appropriate", return_value=(True, None))
 
     @pytest.fixture
     def mock_content_filter_inappropriate(self, mocker):
@@ -73,23 +69,24 @@ class TestRunSocraticDialogueStreaming:
         results = list(run_socratic_dialogue_streaming("", "inappropriate topic"))
 
         assert len(results) == 1
-        error_msg = results[0][0]
-        assert "⚠️" in error_msg
-        assert "Topic is inappropriate" in error_msg
-        assert "Suggested topics:" in error_msg
-        assert "What is justice?" in error_msg
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
+        progress, topic, prop, opp, judge = results[0]
+        # Error message should contain friendly rejection
+        assert "Let's Explore Something Different" in topic or "Topic is inappropriate" in topic
+        assert "What is justice?" in topic
 
-    def test_inappropriate_topic_all_outputs_same_error(
-        self, mock_content_filter_inappropriate
-    ):
-        """All four outputs should contain the same error message."""
+    def test_inappropriate_topic_all_outputs_same_error(self, mock_content_filter_inappropriate):
+        """All four dialogue outputs should contain the same error message."""
         from socratic_sofa.gradio_app import run_socratic_dialogue_streaming
 
         results = list(run_socratic_dialogue_streaming("", "bad topic"))
 
         assert len(results) == 1
-        topic, prop, opp, judge = results[0]
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
+        progress, topic, prop, opp, judge = results[0]
         assert topic == prop == opp == judge
+        # Progress should be empty for rejected topics
+        assert progress == ""
 
     def test_yields_initial_loading_state(
         self, mock_crew_components, mock_content_filter_appropriate, mocker
@@ -111,12 +108,14 @@ class TestRunSocraticDialogueStreaming:
         gen = run_socratic_dialogue_streaming("", "What is truth?")
         first_result = next(gen)
 
-        assert "⏳" in first_result[0]
-        assert "Preparing philosophical inquiry" in first_result[0]
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
+        progress, topic, prop, opp, judge = first_result
+        assert "⏳" in topic
+        assert "Preparing philosophical inquiry" in topic
+        # Progress should contain progress indicator HTML
+        assert "progress" in progress.lower() or progress != ""
 
-    def test_handles_crew_exception(
-        self, mock_crew_components, mock_content_filter_appropriate
-    ):
+    def test_handles_crew_exception(self, mock_crew_components, mock_content_filter_appropriate):
         """Should yield error message when crew raises exception."""
         from socratic_sofa.gradio_app import run_socratic_dialogue_streaming
 
@@ -126,9 +125,11 @@ class TestRunSocraticDialogueStreaming:
         results = list(run_socratic_dialogue_streaming("", "What is truth?"))
 
         # Should have at least the initial loading state and error
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
         final_result = results[-1]
-        assert "❌" in final_result[0]
-        assert "Error running dialogue" in final_result[0]
+        progress, topic, prop, opp, judge = final_result
+        assert "❌" in topic
+        assert "Error running dialogue" in topic
 
     def test_final_output_uses_task_outputs(
         self, mock_crew_components, mock_content_filter_appropriate
@@ -140,33 +141,35 @@ class TestRunSocraticDialogueStreaming:
 
         results = list(run_socratic_dialogue_streaming("", "What is truth?"))
 
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
         final_result = results[-1]
-        assert "Topic output" in final_result[0]
-        assert "Proposition output" in final_result[1]
-        assert "Opposition output" in final_result[2]
-        assert "Judgment output" in final_result[3]
+        progress, topic, prop, opp, judge = final_result
+        assert "Topic output" in topic
+        assert "Proposition output" in prop
+        assert "Opposition output" in opp
+        assert "Judgment output" in judge
 
-    def test_proposition_has_header(
-        self, mock_crew_components, mock_content_filter_appropriate
-    ):
+    def test_proposition_has_header(self, mock_crew_components, mock_content_filter_appropriate):
         """Proposition output should include header."""
         from socratic_sofa.gradio_app import run_socratic_dialogue_streaming
 
         results = list(run_socratic_dialogue_streaming("", "What is truth?"))
 
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
         final_result = results[-1]
-        assert "## 🔵 First Line of Inquiry" in final_result[1]
+        progress, topic, prop, opp, judge = final_result
+        assert "## 🔵 First Line of Inquiry" in prop
 
-    def test_opposition_has_header(
-        self, mock_crew_components, mock_content_filter_appropriate
-    ):
+    def test_opposition_has_header(self, mock_crew_components, mock_content_filter_appropriate):
         """Opposition output should include header."""
         from socratic_sofa.gradio_app import run_socratic_dialogue_streaming
 
         results = list(run_socratic_dialogue_streaming("", "What is truth?"))
 
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
         final_result = results[-1]
-        assert "## 🟢 Alternative Line of Inquiry" in final_result[2]
+        progress, topic, prop, opp, judge = final_result
+        assert "## 🟢 Alternative Line of Inquiry" in opp
 
     def test_uses_custom_topic_over_dropdown(
         self, mock_crew_components, mock_content_filter_appropriate, mocker
@@ -176,11 +179,7 @@ class TestRunSocraticDialogueStreaming:
 
         mock_sofa, mock_crew, _ = mock_crew_components
 
-        list(
-            run_socratic_dialogue_streaming(
-                "[Category] Dropdown Topic", "Custom Topic"
-            )
-        )
+        list(run_socratic_dialogue_streaming("[Category] Dropdown Topic", "Custom Topic"))
 
         # Check the inputs passed to kickoff
         call_args = mock_crew.kickoff.call_args
@@ -247,9 +246,7 @@ class TestStreamingWithTaskCallbacks:
     @pytest.fixture
     def mock_streaming_setup(self, mocker):
         """Setup mocks for streaming test."""
-        mocker.patch(
-            "socratic_sofa.gradio_app.is_topic_appropriate", return_value=(True, None)
-        )
+        mocker.patch("socratic_sofa.gradio_app.is_topic_appropriate", return_value=(True, None))
 
         mock_sofa = MagicMock()
         mock_crew = MagicMock()
@@ -283,9 +280,7 @@ class TestStreamingWithTaskCallbacks:
 
     def test_handles_empty_task_list(self, mocker):
         """Should handle case where tasks list is empty."""
-        mocker.patch(
-            "socratic_sofa.gradio_app.is_topic_appropriate", return_value=(True, None)
-        )
+        mocker.patch("socratic_sofa.gradio_app.is_topic_appropriate", return_value=(True, None))
 
         mock_sofa = MagicMock()
         mock_crew = MagicMock()
@@ -303,9 +298,7 @@ class TestStreamingWithTaskCallbacks:
 
     def test_handles_partial_task_outputs(self, mocker):
         """Should handle case where some task outputs are None."""
-        mocker.patch(
-            "socratic_sofa.gradio_app.is_topic_appropriate", return_value=(True, None)
-        )
+        mocker.patch("socratic_sofa.gradio_app.is_topic_appropriate", return_value=(True, None))
 
         mock_sofa = MagicMock()
         mock_crew = MagicMock()
@@ -333,9 +326,11 @@ class TestStreamingWithTaskCallbacks:
 
         # Should complete without error
         assert len(results) >= 1
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
         final = results[-1]
-        assert "Topic" in final[0]
-        assert "Opp" in final[2]
+        progress, topic, prop, opp, judge = final
+        assert "Topic" in topic
+        assert "Opp" in opp
 
 
 class TestGradioInterfaceSetup:
@@ -374,3 +369,232 @@ class TestGradioInterfaceSetup:
         from socratic_sofa.gradio_app import main
 
         assert callable(main)
+
+
+class TestGetTopicsByCategoryFallback:
+    """Test edge cases in get_topics_by_category."""
+
+    def test_unknown_category_returns_all_topics(self):
+        """Should return all topics when category doesn't exist."""
+        from socratic_sofa.gradio_app import get_topics_by_category, load_topics_data
+
+        topics_data = load_topics_data()
+        topics = get_topics_by_category(topics_data, "Nonexistent Category")
+
+        # Should fall back to all topics (line 61)
+        assert "✨ Let AI choose" in topics
+        assert len(topics) > 1  # Should contain AI choose + all topics
+
+    def test_all_categories_returns_ai_choose_plus_all(self):
+        """Should return AI choose plus all topics for 'All Categories'."""
+        from socratic_sofa.gradio_app import get_topics_by_category, load_topics_data
+
+        topics_data = load_topics_data()
+        topics = get_topics_by_category(topics_data, "All Categories")
+
+        assert "✨ Let AI choose" in topics
+        assert topics[0] == "✨ Let AI choose"
+
+    def test_valid_category_returns_filtered_topics(self):
+        """Should return filtered topics for valid category."""
+        from socratic_sofa.gradio_app import get_topics_by_category, load_topics_data
+
+        topics_data = load_topics_data()
+        # Get first category name from loaded data
+        first_category = list(topics_data.values())[0]["name"]
+
+        topics = get_topics_by_category(topics_data, first_category)
+
+        assert "✨ Let AI choose" in topics
+        # All topics should have the category prefix
+        for topic in topics[1:]:  # Skip AI choose
+            assert f"[{first_category}]" in topic
+
+
+class TestEventHandlers:
+    """Test Gradio event handler functions."""
+
+    def test_update_topics_by_category_returns_update(self):
+        """Test update_topics_by_category returns gr.update."""
+        from socratic_sofa.gradio_app import load_topics_data, update_topics_by_category
+
+        topics_data = load_topics_data()
+        first_category = list(topics_data.values())[0]["name"]
+
+        result = update_topics_by_category(first_category)
+
+        # Should return a gr.update object with choices and value
+        assert hasattr(result, "get") or hasattr(result, "__getitem__")
+
+    def test_clear_custom_on_dropdown_change_clears_for_selected(self):
+        """Test clearing custom input when dropdown topic selected."""
+        from socratic_sofa.gradio_app import clear_custom_on_dropdown_change
+
+        result = clear_custom_on_dropdown_change("[Ethics] What is justice?")
+
+        # Should return empty string when dropdown has a topic
+        assert result == ""
+
+    def test_clear_custom_on_dropdown_change_no_change_for_ai_choose(self):
+        """Test no change when AI choose selected."""
+        from socratic_sofa.gradio_app import clear_custom_on_dropdown_change
+
+        result = clear_custom_on_dropdown_change("✨ Let AI choose")
+
+        # Should return gr.update (no change)
+        assert hasattr(result, "get") or hasattr(result, "__getitem__") or result == ""
+
+    def test_clear_custom_on_dropdown_change_handles_none(self):
+        """Test handling of None dropdown value."""
+        from socratic_sofa.gradio_app import clear_custom_on_dropdown_change
+
+        result = clear_custom_on_dropdown_change(None)
+
+        # Should return gr.update for None
+        assert hasattr(result, "get") or hasattr(result, "__getitem__")
+
+
+class TestStreamingLoopDetails:
+    """Test the streaming loop internals."""
+
+    def test_streaming_updates_on_task_completion(self, mocker):
+        """Test that outputs update as tasks complete."""
+        mocker.patch("socratic_sofa.gradio_app.is_topic_appropriate", return_value=(True, None))
+
+        mock_sofa = MagicMock()
+        mock_crew = MagicMock()
+        mock_sofa.crew.return_value = mock_crew
+
+        # Create mock tasks
+        mock_tasks = []
+        for raw_text in ["Topic", "Prop", "Opp", "Judge"]:
+            mock_task = Mock()
+            mock_output = Mock()
+            mock_output.raw = raw_text
+            mock_task.output = mock_output
+            mock_tasks.append(mock_task)
+
+        mock_crew.tasks = mock_tasks
+
+        # Track callback invocations
+        callback_holder = {"callback": None}
+
+        def capture_callback(val):
+            callback_holder["callback"] = val
+
+        type(mock_sofa).task_callback = property(
+            fget=lambda self: callback_holder["callback"],
+            fset=lambda self, val: capture_callback(val),
+        )
+
+        # Simulate crew execution with callbacks
+        def simulated_kickoff(inputs):
+            # Call callback for each task as they "complete"
+            if callback_holder["callback"]:
+                for task in mock_tasks:
+                    callback_holder["callback"](task.output)
+            return Mock()
+
+        mock_crew.kickoff.side_effect = simulated_kickoff
+
+        mocker.patch("socratic_sofa.gradio_app.SocraticSofa", return_value=mock_sofa)
+
+        from socratic_sofa.gradio_app import run_socratic_dialogue_streaming
+
+        results = list(run_socratic_dialogue_streaming("", "Test"))
+
+        # Should have multiple updates as tasks complete
+        assert len(results) >= 1
+        # Final result should have all outputs
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
+        final = results[-1]
+        progress, topic, prop, opp, judge = final
+        assert "Topic" in topic
+        assert "Prop" in prop
+        assert "Opp" in opp
+        assert "Judge" in judge
+
+    def test_streaming_handles_queue_timeout(self, mocker):
+        """Test graceful handling of queue.get timeout."""
+        mocker.patch("socratic_sofa.gradio_app.is_topic_appropriate", return_value=(True, None))
+
+        mock_sofa = MagicMock()
+        mock_crew = MagicMock()
+        mock_sofa.crew.return_value = mock_crew
+
+        # Create mock tasks
+        mock_tasks = []
+        for raw_text in ["Topic", "Prop", "Opp", "Judge"]:
+            mock_task = Mock()
+            mock_output = Mock()
+            mock_output.raw = raw_text
+            mock_task.output = mock_output
+            mock_tasks.append(mock_task)
+
+        mock_crew.tasks = mock_tasks
+
+        # Simulate slow kickoff with no callbacks
+        def slow_kickoff(inputs):
+            import time
+
+            time.sleep(0.6)  # Longer than queue timeout
+            return Mock()
+
+        mock_crew.kickoff.side_effect = slow_kickoff
+
+        mocker.patch("socratic_sofa.gradio_app.SocraticSofa", return_value=mock_sofa)
+
+        from socratic_sofa.gradio_app import run_socratic_dialogue_streaming
+
+        # Should complete without hanging
+        results = list(run_socratic_dialogue_streaming("", "Test"))
+
+        # Should have at least initial and final outputs
+        assert len(results) >= 2
+
+
+class TestMainFunction:
+    """Test the main() entry point."""
+
+    def test_main_calls_demo_launch(self, mocker):
+        """Test main() calls demo.launch with correct args."""
+        # Mock the demo object's launch method
+        mock_launch = mocker.patch("socratic_sofa.gradio_app.demo.launch")
+
+        from socratic_sofa.gradio_app import main
+
+        main()
+
+        # Verify launch was called
+        mock_launch.assert_called_once()
+
+        # Verify launch arguments
+        call_kwargs = mock_launch.call_args[1]
+        assert call_kwargs["server_name"] == "0.0.0.0"
+        assert call_kwargs["server_port"] == 7860
+        assert call_kwargs["share"] is False
+
+    def test_main_sets_custom_css(self, mocker):
+        """Test main() passes custom CSS to demo.launch."""
+        mock_launch = mocker.patch("socratic_sofa.gradio_app.demo.launch")
+
+        from socratic_sofa.gradio_app import CUSTOM_CSS, main
+
+        main()
+
+        call_kwargs = mock_launch.call_args[1]
+        assert call_kwargs["css"] == CUSTOM_CSS
+
+    def test_main_sets_theme(self, mocker):
+        """Test main() sets theme with correct colors."""
+        mock_launch = mocker.patch("socratic_sofa.gradio_app.demo.launch")
+
+        from socratic_sofa.gradio_app import main
+
+        main()
+
+        call_kwargs = mock_launch.call_args[1]
+        assert "theme" in call_kwargs
+        # Theme should be a Gradio theme object
+        theme = call_kwargs["theme"]
+        assert theme is not None

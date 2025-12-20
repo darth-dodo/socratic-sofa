@@ -4,7 +4,7 @@ Tests focus on class structure and type annotations without
 requiring API keys or executing the crew.
 """
 
-import pytest
+from unittest.mock import MagicMock, patch
 
 from socratic_sofa.crew import SocraticSofa
 
@@ -29,7 +29,9 @@ class TestSocraticSofaStructure:
 
         # Verify it's a callable type
         callback_annotation = str(annotations["task_callback"])
-        assert "Callable" in callback_annotation or "collections.abc.Callable" in callback_annotation
+        assert (
+            "Callable" in callback_annotation or "collections.abc.Callable" in callback_annotation
+        )
 
     def test_has_agents_annotation(self):
         """Test that agents attribute is annotated."""
@@ -134,3 +136,219 @@ class TestSocraticSofaClassDefault:
             default = getattr(SocraticSofa, "task_callback", "NOT_SET")
             if default != "NOT_SET":
                 assert default is None
+
+
+class TestSocraticSofaAgentCreation:
+    """Test that agent methods return Agent instances."""
+
+    def test_socratic_questioner_returns_agent(self, mocker):
+        """Test socratic_questioner method returns an Agent."""
+        # Mock the Agent class where it's imported in the module
+        mock_agent_instance = MagicMock()
+        mock_agent_class = mocker.patch(
+            "socratic_sofa.crew.Agent", return_value=mock_agent_instance
+        )
+
+        # Create crew instance - CrewAI's @CrewBase loads config automatically
+        SocraticSofa()
+
+        # Agent should have been called with config for socratic_questioner
+        # The @agent decorator calls the method during class instantiation
+        calls = mock_agent_class.call_args_list
+        assert len(calls) >= 1
+        # Check that socratic_questioner config was used
+        configs_used = [c[1]["config"] for c in calls if "config" in c[1]]
+        assert any("Socratic" in str(cfg.get("role", "")) for cfg in configs_used)
+
+    def test_judge_returns_agent(self, mocker):
+        """Test judge method returns an Agent."""
+        # Mock the Agent class where it's imported in the module
+        mock_agent_instance = MagicMock()
+        mock_agent_class = mocker.patch(
+            "socratic_sofa.crew.Agent", return_value=mock_agent_instance
+        )
+
+        # Create crew instance - CrewAI's @CrewBase loads config automatically
+        SocraticSofa()
+
+        # Agent should have been called for both agents
+        calls = mock_agent_class.call_args_list
+        assert len(calls) == 2  # socratic_questioner and judge
+        # Check that judge config was used
+        configs_used = [c[1]["config"] for c in calls if "config" in c[1]]
+        assert any(
+            "Moderator" in str(cfg.get("role", "")) or "judge" in str(cfg).lower()
+            for cfg in configs_used
+        )
+
+
+class TestSocraticSofaTaskCreation:
+    """Test that task methods return Task instances."""
+
+    @patch("socratic_sofa.crew.Task")
+    def test_propose_topic_returns_task(self, mock_task_class):
+        """Test propose_topic method returns a Task."""
+        # Mock the Task class
+        mock_task_instance = MagicMock()
+        mock_task_class.return_value = mock_task_instance
+
+        # Create crew instance and mock tasks_config
+        crew = SocraticSofa()
+        crew.tasks_config = {
+            "propose_topic": {
+                "description": "Propose a philosophical topic",
+                "expected_output": "A topic statement",
+            }
+        }
+        crew.task_callback = None
+
+        # Call the method - this covers line 31
+        task = crew.propose_topic()
+
+        # Verify Task was created with correct config
+        assert task is not None
+        mock_task_class.assert_called_once()
+        call_kwargs = mock_task_class.call_args[1]
+        assert call_kwargs["config"] == crew.tasks_config["propose_topic"]
+        assert call_kwargs["callback"] is None
+
+    @patch("socratic_sofa.crew.Task")
+    def test_propose_returns_task_with_context(self, mock_task_class):
+        """Test propose method returns a Task with context."""
+        # Mock the Task class
+        mock_task_instance = MagicMock()
+        mock_task_class.return_value = mock_task_instance
+
+        # Create crew instance and mock configs
+        crew = SocraticSofa()
+        crew.tasks_config = {
+            "propose_topic": {"description": "Propose topic", "expected_output": "Topic"},
+            "propose": {"description": "Propose argument", "expected_output": "Argument"},
+        }
+        crew.task_callback = MagicMock()
+
+        # Call the method - this covers line 35
+        task = crew.propose()
+
+        # Verify Task was created with context
+        assert task is not None
+        # Should be called twice: once for propose_topic(), once for propose()
+        assert mock_task_class.call_count == 2
+
+        # Check the second call (propose task)
+        second_call_kwargs = mock_task_class.call_args_list[1][1]
+        assert second_call_kwargs["config"] == crew.tasks_config["propose"]
+        assert "context" in second_call_kwargs
+        assert len(second_call_kwargs["context"]) == 1
+        assert second_call_kwargs["callback"] == crew.task_callback
+
+    @patch("socratic_sofa.crew.Task")
+    def test_oppose_returns_task_with_context(self, mock_task_class):
+        """Test oppose method returns a Task with propose context."""
+        # Mock the Task class
+        mock_task_instance = MagicMock()
+        mock_task_class.return_value = mock_task_instance
+
+        # Create crew instance and mock configs
+        crew = SocraticSofa()
+        crew.tasks_config = {
+            "propose_topic": {"description": "Topic", "expected_output": "Topic"},
+            "propose": {"description": "Propose", "expected_output": "Argument"},
+            "oppose": {"description": "Oppose", "expected_output": "Counter-argument"},
+        }
+        crew.task_callback = MagicMock()
+
+        # Call the method - this covers line 43
+        task = crew.oppose()
+
+        # Verify Task was created with context
+        assert task is not None
+        # Should be called 3 times: propose_topic(), propose(), oppose()
+        assert mock_task_class.call_count == 3
+
+        # Check the third call (oppose task)
+        third_call_kwargs = mock_task_class.call_args_list[2][1]
+        assert third_call_kwargs["config"] == crew.tasks_config["oppose"]
+        assert "context" in third_call_kwargs
+        assert len(third_call_kwargs["context"]) == 2
+        assert third_call_kwargs["callback"] == crew.task_callback
+
+    @patch("socratic_sofa.crew.Task")
+    def test_judge_task_returns_task_with_all_context(self, mock_task_class):
+        """Test judge_task method returns a Task with full context."""
+        # Mock the Task class
+        mock_task_instance = MagicMock()
+        mock_task_class.return_value = mock_task_instance
+
+        # Create crew instance and mock configs
+        crew = SocraticSofa()
+        crew.tasks_config = {
+            "propose_topic": {"description": "Topic", "expected_output": "Topic"},
+            "propose": {"description": "Propose", "expected_output": "Argument"},
+            "oppose": {"description": "Oppose", "expected_output": "Counter"},
+            "judge_task": {"description": "Judge", "expected_output": "Judgment"},
+        }
+        crew.task_callback = None
+
+        # Call the method - this covers line 51
+        task = crew.judge_task()
+
+        # Verify Task was created with all context
+        assert task is not None
+        # Should be called 4 times: propose_topic(), propose(), oppose(), judge_task()
+        assert mock_task_class.call_count == 4
+
+        # Check the fourth call (judge_task)
+        fourth_call_kwargs = mock_task_class.call_args_list[3][1]
+        assert fourth_call_kwargs["config"] == crew.tasks_config["judge_task"]
+        assert "context" in fourth_call_kwargs
+        assert len(fourth_call_kwargs["context"]) == 3
+        assert fourth_call_kwargs["callback"] is None
+
+
+class TestSocraticSofaCrewCreation:
+    """Test crew method."""
+
+    @patch("socratic_sofa.crew.Crew")
+    def test_crew_returns_crew_instance(self, mock_crew_class):
+        """Test crew method returns a Crew."""
+        # Mock the Crew class
+        mock_crew_instance = MagicMock()
+        mock_crew_class.return_value = mock_crew_instance
+
+        # Create crew instance
+        crew_obj = SocraticSofa()
+        crew_obj.agents = [MagicMock(), MagicMock()]
+        crew_obj.tasks = [MagicMock(), MagicMock(), MagicMock()]
+
+        # Call the method - this covers line 61
+        result = crew_obj.crew()
+
+        # Verify Crew was created
+        assert result is not None
+        mock_crew_class.assert_called_once()
+        call_kwargs = mock_crew_class.call_args[1]
+        assert call_kwargs["agents"] == crew_obj.agents
+        assert call_kwargs["tasks"] == crew_obj.tasks
+        assert call_kwargs["verbose"] is True
+
+    @patch("socratic_sofa.crew.Crew")
+    @patch("socratic_sofa.crew.Process")
+    def test_crew_has_sequential_process(self, mock_process, mock_crew_class):
+        """Test crew uses sequential process."""
+        # Mock the Crew class
+        mock_crew_instance = MagicMock()
+        mock_crew_class.return_value = mock_crew_instance
+
+        # Create crew instance
+        crew_obj = SocraticSofa()
+        crew_obj.agents = []
+        crew_obj.tasks = []
+
+        # Call the method
+        crew_obj.crew()
+
+        # Verify sequential process is used
+        call_kwargs = mock_crew_class.call_args[1]
+        assert "process" in call_kwargs
+        # The actual Process.sequential value will be used, not mocked

@@ -870,6 +870,19 @@ wheels = [
 ]
 
 [[package]]
+name = "detect-secrets"
+version = "1.5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pyyaml" },
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/69/67/382a863fff94eae5a0cf05542179169a1c49a4c8784a9480621e2066ca7d/detect_secrets-1.5.0.tar.gz", hash = "sha256:6bb46dcc553c10df51475641bb30fd69d25645cc12339e46c824c1e0c388898a", size = 97351, upload-time = "2024-05-06T17:46:19.721Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4e/5e/4f5fe4b89fde1dc3ed0eb51bd4ce4c0bca406246673d370ea2ad0c58d747/detect_secrets-1.5.0-py3-none-any.whl", hash = "sha256:e24e7b9b5a35048c313e983f76c4bd09dad89f045ff059e354f9943bf45aa060", size = 120341, upload-time = "2024-05-06T17:46:16.628Z" },
+]
+
+[[package]]
 name = "diskcache"
 version = "5.6.3"
 source = { registry = "https://pypi.org/simple" }
@@ -3419,6 +3432,12 @@ wheels = [
 ]
 
 [[package]]
+name = "ratelimit"
+version = "2.2.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ab/38/ff60c8fc9e002d50d48822cc5095deb8ebbc5f91a6b8fdd9731c87a147c9/ratelimit-2.2.1.tar.gz", hash = "sha256:af8a9b64b821529aca09ebaf6d8d279100d766f19e90b5059ac6a718ca6dee42", size = 5251, upload-time = "2018-12-17T18:55:49.675Z" }
+
+[[package]]
 name = "ratelimiter"
 version = "1.2.0.post0"
 source = { registry = "https://pypi.org/simple" }
@@ -3761,6 +3780,7 @@ dependencies = [
     { name = "crewai", extra = ["tools"] },
     { name = "gradio" },
     { name = "pyyaml" },
+    { name = "ratelimit" },
 ]
 
 [package.optional-dependencies]
@@ -3778,6 +3798,11 @@ test = [
     { name = "pytest-mock" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "detect-secrets" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "anthropic", specifier = ">=0.75.0" },
@@ -3790,11 +3815,15 @@ requires-dist = [
     { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=4.0.0" },
     { name = "pytest-mock", marker = "extra == 'test'", specifier = ">=3.12.0" },
     { name = "pyyaml", specifier = ">=6.0.3" },
+    { name = "ratelimit", specifier = ">=2.2.1" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8.4" },
     { name = "types-pyyaml", marker = "extra == 'dev'", specifier = ">=6.0.12" },
     { name = "vulture", marker = "extra == 'dev'", specifier = ">=2.14" },
 ]
 provides-extras = ["dev", "test"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "detect-secrets", specifier = ">=1.5.0" }]
 
 [[package]]
 name = "soupsieve"

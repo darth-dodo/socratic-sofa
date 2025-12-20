@@ -9,8 +9,6 @@ Welcome to the comprehensive documentation for **Socratic Sofa** - an AI-powered
 New to Socratic Sofa? Start here!
 
 - **[Installation Guide](getting-started/installation.md)** - Step-by-step setup instructions
-- **[Quickstart](getting-started/quickstart.md)** - Get your first dialogue running in 5 minutes
-- **[First Dialogue Tutorial](getting-started/first-dialogue.md)** - Complete walkthrough of creating your first philosophical dialogue
 
 ### 🏗️ Architecture
 
@@ -18,7 +16,6 @@ Understand how Socratic Sofa works under the hood.
 
 - **[System Overview](architecture/overview.md)** - Architecture diagrams, components, data flow
 - **[Agents](architecture/agents.md)** - Detailed agent documentation (Socratic Philosopher, Dialectic Moderator)
-- **[Tasks & Workflow](architecture/tasks.md)** - Task pipeline, dependencies, evaluation criteria
 - **[Content Moderation](architecture/content-moderation.md)** - AI-powered content filtering and safety measures
 
 ### 👥 User Guide
@@ -26,7 +23,6 @@ Understand how Socratic Sofa works under the hood.
 Learn how to use Socratic Sofa effectively.
 
 - **[Web Interface](user-guide/web-interface.md)** - Complete Gradio UI guide with features and navigation
-- **[CLI Usage](user-guide/cli-usage.md)** - Command-line interface guide with examples
 - **[Topic Library](user-guide/topic-library.md)** - Explore 100 curated philosophical questions
 - **[Custom Topics](user-guide/custom-topics.md)** - Create your own philosophical topics
 
@@ -47,11 +43,23 @@ Technical API documentation for developers.
 - **[Gradio App API](api/gradio-app.md)** - Web interface functions and parameters
 - **[Content Filter API](api/content-filter.md)** - Content moderation functions and categories
 
+## 🆕 What's New
+
+See [CHANGELOG.md](CHANGELOG.md) for recent updates and improvements.
+
+**Latest (v0.2.1)**:
+
+- Security scanning with Bandit and detect-secrets
+- 99% test coverage with 220+ tests
+- Enhanced CI/CD with parallel quality, security, and test jobs
+- Mermaid diagrams in architecture documentation
+
 ## 🎯 Quick Links
 
 ### For Users
 
-- [Installation Guide](getting-started/installation.md) → [Quickstart](getting-started/quickstart.md) → [First Dialogue](getting-started/first-dialogue.md)
+- [Installation Guide](getting-started/installation.md)
+- [Live Demo](https://huggingface.co/spaces/darth-dodo/socratic-sofa) - Try it now!
 - [Web Interface Guide](user-guide/web-interface.md)
 - [Topic Library](user-guide/topic-library.md)
 
@@ -89,6 +97,12 @@ Found a typo or want to improve the docs? We welcome contributions!
 
 ---
 
-**Last Updated**: December 2025
-**Version**: 0.1.0
+**Last Updated**: December 20, 2025
+**Version**: 0.2.1
 **License**: MIT
+
+## 🔗 Project Links
+
+- **Live Demo**: [HuggingFace Spaces](https://huggingface.co/spaces/darth-dodo/socratic-sofa)
+- **GitHub**: [socratic-sofa](https://github.com/darth-dodo/socratic-sofa)
+- **Changelog**: [What's New](CHANGELOG.md)

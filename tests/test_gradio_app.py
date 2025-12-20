@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-"""
-Unit tests for gradio_app.py helper functions.
+"""Unit tests for gradio_app.py helper functions.
 
 Tests cover:
 - Topic loading from YAML with error handling
@@ -9,7 +7,7 @@ Tests cover:
 """
 
 from pathlib import Path
-from unittest.mock import mock_open, patch
+from unittest.mock import mock_open
 
 import pytest
 import yaml

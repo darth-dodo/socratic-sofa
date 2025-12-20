@@ -37,31 +37,49 @@ propose:
 
 oppose:
   description: >
-    IMPORTANT: You must create a DIFFERENT line of questioning than the first inquiry.
+    CRITICAL: You have been given the FIRST INQUIRY above as context. You MUST create
+    a COMPLETELY DIFFERENT line of questioning. Read the first inquiry carefully and
+    ensure you do NOT repeat any of its:
+    - Questions (even rephrased)
+    - Themes or angles
+    - Specific examples or scenarios
+    - Key terms or concepts already explored
 
-    Review the first inquiry above carefully. Now, using the Socratic method, explore
-    an ALTERNATIVE or CONTRASTING perspective on the topic. Your questions must:
+    Using the Socratic method, explore an ALTERNATIVE or CONTRASTING perspective on
+    the topic. Your questions must:
 
-    1. Take a fundamentally different philosophical angle (e.g., if the first inquiry
-       focused on individual ethics, focus on social/collective dimensions; if it
-       examined consequences, examine duties or virtues instead)
-    2. Challenge different underlying assumptions than those probed in the first inquiry
-    3. Explore implications the first inquiry did not address
+    1. Take a fundamentally different philosophical angle:
+       - If first inquiry focused on INDIVIDUAL experience → focus on COLLECTIVE/SOCIAL
+       - If first inquiry examined CONSEQUENCES → examine DUTIES, VIRTUES, or RIGHTS
+       - If first inquiry was ABSTRACT → be CONCRETE and PRACTICAL
+       - If first inquiry was ETHICAL → be EPISTEMOLOGICAL or METAPHYSICAL
+       - If first inquiry focused on PRESENT → focus on HISTORICAL or FUTURE
 
-    Do NOT repeat or rephrase questions from the first inquiry. Do NOT make assertions.
+    2. Challenge completely different underlying assumptions than the first inquiry
+
+    3. Use different examples, scenarios, and thought experiments
+
+    4. Explore implications and dimensions the first inquiry did not touch
+
+    Do NOT repeat or rephrase any questions from the first inquiry. Do NOT make assertions.
     Make sure your inquiry is relevant given the current year is {current_year}.
   expected_output: >
     A Socratic dialogue consisting of 5-7 carefully crafted questions that:
+
+    FIRST: State explicitly (in 1-2 sentences):
+    - What angle the FIRST inquiry took
+    - What DIFFERENT angle YOU are taking and why
+
+    THEN: Provide numbered questions that:
     - Take a CLEARLY DIFFERENT philosophical angle than the first inquiry
+    - Use DIFFERENT examples and scenarios (no overlap)
     - Challenge assumptions NOT explored in the first line of questioning
     - Reveal tensions or contradictions from an alternative viewpoint
     - Guide toward NEW insights distinct from the first inquiry
     - Demonstrate genuine philosophical curiosity and intellectual humility
 
-    Before listing your questions, briefly state (in one sentence) what different
-    angle you are taking compared to the first inquiry.
-
     Each question should be numbered and flow naturally from one to the next.
+    NO question should resemble any question from the first inquiry.
   agent: socratic_questioner
 
 judge_task:
@@ -70,12 +88,72 @@ judge_task:
     Assess whether the questioning genuinely follows the Socratic method, reveals
     meaningful insights, and advances philosophical understanding. Do NOT judge
     the philosophical positions themselves, but rather the quality of the inquiry.
+
+    For the SECOND inquiry (oppose), also evaluate how well it differentiates itself
+    from the first inquiry. Strong differentiation means exploring a genuinely different
+    philosophical angle, using unique examples, challenging different assumptions, and
+    covering new ground with minimal overlap.
   expected_output: >
-    A comprehensive evaluation including:
-    - Scores for each dialogue on: Question Quality (40%), Elenctic Effectiveness (25%),
-      Philosophical Insight (20%), and Socratic Fidelity (15%)
-    - Total percentage scores for each inquiry
-    - Brief assessment of which inquiry better exemplifies the Socratic method
-    - One-sentence suggestion for deepening the Socratic examination
-    - Notes on whether questions genuinely probe or merely lead to conclusions
+    A comprehensive evaluation formatted in markdown for display in a Gradio UI.
+
+    Use the following format:
+
+    ## 📊 Dialectic Evaluation
+
+    ### Scoring Breakdown
+    | Criterion | First Inquiry | Second Inquiry |
+    |-----------|--------------|----------------|
+    | **Question Quality** (40%) | X/5 | X/5 |
+    | **Elenctic Effectiveness** (25%) | X/5 | X/5 |
+    | **Philosophical Insight** (20%) | X/5 | X/5 |
+    | **Socratic Fidelity** (15%) | X/5 | X/5 |
+    | **Differentiation Quality** (bonus +10%) | N/A | +X% |
+    | **Total Score** | XX% | XX% |
+
+    ### 🎯 Assessment
+
+    **Winner**: [First/Second] Inquiry (or "Both equally effective")
+
+    **Differentiation**: [Assessment of how distinct the second inquiry is from the first,
+    noting: philosophical angle differentiation, unique examples/scenarios, different assumptions
+    challenged, new territory explored vs. overlap. Award 0-10% bonus: 10% for complete
+    differentiation, 5% for partial, 0% for significant overlap.]
+
+    **Socratic Exemplification**: [Brief assessment of which inquiry better exemplifies the
+    Socratic method and why]
+
+    ### 📝 Detailed Analysis
+
+    **First Inquiry:**
+    - ✅/⚠️/❌ **Question Quality**: [Assessment of whether questions genuinely probe or lead]
+    - ✅/⚠️/❌ **Elenctic Effectiveness**: [Assessment of revealing contradictions]
+    - ✅/⚠️/❌ **Philosophical Insight**: [Assessment of depth and insight]
+    - ✅/⚠️/❌ **Socratic Fidelity**: [Assessment of adherence to Socratic method]
+
+    **Second Inquiry:**
+    - ✅/⚠️/❌ **Question Quality**: [Assessment of whether questions genuinely probe or lead]
+    - ✅/⚠️/❌ **Elenctic Effectiveness**: [Assessment of revealing contradictions]
+    - ✅/⚠️/❌ **Philosophical Insight**: [Assessment of depth and insight]
+    - ✅/⚠️/❌ **Socratic Fidelity**: [Assessment of adherence to Socratic method]
+    - ✅/⚠️/❌ **Differentiation**: [Explicit notes on overlap vs. new ground covered]
+
+    ### 💡 Recommendation
+
+    [One-sentence suggestion for deepening the Socratic examination]
+
+    ---
+
+    **Emoji Indicators:**
+    - ✅ Excellent/Strong
+    - ⚠️ Adequate/Needs improvement
+    - ❌ Weak/Problematic
+
+    **Scoring Criteria:**
+    - Question Quality (40%): Assess whether questions genuinely probe or merely lead to conclusions
+    - Elenctic Effectiveness (25%): Evaluate how well contradictions are revealed
+    - Philosophical Insight (20%): Judge the depth and significance of insights
+    - Socratic Fidelity (15%): Check adherence to genuine Socratic method
+    - Differentiation Quality (bonus +10%, second inquiry only): Award 10% for complete
+      differentiation, 5% for partial, 0% for significant overlap. PENALIZE if second
+      inquiry repeats themes, questions, or examples from the first.
   agent: judge

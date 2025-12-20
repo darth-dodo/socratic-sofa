@@ -5,6 +5,7 @@ A philosophical dialogue system powered by CrewAI and the Socratic method
 """
 
 import random
+import time
 from datetime import datetime
 from pathlib import Path
 from queue import Queue
@@ -13,8 +14,16 @@ from threading import Thread
 import gradio as gr
 import yaml
 
-from socratic_sofa.content_filter import get_alternative_suggestions, is_topic_appropriate
+from socratic_sofa.content_filter import (
+    get_alternative_suggestions,
+    get_rejection_guidelines,
+    is_topic_appropriate,
+)
 from socratic_sofa.crew import SocraticSofa
+from socratic_sofa.logging_config import get_logger
+
+# Module logger
+logger = get_logger(__name__)
 
 
 # Load topics from YAML
@@ -25,7 +34,9 @@ def load_topics_data():
         with open(topics_file) as f:
             return yaml.safe_load(f)
     except Exception as e:
-        print(f"Error loading topics: {e}")
+        logger.warning(
+            "Error loading topics file", extra={"error": str(e), "file": str(topics_file)}
+        )
         return {
             "fallback": {
                 "name": "Philosophy",
@@ -73,6 +84,62 @@ TOPICS = get_topics_flat(TOPICS_DATA)
 CATEGORIES = get_categories(TOPICS_DATA)
 
 
+# Progress indicator stages
+PROGRESS_STAGES = [
+    ("Topic Selection", "🎯"),
+    ("First Inquiry", "🔵"),
+    ("Alternative Inquiry", "🟢"),
+    ("Evaluation", "⚖️"),
+]
+
+
+def create_progress_html(current_stage: int, start_time: float = None) -> str:
+    """
+    Generate HTML for progress indicator.
+
+    Args:
+        current_stage: Current stage index (0-4, where 4 means complete)
+        start_time: Start time for elapsed calculation
+
+    Returns:
+        HTML string for progress display
+    """
+    elapsed = time.time() - start_time if start_time else 0
+    avg_stage_time = 37.5  # Average of 30-45 seconds per stage
+    total_estimated = avg_stage_time * len(PROGRESS_STAGES)
+    time_remaining = max(0, total_estimated - elapsed)
+    progress_percent = min(100, (current_stage / len(PROGRESS_STAGES)) * 100)
+
+    stages_html = ""
+    for idx, (stage_name, icon) in enumerate(PROGRESS_STAGES):
+        if idx < current_stage:
+            stage_class = "completed"
+            stage_icon = "✓"
+        elif idx == current_stage:
+            stage_class = "active"
+            stage_icon = icon
+        else:
+            stage_class = "pending"
+            stage_icon = "○"
+
+        stages_html += f'<span class="stage {stage_class}">{stage_icon} {stage_name}</span>'
+
+    if current_stage >= len(PROGRESS_STAGES):
+        status_text = "✅ Complete!"
+    else:
+        status_text = f"⏱️ ~{int(time_remaining)}s remaining"
+
+    return f"""
+<div class="progress-container">
+    <div class="progress-stages">{stages_html}</div>
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" style="width: {progress_percent}%"></div>
+    </div>
+    <div class="progress-status">{status_text}</div>
+</div>
+"""
+
+
 def handle_topic_selection(dropdown_value: str = None, textbox_value: str = None) -> str:
     """
     Handle topic selection from dropdown or textbox.
@@ -108,25 +175,47 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
         custom_topic: Custom topic entered by user
 
     Yields:
-        Tuple of (topic_output, proposition_output, opposition_output, judgment_output)
+        Tuple of (progress_html, topic_output, proposition_output, opposition_output, judgment_output)
     """
+    # Track start time for progress indicator
+    start_time = time.time()
+
     # Determine which topic to use
     final_topic = handle_topic_selection(dropdown_topic, custom_topic)
 
-    # Debug output
-    print("🔍 Topic Selection Debug:")
-    print(f"   Dropdown: {repr(dropdown_topic)}")
-    print(f"   Custom: {repr(custom_topic)}")
-    print(f"   Final: {repr(final_topic)}")
+    # Debug logging
+    logger.debug(
+        "Topic selection",
+        extra={
+            "dropdown_topic": dropdown_topic,
+            "custom_topic": custom_topic,
+            "final_topic": final_topic,
+        },
+    )
 
     # Content moderation check
     is_appropriate, rejection_reason = is_topic_appropriate(final_topic)
     if not is_appropriate:
-        error_msg = f"⚠️ {rejection_reason}\n\n"
-        error_msg += "**Suggested topics:**\n"
-        for suggestion in get_alternative_suggestions():
+        # Create a friendlier rejection message with info/warning styling
+        error_msg = "## 💭 Let's Explore Something Different\n\n"
+        error_msg += f"We couldn't proceed with this topic. {rejection_reason}\n\n"
+        error_msg += "### 🌟 Try These Related Topics Instead\n\n"
+
+        # Get thematically related suggestions
+        suggestions = get_alternative_suggestions(final_topic)
+        for suggestion in suggestions[:5]:  # Show top 5 suggestions
             error_msg += f"- {suggestion}\n"
-        yield error_msg, error_msg, error_msg, error_msg
+
+        error_msg += "\n---\n\n"
+        error_msg += "<details>\n"
+        error_msg += (
+            "<summary><strong>📖 Why was this rejected? (Click to expand)</strong></summary>\n\n"
+        )
+        error_msg += get_rejection_guidelines()
+        error_msg += "\n</details>"
+
+        # Return empty progress (no stages completed) and error message
+        yield "", error_msg, error_msg, error_msg, error_msg
         return
 
     # Initialize outputs with loading states
@@ -136,6 +225,7 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
         "opposition": "⏳ *Waiting for first inquiry...*",
         "judgment": "⏳ *Waiting for dialogues to complete...*",
     }
+    current_stage = 0
 
     # Queue for receiving task completions
     task_queue = Queue()
@@ -147,10 +237,22 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
     # Prepare inputs
     inputs = {"topic": final_topic, "current_year": str(datetime.now().year)}
 
-    # Yield initial loading state
-    yield (outputs["topic"], outputs["proposition"], outputs["opposition"], outputs["judgment"])
+    # Yield initial loading state with progress indicator
+    progress_html = create_progress_html(current_stage, start_time)
+    yield (
+        progress_html,
+        outputs["topic"],
+        outputs["proposition"],
+        outputs["opposition"],
+        outputs["judgment"],
+    )
 
     try:
+        logger.info(
+            "Starting Socratic dialogue",
+            extra={"topic": final_topic, "topic_length": len(final_topic) if final_topic else 0},
+        )
+
         # Create the crew with callback
         crew_instance = SocraticSofa()
         crew_instance.task_callback = task_callback
@@ -185,21 +287,27 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
                     if task_name == "propose_topic":
                         outputs["topic"] = task_output.raw
                         outputs["proposition"] = "🔄 *First line of inquiry in progress...*"
+                        current_stage = 1
                     elif task_name == "propose":
                         outputs["proposition"] = "## 🔵 First Line of Inquiry\n\n" + task_output.raw
                         outputs["opposition"] = "🔄 *Alternative inquiry in progress...*"
+                        current_stage = 2
                     elif task_name == "oppose":
                         outputs["opposition"] = (
                             "## 🟢 Alternative Line of Inquiry\n\n" + task_output.raw
                         )
                         outputs["judgment"] = "🔄 *Evaluating dialogues...*"
+                        current_stage = 3
                     elif task_name == "judge_task":
                         outputs["judgment"] = task_output.raw
+                        current_stage = 4
 
                     task_index += 1
 
-                    # Yield updated outputs
+                    # Yield updated outputs with progress
+                    progress_html = create_progress_html(current_stage, start_time)
                     yield (
+                        progress_html,
                         outputs["topic"],
                         outputs["proposition"],
                         outputs["opposition"],
@@ -231,16 +339,109 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
             if tasks[3].output:
                 outputs["judgment"] = tasks[3].output.raw
 
-        # Final yield with complete results
-        yield (outputs["topic"], outputs["proposition"], outputs["opposition"], outputs["judgment"])
+        # Final yield with complete results and finished progress
+        elapsed = time.time() - start_time
+        logger.info(
+            "Dialogue completed successfully",
+            extra={"topic": final_topic, "elapsed_seconds": round(elapsed, 2)},
+        )
+
+        progress_html = create_progress_html(4, start_time)  # All 4 stages complete
+        yield (
+            progress_html,
+            outputs["topic"],
+            outputs["proposition"],
+            outputs["opposition"],
+            outputs["judgment"],
+        )
 
     except Exception as e:
+        elapsed = time.time() - start_time
+        logger.error(
+            "Dialogue failed",
+            extra={
+                "topic": final_topic,
+                "elapsed_seconds": round(elapsed, 2),
+                "error": str(e),
+                "error_type": type(e).__name__,
+            },
+        )
         error_msg = f"❌ Error running dialogue: {str(e)}"
-        yield error_msg, error_msg, error_msg, error_msg
+        yield "", error_msg, error_msg, error_msg, error_msg
 
 
 # CSS for mobile responsive design
 CUSTOM_CSS = """
+        /* Progress indicator styles */
+        .progress-container {
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .progress-stages {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .progress-stages .stage {
+            flex: 1 1 auto;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .progress-stages .stage.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .progress-stages .stage.active {
+            background: #cce5ff;
+            color: #004085;
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+        }
+
+        .progress-stages .stage.pending {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        .progress-status {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
         /* Mobile responsive styles */
         @media (max-width: 768px) {
             .gradio-container {
@@ -455,6 +656,9 @@ with gr.Blocks(title="Socratic Sofa - Philosophical Dialogue") as demo:
         outputs=[topic_input],
     )
 
+    # Progress indicator
+    progress_display = gr.HTML(value="", label="Progress")
+
     with gr.Row():
         with gr.Column():
             gr.Markdown("### 📜 Proposed Topic")
@@ -494,7 +698,13 @@ with gr.Blocks(title="Socratic Sofa - Philosophical Dialogue") as demo:
     run_button.click(
         fn=run_socratic_dialogue_streaming,
         inputs=[topic_dropdown, topic_input],
-        outputs=[topic_output, proposition_output, opposition_output, judgment_output],
+        outputs=[
+            progress_display,
+            topic_output,
+            proposition_output,
+            opposition_output,
+            judgment_output,
+        ],
     )
 
 

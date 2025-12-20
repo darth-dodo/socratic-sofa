@@ -7,7 +7,11 @@ from unittest.mock import Mock
 
 import pytest
 
-from socratic_sofa.content_filter import get_alternative_suggestions, is_topic_appropriate
+from socratic_sofa.content_filter import (
+    get_alternative_suggestions,
+    get_rejection_guidelines,
+    is_topic_appropriate,
+)
 
 
 class TestIsTopicAppropriate:
@@ -115,36 +119,47 @@ class TestIsTopicAppropriate:
         assert is_appropriate is True
         assert reason == ""
 
-    def test_api_exception_returns_true_fail_open(self, mocker, capsys):
+    def test_api_exception_returns_true_fail_open(self, mocker, caplog):
         """Test that API exception returns (True, '') to fail open."""
-        # Mock Anthropic to raise an exception
-        mocker.patch(
-            "socratic_sofa.content_filter.Anthropic", side_effect=Exception("API Error")
-        )
+        import logging
 
-        is_appropriate, reason = is_topic_appropriate("some topic")
+        # Mock Anthropic to raise an exception
+        mocker.patch("socratic_sofa.content_filter.Anthropic", side_effect=Exception("API Error"))
+
+        # Capture logs from the socratic_sofa logger hierarchy
+        with caplog.at_level(logging.WARNING, logger="socratic_sofa"):
+            is_appropriate, reason = is_topic_appropriate("some topic")
 
         assert is_appropriate is True
         assert reason == ""
 
-        # Check that error was printed
-        captured = capsys.readouterr()
-        assert "Content moderation error" in captured.out
+        # Check that warning was logged (check message or formatted text)
+        log_text = caplog.text
+        assert "Content moderation error" in log_text or any(
+            "Content moderation error" in record.message for record in caplog.records
+        )
 
-    def test_api_network_error_returns_true(self, mocker, capsys):
+    def test_api_network_error_returns_true(self, mocker, caplog):
         """Test that network errors fail open gracefully."""
+        import logging
+
         mocker.patch(
             "socratic_sofa.content_filter.Anthropic",
             side_effect=ConnectionError("Network unavailable"),
         )
 
-        is_appropriate, reason = is_topic_appropriate("test topic")
+        # Capture logs from the socratic_sofa logger hierarchy
+        with caplog.at_level(logging.WARNING, logger="socratic_sofa"):
+            is_appropriate, reason = is_topic_appropriate("test topic")
 
         assert is_appropriate is True
         assert reason == ""
 
-        captured = capsys.readouterr()
-        assert "Content moderation error" in captured.out
+        # Check that warning was logged (check message or formatted text)
+        log_text = caplog.text
+        assert "Content moderation error" in log_text or any(
+            "Content moderation error" in record.message for record in caplog.records
+        )
 
     def test_api_called_with_correct_parameters(self, mock_anthropic):
         """Test that Anthropic API is called with correct parameters."""
@@ -267,3 +282,274 @@ class TestGetAlternativeSuggestions:
         # At least 80% should end with '?'
         question_count = sum(1 for s in suggestions if s.strip().endswith("?"))
         assert question_count >= len(suggestions) * 0.8
+
+    def test_with_empty_rejected_topic(self):
+        """Test that empty rejected topic returns default suggestions."""
+        suggestions = get_alternative_suggestions("")
+
+        assert isinstance(suggestions, list)
+        assert len(suggestions) > 0
+        assert "What is justice?" in suggestions
+
+    def test_with_whitespace_rejected_topic(self):
+        """Test that whitespace rejected topic returns default suggestions."""
+        suggestions = get_alternative_suggestions("   \t\n  ")
+
+        assert isinstance(suggestions, list)
+        assert "What is justice?" in suggestions
+
+    def test_technology_theme_suggestions(self):
+        """Test that technology-themed topics get related suggestions."""
+        tech_topics = [
+            "Can AI destroy humanity?",
+            "Should we ban robots?",
+            "What about computer ethics?",
+            "Is the internet making us dumber?",
+            "Should we fear technology?",
+        ]
+
+        for topic in tech_topics:
+            suggestions = get_alternative_suggestions(topic)
+
+            # Should contain technology-related suggestions
+            assert any(
+                "AI" in s or "technology" in s or "machine" in s or "digital" in s
+                for s in suggestions
+            )
+            # Verify it's returning the technology theme set
+            assert "Can AI have rights?" in suggestions
+
+    def test_ethics_theme_suggestions(self):
+        """Test that ethics-themed topics get related suggestions."""
+        ethics_topics = [
+            "Is stealing always wrong?",
+            "What makes an action moral?",
+            "Should we help the poor?",
+            "Are there ethical absolutes?",
+            "What is virtue?",
+        ]
+
+        for topic in ethics_topics:
+            suggestions = get_alternative_suggestions(topic)
+
+            # Should contain ethics-related suggestions
+            assert any(
+                "moral" in s.lower() or "ethics" in s.lower() or "good" in s.lower()
+                for s in suggestions
+            )
+            assert "Is morality relative or universal?" in suggestions
+
+    def test_politics_theme_suggestions(self):
+        """Test that politics-themed topics get related suggestions."""
+        politics_topics = [
+            "Should government control everything?",
+            "What is the best form of democracy?",
+            "Are there limits to freedom?",
+            "What are our rights?",
+            "How should society be organized?",
+        ]
+
+        for topic in politics_topics:
+            suggestions = get_alternative_suggestions(topic)
+
+            # Should contain politics-related suggestions
+            assert any(
+                "government" in s.lower()
+                or "democracy" in s.lower()
+                or "freedom" in s.lower()
+                or "rights" in s.lower()
+                for s in suggestions
+            )
+            assert "What is justice?" in suggestions
+
+    def test_consciousness_theme_suggestions(self):
+        """Test that consciousness-themed topics get related suggestions."""
+        consciousness_topics = [
+            "What is the mind?",
+            "How does the brain work?",
+            "Are we aware of everything we think?",
+            "What is perception?",
+            "Is consciousness an illusion?",
+        ]
+
+        for topic in consciousness_topics:
+            suggestions = get_alternative_suggestions(topic)
+
+            # Should contain consciousness-related suggestions
+            assert "What is consciousness?" in suggestions
+            assert any("mind" in s.lower() or "consciousness" in s.lower() for s in suggestions)
+
+    def test_existential_theme_suggestions(self):
+        """Test that existential-themed topics get related suggestions."""
+        existential_topics = [
+            "What is the meaning of life?",
+            "Why do we exist?",
+            "How should we face death?",
+            "What is our purpose?",
+            "Why is there suffering?",
+        ]
+
+        for topic in existential_topics:
+            suggestions = get_alternative_suggestions(topic)
+
+            # Should contain existential suggestions
+            assert any(
+                "meaning" in s.lower() or "life" in s.lower() or "purpose" in s.lower()
+                for s in suggestions
+            )
+            assert "What is the good life?" in suggestions
+
+    def test_knowledge_theme_suggestions(self):
+        """Test that knowledge-themed topics get related suggestions."""
+        knowledge_topics = [
+            "What is truth?",
+            "How do we prove things?",
+            "Can we believe in science?",
+            "What is evidence?",
+            "How do we know anything?",
+        ]
+
+        for topic in knowledge_topics:
+            suggestions = get_alternative_suggestions(topic)
+
+            # Should contain knowledge-related suggestions
+            assert "What is truth?" in suggestions
+            assert any("knowledge" in s.lower() or "truth" in s.lower() for s in suggestions)
+
+    def test_aesthetics_theme_suggestions(self):
+        """Test that aesthetics-themed topics get related suggestions."""
+        aesthetic_topics = [
+            "What makes art beautiful?",
+            "Is music universal?",
+            "Can machines create art?",
+            "What is beauty?",
+            "Is culture relative?",
+        ]
+
+        for topic in aesthetic_topics:
+            suggestions = get_alternative_suggestions(topic)
+
+            # Should contain aesthetic suggestions
+            assert any(
+                "beauty" in s.lower()
+                or "art" in s.lower()
+                or "aesthetic" in s.lower()
+                or "creative" in s.lower()
+                for s in suggestions
+            )
+            assert "Is beauty objective?" in suggestions
+
+    def test_unthemed_topic_returns_defaults(self):
+        """Test that topics with no clear theme return default suggestions."""
+        unthemed_topics = [
+            "Random gibberish xyz",
+            "Nonsense topic abc",
+            "Unrelated content",
+        ]
+
+        for topic in unthemed_topics:
+            suggestions = get_alternative_suggestions(topic)
+
+            # Should return default suggestions
+            assert "What is justice?" in suggestions
+            assert "What is the good life?" in suggestions
+            assert len(suggestions) >= 5
+
+    def test_case_insensitive_theme_detection(self):
+        """Test that theme detection is case-insensitive."""
+        suggestions_lower = get_alternative_suggestions("what about ai technology")
+        suggestions_upper = get_alternative_suggestions("WHAT ABOUT AI TECHNOLOGY")
+        suggestions_mixed = get_alternative_suggestions("WhAt AbOuT Ai TechNOLogy")
+
+        # All should return the same technology-themed suggestions
+        assert suggestions_lower == suggestions_upper == suggestions_mixed
+        assert "Can AI have rights?" in suggestions_lower
+
+    def test_multiple_themes_returns_first_match(self):
+        """Test that topics with multiple themes return the first matching theme."""
+        topic = "Should AI have moral rights in a democratic society?"
+        # Contains: AI (tech), moral (ethics), rights (politics)
+        # Should match technology first since it's checked first
+        suggestions = get_alternative_suggestions(topic)
+
+        assert "Can AI have rights?" in suggestions
+
+    def test_themed_suggestions_have_minimum_count(self):
+        """Test that themed suggestions return at least 5 alternatives."""
+        themes = [
+            "AI technology",
+            "moral ethics",
+            "government politics",
+            "consciousness mind",
+            "meaning of life",
+            "truth knowledge",
+            "beauty art",
+        ]
+
+        for theme in themes:
+            suggestions = get_alternative_suggestions(theme)
+            assert len(suggestions) >= 5
+
+
+class TestGetRejectionGuidelines:
+    """Test suite for get_rejection_guidelines function."""
+
+    def test_returns_non_empty_string(self):
+        """Test that function returns a non-empty string."""
+        guidelines = get_rejection_guidelines()
+
+        assert isinstance(guidelines, str)
+        assert len(guidelines.strip()) > 0
+
+    def test_contains_markdown_formatting(self):
+        """Test that guidelines contain markdown formatting."""
+        guidelines = get_rejection_guidelines()
+
+        # Should have markdown headers or bold text
+        assert "**" in guidelines or "#" in guidelines
+
+    def test_contains_welcome_criteria(self):
+        """Test that guidelines explain what is welcome."""
+        guidelines = get_rejection_guidelines()
+
+        assert "welcome" in guidelines.lower() or "appropriate" in guidelines.lower()
+
+    def test_contains_rejection_criteria(self):
+        """Test that guidelines explain what is filtered."""
+        guidelines = get_rejection_guidelines()
+
+        assert "filter" in guidelines.lower() or "reject" in guidelines.lower()
+
+    def test_contains_examples(self):
+        """Test that guidelines provide concrete examples."""
+        guidelines = get_rejection_guidelines()
+
+        # Should contain some example or illustration
+        # Looking for question marks or specific examples
+        assert "?" in guidelines
+
+    def test_mentions_philosophical_discourse(self):
+        """Test that guidelines reference philosophical discourse."""
+        guidelines = get_rejection_guidelines()
+
+        assert "philosophical" in guidelines.lower() or "philosophy" in guidelines.lower()
+
+    def test_provides_guidance_not_loopholes(self):
+        """Test that guidelines provide general guidance without giving evasion hints."""
+        guidelines = get_rejection_guidelines()
+
+        # Should not contain overly specific instructions on how to rephrase
+        # Check that it's educational rather than prescriptive
+        assert len(guidelines) > 100  # Substantial content
+        assert "rephrasing" in guidelines.lower() or "rephrase" in guidelines.lower()
+
+    def test_guidelines_are_user_friendly(self):
+        """Test that guidelines use friendly, accessible language."""
+        guidelines = get_rejection_guidelines()
+
+        # Should avoid overly technical or harsh language
+        assert (
+            "hate" not in guidelines.lower() or "hate speech" in guidelines.lower()
+        )  # Context matters
+        # Should use welcoming language
+        assert "welcome" in guidelines.lower() or "explore" in guidelines.lower()

@@ -5,7 +5,7 @@ Tests the CLI functions with mocked CrewAI components.
 
 import json
 import sys
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import MagicMock, Mock
 
 import pytest
 
@@ -318,9 +318,7 @@ class TestRunWithTriggerFunction:
         with pytest.raises(Exception) as exc_info:
             run_with_trigger()
 
-        assert "An error occurred while running the crew with trigger" in str(
-            exc_info.value
-        )
+        assert "An error occurred while running the crew with trigger" in str(exc_info.value)
 
     def test_run_with_trigger_returns_result(self, mock_crew_trigger, mocker):
         """run_with_trigger() should return the crew result."""

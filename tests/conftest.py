@@ -4,8 +4,8 @@ This module provides common fixtures and configuration for all tests.
 """
 
 import os
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 import pytest
 
@@ -73,6 +73,19 @@ def mock_api_key(monkeypatch: pytest.MonkeyPatch) -> Generator[str, None, None]:
     monkeypatch.setenv("ANTHROPIC_API_KEY", mock_key)
     yield mock_key
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+
+
+@pytest.fixture(autouse=True)
+def mock_openai_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Provide a mock OpenAI API key for CrewAI tests.
+
+    CrewAI requires OPENAI_API_KEY by default. This fixture sets a mock
+    key to prevent API key errors during testing.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture
+    """
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test-mock-openai-key-for-testing")
 
 
 @pytest.fixture
