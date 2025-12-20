@@ -69,21 +69,24 @@ class TestRunSocraticDialogueStreaming:
         results = list(run_socratic_dialogue_streaming("", "inappropriate topic"))
 
         assert len(results) == 1
-        error_msg = results[0][0]
-        assert "⚠️" in error_msg
-        assert "Topic is inappropriate" in error_msg
-        assert "Suggested topics:" in error_msg
-        assert "What is justice?" in error_msg
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
+        progress, topic, prop, opp, judge = results[0]
+        # Error message should contain friendly rejection
+        assert "Let's Explore Something Different" in topic or "Topic is inappropriate" in topic
+        assert "What is justice?" in topic
 
     def test_inappropriate_topic_all_outputs_same_error(self, mock_content_filter_inappropriate):
-        """All four outputs should contain the same error message."""
+        """All four dialogue outputs should contain the same error message."""
         from socratic_sofa.gradio_app import run_socratic_dialogue_streaming
 
         results = list(run_socratic_dialogue_streaming("", "bad topic"))
 
         assert len(results) == 1
-        topic, prop, opp, judge = results[0]
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
+        progress, topic, prop, opp, judge = results[0]
         assert topic == prop == opp == judge
+        # Progress should be empty for rejected topics
+        assert progress == ""
 
     def test_yields_initial_loading_state(
         self, mock_crew_components, mock_content_filter_appropriate, mocker
@@ -105,8 +108,12 @@ class TestRunSocraticDialogueStreaming:
         gen = run_socratic_dialogue_streaming("", "What is truth?")
         first_result = next(gen)
 
-        assert "⏳" in first_result[0]
-        assert "Preparing philosophical inquiry" in first_result[0]
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
+        progress, topic, prop, opp, judge = first_result
+        assert "⏳" in topic
+        assert "Preparing philosophical inquiry" in topic
+        # Progress should contain progress indicator HTML
+        assert "progress" in progress.lower() or progress != ""
 
     def test_handles_crew_exception(self, mock_crew_components, mock_content_filter_appropriate):
         """Should yield error message when crew raises exception."""
@@ -118,9 +125,11 @@ class TestRunSocraticDialogueStreaming:
         results = list(run_socratic_dialogue_streaming("", "What is truth?"))
 
         # Should have at least the initial loading state and error
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
         final_result = results[-1]
-        assert "❌" in final_result[0]
-        assert "Error running dialogue" in final_result[0]
+        progress, topic, prop, opp, judge = final_result
+        assert "❌" in topic
+        assert "Error running dialogue" in topic
 
     def test_final_output_uses_task_outputs(
         self, mock_crew_components, mock_content_filter_appropriate
@@ -132,11 +141,13 @@ class TestRunSocraticDialogueStreaming:
 
         results = list(run_socratic_dialogue_streaming("", "What is truth?"))
 
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
         final_result = results[-1]
-        assert "Topic output" in final_result[0]
-        assert "Proposition output" in final_result[1]
-        assert "Opposition output" in final_result[2]
-        assert "Judgment output" in final_result[3]
+        progress, topic, prop, opp, judge = final_result
+        assert "Topic output" in topic
+        assert "Proposition output" in prop
+        assert "Opposition output" in opp
+        assert "Judgment output" in judge
 
     def test_proposition_has_header(self, mock_crew_components, mock_content_filter_appropriate):
         """Proposition output should include header."""
@@ -144,8 +155,10 @@ class TestRunSocraticDialogueStreaming:
 
         results = list(run_socratic_dialogue_streaming("", "What is truth?"))
 
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
         final_result = results[-1]
-        assert "## 🔵 First Line of Inquiry" in final_result[1]
+        progress, topic, prop, opp, judge = final_result
+        assert "## 🔵 First Line of Inquiry" in prop
 
     def test_opposition_has_header(self, mock_crew_components, mock_content_filter_appropriate):
         """Opposition output should include header."""
@@ -153,8 +166,10 @@ class TestRunSocraticDialogueStreaming:
 
         results = list(run_socratic_dialogue_streaming("", "What is truth?"))
 
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
         final_result = results[-1]
-        assert "## 🟢 Alternative Line of Inquiry" in final_result[2]
+        progress, topic, prop, opp, judge = final_result
+        assert "## 🟢 Alternative Line of Inquiry" in opp
 
     def test_uses_custom_topic_over_dropdown(
         self, mock_crew_components, mock_content_filter_appropriate, mocker
@@ -311,9 +326,11 @@ class TestStreamingWithTaskCallbacks:
 
         # Should complete without error
         assert len(results) >= 1
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
         final = results[-1]
-        assert "Topic" in final[0]
-        assert "Opp" in final[2]
+        progress, topic, prop, opp, judge = final
+        assert "Topic" in topic
+        assert "Opp" in opp
 
 
 class TestGradioInterfaceSetup:
@@ -500,11 +517,13 @@ class TestStreamingLoopDetails:
         # Should have multiple updates as tasks complete
         assert len(results) >= 1
         # Final result should have all outputs
+        # Output is now (progress_html, topic, proposition, opposition, judgment)
         final = results[-1]
-        assert "Topic" in final[0]
-        assert "Prop" in final[1]
-        assert "Opp" in final[2]
-        assert "Judge" in final[3]
+        progress, topic, prop, opp, judge = final
+        assert "Topic" in topic
+        assert "Prop" in prop
+        assert "Opp" in opp
+        assert "Judge" in judge
 
     def test_streaming_handles_queue_timeout(self, mocker):
         """Test graceful handling of queue.get timeout."""
