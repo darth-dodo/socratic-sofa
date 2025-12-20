@@ -79,8 +79,6 @@ Task for proposing or refining the philosophical topic for discussion.
 
 **Configuration**: Loaded from `tasks_config['propose_topic']`
 
-**Output File**: `outputs/01_topic.md`
-
 **Description**: Analyzes and refines the input topic, ensuring it's suitable for Socratic inquiry. If no topic is provided, the AI selects an appropriate philosophical question.
 
 **Example**:
@@ -101,8 +99,6 @@ Task for conducting the first line of Socratic inquiry.
 **Returns**: `Task`
 
 **Configuration**: Loaded from `tasks_config['propose']`
-
-**Output File**: `outputs/02_proposition.md`
 
 **Description**: The socratic_questioner agent conducts a series of probing questions following the Socratic method: establishing definitions, examining assumptions, revealing contradictions, and moving toward deeper understanding.
 
@@ -125,8 +121,6 @@ Task for conducting an alternative line of Socratic inquiry from a different ang
 
 **Configuration**: Loaded from `tasks_config['oppose']`
 
-**Output File**: `outputs/03_opposition.md`
-
 **Description**: Explores the same topic from a contrasting perspective, revealing additional dimensions and contradictions through Socratic questioning. This creates a richer dialectic by examining multiple viewpoints.
 
 **Example**:
@@ -147,8 +141,6 @@ Task for evaluating the quality of the Socratic dialogue.
 **Returns**: `Task`
 
 **Configuration**: Loaded from `tasks_config['judge_task']`
-
-**Output File**: `outputs/04_judgment.md`
 
 **Description**: The judge agent evaluates whether the dialogue followed authentic Socratic principles, assesses the effectiveness of questioning, and provides critical feedback on both lines of inquiry.
 
@@ -217,23 +209,8 @@ inputs = {
 # Execute the dialogue
 result = crew_instance.kickoff(inputs=inputs)
 
-# Access outputs from files
-with open('outputs/01_topic.md', 'r') as f:
-    topic = f.read()
-
-with open('outputs/02_proposition.md', 'r') as f:
-    proposition = f.read()
-
-with open('outputs/03_opposition.md', 'r') as f:
-    opposition = f.read()
-
-with open('outputs/04_judgment.md', 'r') as f:
-    judgment = f.read()
-
-print(f"Topic: {topic}")
-print(f"First Inquiry: {proposition}")
-print(f"Alternative Inquiry: {opposition}")
-print(f"Evaluation: {judgment}")
+# Access the result
+print(f"Result: {result.raw}")
 ```
 
 ---
@@ -247,7 +224,7 @@ The crew executes tasks in the following sequential order:
 3. **oppose**: Alternative line of inquiry
 4. **judge_task**: Evaluation of the dialogue quality
 
-Each task's output is saved to its respective markdown file in the `outputs/` directory.
+Each task's output is passed to the next task in the sequence via CrewAI's context mechanism.
 
 ---
 
@@ -279,6 +256,6 @@ except Exception as e:
 
 - All agents operate with `verbose=True` for transparency in the Socratic process
 - Tasks execute sequentially, ensuring proper dialogue flow
-- Output files are overwritten on each execution
+- Outputs are streamed in real-time via task callbacks
 - The crew requires valid ANTHROPIC_API_KEY environment variable
 - Type hints use `# type: ignore[index]` for config dictionary access

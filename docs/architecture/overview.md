@@ -30,13 +30,6 @@ flowchart TB
         T4["4. judge_task"]
     end
 
-    subgraph Output["Output Storage"]
-        O1["01_topic.md"]
-        O2["02_proposition.md"]
-        O3["03_opposition.md"]
-        O4["04_judgment.md"]
-    end
-
     Topic --> Rate --> Mod
     Mod -->|Approved| Crew
     Mod -->|Rejected| Topic
@@ -44,12 +37,7 @@ flowchart TB
     SP --> T1 --> T2 --> T3
     DM --> T4
 
-    T1 --> O1
-    T2 --> O2
-    T3 --> O3
-    T4 --> O4
-
-    Output --> Display
+    Tasks --> Display
 ```
 
 ## Data Flow
@@ -293,7 +281,6 @@ gantt
 | Memory   | ~500MB per dialogue        |
 | CPU      | Moderate during generation |
 | Network  | Rate-limited API calls     |
-| Storage  | ~10KB per dialogue         |
 
 ## Monitoring & Observability
 
@@ -338,7 +325,6 @@ flowchart TB
 python -m socratic_sofa.gradio_app
   → Starts Gradio on 0.0.0.0:7860
   → Reads configurations from config/
-  → Outputs to outputs/ directory
 ```
 
 ### Production Deployment
@@ -355,14 +341,7 @@ flowchart LR
         HF["Hugging Face Spaces"]
     end
 
-    subgraph Storage["Persistent Storage"]
-        Out["outputs/"]
-        Logs["logs/"]
-    end
-
     G --> App --> API
-    App --> Out
-    App --> Logs
     HF --> Container
 ```
 
@@ -371,7 +350,6 @@ flowchart LR
 - Python 3.11+ runtime
 - ANTHROPIC_API_KEY environment variable
 - 1GB+ RAM recommended
-- Persistent storage for outputs/
 
 ## Security & Safety
 

@@ -9,8 +9,6 @@ Welcome to the comprehensive documentation for **Socratic Sofa** - an AI-powered
 New to Socratic Sofa? Start here!
 
 - **[Installation Guide](getting-started/installation.md)** - Step-by-step setup instructions
-- **[Quickstart](getting-started/quickstart.md)** - Get your first dialogue running in 5 minutes
-- **[First Dialogue Tutorial](getting-started/first-dialogue.md)** - Complete walkthrough of creating your first philosophical dialogue
 
 ### 🏗️ Architecture
 
@@ -18,7 +16,6 @@ Understand how Socratic Sofa works under the hood.
 
 - **[System Overview](architecture/overview.md)** - Architecture diagrams, components, data flow
 - **[Agents](architecture/agents.md)** - Detailed agent documentation (Socratic Philosopher, Dialectic Moderator)
-- **[Tasks & Workflow](architecture/tasks.md)** - Task pipeline, dependencies, evaluation criteria
 - **[Content Moderation](architecture/content-moderation.md)** - AI-powered content filtering and safety measures
 
 ### 👥 User Guide
@@ -26,7 +23,6 @@ Understand how Socratic Sofa works under the hood.
 Learn how to use Socratic Sofa effectively.
 
 - **[Web Interface](user-guide/web-interface.md)** - Complete Gradio UI guide with features and navigation
-- **[CLI Usage](user-guide/cli-usage.md)** - Command-line interface guide with examples
 - **[Topic Library](user-guide/topic-library.md)** - Explore 100 curated philosophical questions
 - **[Custom Topics](user-guide/custom-topics.md)** - Create your own philosophical topics
 
@@ -62,7 +58,7 @@ See [CHANGELOG.md](CHANGELOG.md) for recent updates and improvements.
 
 ### For Users
 
-- [Installation Guide](getting-started/installation.md) → [Quickstart](getting-started/quickstart.md) → [First Dialogue](getting-started/first-dialogue.md)
+- [Installation Guide](getting-started/installation.md)
 - [Live Demo](https://huggingface.co/spaces/darth-dodo/socratic-sofa) - Try it now!
 - [Web Interface Guide](user-guide/web-interface.md)
 - [Topic Library](user-guide/topic-library.md)

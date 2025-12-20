@@ -165,20 +165,18 @@ def run_socratic_dialogue(
 
 Tuple containing:
 
-1. **Topic output**: Refined/proposed topic (from `01_topic.md`)
-2. **Proposition output**: First line of inquiry (from `02_proposition.md`)
-3. **Opposition output**: Alternative inquiry (from `03_opposition.md`)
-4. **Judgment output**: Evaluation (from `04_judgment.md`)
+1. **Topic output**: Refined/proposed topic
+2. **Proposition output**: First line of inquiry
+3. **Opposition output**: Alternative inquiry
+4. **Judgment output**: Evaluation
 
 **Process Flow**:
 
 1. Determine final topic using `handle_topic_selection()`
 2. Run content moderation check
 3. Prepare inputs for crew
-4. Execute crew.kickoff()
-5. Read output files
-6. Add section headers
-7. Return all outputs
+4. Execute crew.kickoff() with streaming callbacks
+5. Return all outputs via streaming generator
 
 **Example**:
 
@@ -439,13 +437,9 @@ main()
 
 ## File Dependencies
 
-| File                        | Purpose                     |
-| --------------------------- | --------------------------- |
-| `topics.yaml`               | Topic library configuration |
-| `outputs/01_topic.md`       | Topic refinement output     |
-| `outputs/02_proposition.md` | First inquiry output        |
-| `outputs/03_opposition.md`  | Alternative inquiry output  |
-| `outputs/04_judgment.md`    | Evaluation output           |
+| File          | Purpose                     |
+| ------------- | --------------------------- |
+| `topics.yaml` | Topic library configuration |
 
 ---
 
@@ -453,7 +447,7 @@ main()
 
 - Interface is designed mobile-first with responsive breakpoints
 - Content moderation runs before dialogue execution
-- All outputs are cached in markdown files for each session
+- Outputs are streamed in real-time as tasks complete
 - Debug logging prints topic selection details to console
 - Error messages are user-friendly and suggest alternatives
 - Execution time is typically 2-3 minutes per dialogue

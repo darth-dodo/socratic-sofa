@@ -478,12 +478,6 @@ The interface teaches authentic Socratic questioning:
 - Current year (for context)
 - Content moderation results
 
-**What Gets Stored:**
-
-- Output markdown files in `outputs/` directory
-- Four files per dialogue (topic, proposition, opposition, judgment)
-- Files are overwritten with each new dialogue
-
 **What Doesn't Get Stored:**
 
 - No user identification
@@ -536,7 +530,6 @@ The interface teaches authentic Socratic questioning:
 
 - Project documentation: `docs/` directory
 - Issue tracker: GitHub Issues
-- Example dialogues: `outputs/` directory
 - Source code: Fully open source
 
 **Reporting Issues:**
@@ -547,23 +540,6 @@ The interface teaches authentic Socratic questioning:
 4. Check if reproducible
 
 ## Advanced Usage
-
-### Integration with CLI
-
-The web interface and CLI can be used together:
-
-1. Generate dialogue via web interface
-2. Results saved in `outputs/` directory
-3. Access files programmatically
-4. Analyze patterns across multiple dialogues
-
-### Batch Processing
-
-For multiple topics:
-
-1. Use CLI for batch operations (see CLI guide)
-2. Web interface best for interactive exploration
-3. Outputs accessible to both interfaces
 
 ### Custom Deployment
 
