@@ -7,6 +7,11 @@ import os
 
 from anthropic import Anthropic
 
+from socratic_sofa.logging_config import get_logger, log_timing
+
+# Module logger
+logger = get_logger(__name__)
+
 
 def is_topic_appropriate(topic: str) -> tuple[bool, str]:
     """
@@ -25,10 +30,12 @@ def is_topic_appropriate(topic: str) -> tuple[bool, str]:
 
     # Check length first (quick check before API call)
     if len(topic) > 500:
+        logger.info("Topic rejected - too long", extra={"topic_length": len(topic)})
         return False, "Topic is too long. Please keep it concise (under 500 characters)."
 
     # Use Claude to moderate the content
     try:
+        logger.debug("Starting content moderation", extra={"topic_length": len(topic)})
         client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
         moderation_prompt = f"""You are a content moderator for a philosophical dialogue platform. Evaluate if this topic is appropriate for respectful philosophical discussion.
@@ -63,17 +70,26 @@ Response:"""
         result = response.content[0].text.strip()
 
         if result.startswith("APPROPRIATE"):
+            logger.info("Topic approved", extra={"topic_length": len(topic)})
             return True, ""
         elif result.startswith("INAPPROPRIATE:"):
             reason = result.replace("INAPPROPRIATE:", "").strip()
+            logger.info(
+                "Topic rejected by moderation",
+                extra={"topic_length": len(topic), "reason": reason},
+            )
             return False, f"This topic may not be appropriate: {reason}"
         else:
             # If unclear response, err on the side of caution but be permissive
+            logger.debug("Unclear moderation response - allowing", extra={"response": result})
             return True, ""
 
     except Exception as e:
         # If moderation fails, log the error but allow the topic (fail open for better UX)
-        print(f"⚠️ Content moderation error: {e}")
+        logger.warning(
+            "Content moderation error - failing open",
+            extra={"error": str(e), "topic_length": len(topic)},
+        )
         return True, ""
 
 

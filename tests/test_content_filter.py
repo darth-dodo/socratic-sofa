@@ -119,34 +119,47 @@ class TestIsTopicAppropriate:
         assert is_appropriate is True
         assert reason == ""
 
-    def test_api_exception_returns_true_fail_open(self, mocker, capsys):
+    def test_api_exception_returns_true_fail_open(self, mocker, caplog):
         """Test that API exception returns (True, '') to fail open."""
+        import logging
+
         # Mock Anthropic to raise an exception
         mocker.patch("socratic_sofa.content_filter.Anthropic", side_effect=Exception("API Error"))
 
-        is_appropriate, reason = is_topic_appropriate("some topic")
+        # Capture logs from the socratic_sofa logger hierarchy
+        with caplog.at_level(logging.WARNING, logger="socratic_sofa"):
+            is_appropriate, reason = is_topic_appropriate("some topic")
 
         assert is_appropriate is True
         assert reason == ""
 
-        # Check that error was printed
-        captured = capsys.readouterr()
-        assert "Content moderation error" in captured.out
+        # Check that warning was logged (check message or formatted text)
+        log_text = caplog.text
+        assert "Content moderation error" in log_text or any(
+            "Content moderation error" in record.message for record in caplog.records
+        )
 
-    def test_api_network_error_returns_true(self, mocker, capsys):
+    def test_api_network_error_returns_true(self, mocker, caplog):
         """Test that network errors fail open gracefully."""
+        import logging
+
         mocker.patch(
             "socratic_sofa.content_filter.Anthropic",
             side_effect=ConnectionError("Network unavailable"),
         )
 
-        is_appropriate, reason = is_topic_appropriate("test topic")
+        # Capture logs from the socratic_sofa logger hierarchy
+        with caplog.at_level(logging.WARNING, logger="socratic_sofa"):
+            is_appropriate, reason = is_topic_appropriate("test topic")
 
         assert is_appropriate is True
         assert reason == ""
 
-        captured = capsys.readouterr()
-        assert "Content moderation error" in captured.out
+        # Check that warning was logged (check message or formatted text)
+        log_text = caplog.text
+        assert "Content moderation error" in log_text or any(
+            "Content moderation error" in record.message for record in caplog.records
+        )
 
     def test_api_called_with_correct_parameters(self, mock_anthropic):
         """Test that Anthropic API is called with correct parameters."""

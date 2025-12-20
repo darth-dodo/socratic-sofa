@@ -15,12 +15,17 @@ from threading import Thread
 import gradio as gr
 import yaml
 
+from socratic_sofa.logging_config import get_logger, log_timing
+
 from socratic_sofa.content_filter import (
     get_alternative_suggestions,
     get_rejection_guidelines,
     is_topic_appropriate,
 )
 from socratic_sofa.crew import SocraticSofa
+
+# Module logger
+logger = get_logger(__name__)
 
 
 # Load topics from YAML
@@ -31,7 +36,7 @@ def load_topics_data():
         with open(topics_file) as f:
             return yaml.safe_load(f)
     except Exception as e:
-        print(f"Error loading topics: {e}")
+        logger.warning("Error loading topics file", extra={"error": str(e), "file": str(topics_file)})
         return {
             "fallback": {
                 "name": "Philosophy",
@@ -266,11 +271,15 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
     # Determine which topic to use
     final_topic = handle_topic_selection(dropdown_topic, custom_topic)
 
-    # Debug output
-    print("🔍 Topic Selection Debug:")
-    print(f"   Dropdown: {repr(dropdown_topic)}")
-    print(f"   Custom: {repr(custom_topic)}")
-    print(f"   Final: {repr(final_topic)}")
+    # Debug logging
+    logger.debug(
+        "Topic selection",
+        extra={
+            "dropdown_topic": dropdown_topic,
+            "custom_topic": custom_topic,
+            "final_topic": final_topic,
+        },
+    )
 
     # Content moderation check
     is_appropriate, rejection_reason = is_topic_appropriate(final_topic)
@@ -327,6 +336,11 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
     )
 
     try:
+        logger.info(
+            "Starting Socratic dialogue",
+            extra={"topic": final_topic, "topic_length": len(final_topic) if final_topic else 0},
+        )
+
         # Create the crew with callback
         crew_instance = SocraticSofa()
         crew_instance.task_callback = task_callback
@@ -414,6 +428,12 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
                 outputs["judgment"] = tasks[3].output.raw
 
         # Final yield with complete results and finished progress
+        elapsed = time.time() - start_time
+        logger.info(
+            "Dialogue completed successfully",
+            extra={"topic": final_topic, "elapsed_seconds": round(elapsed, 2)},
+        )
+
         progress_html = create_progress_html(4, start_time)  # All 4 stages complete
         yield (
             progress_html,
@@ -424,6 +444,16 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
         )
 
     except Exception as e:
+        elapsed = time.time() - start_time
+        logger.error(
+            "Dialogue failed",
+            extra={
+                "topic": final_topic,
+                "elapsed_seconds": round(elapsed, 2),
+                "error": str(e),
+                "error_type": type(e).__name__,
+            },
+        )
         error_msg = f"❌ Error running dialogue: {str(e)}"
         yield "", error_msg, error_msg, error_msg, error_msg
 
