@@ -740,6 +740,11 @@ CUSTOM_CSS = """
 # Create the Gradio interface
 with gr.Blocks(
     title="Socratic Sofa - Philosophical Dialogue",
+    css=CUSTOM_CSS,
+    theme=gr.themes.Soft(
+        primary_hue="orange",
+        secondary_hue="orange",
+    ),
 ) as demo:
     gr.Markdown(
         """
@@ -908,11 +913,6 @@ def main():
         server_name="0.0.0.0",  # nosec B104 - Required for HF Spaces deployment
         server_port=7860,
         share=False,
-        css=CUSTOM_CSS,
-        theme=gr.themes.Soft(
-            primary_hue="orange",
-            secondary_hue="teal",
-        ),
     )
 
 
