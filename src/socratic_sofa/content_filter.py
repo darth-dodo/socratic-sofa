@@ -7,7 +7,7 @@ import os
 
 from anthropic import Anthropic
 
-from socratic_sofa.logging_config import get_logger, log_timing
+from socratic_sofa.logging_config import get_logger
 from socratic_sofa.rate_limiter import rate_limited
 
 # Module logger

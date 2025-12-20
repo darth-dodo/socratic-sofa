@@ -6,7 +6,8 @@ to the Anthropic content moderation endpoint.
 """
 
 from functools import wraps
-from typing import Any, Callable, TypeVar
+from collections.abc import Callable
+from typing import Any, TypeVar
 
 from ratelimit import RateLimitException, limits, sleep_and_retry
 
