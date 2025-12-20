@@ -5,12 +5,14 @@
 The `content_filter.py` module provides AI-powered content moderation for philosophical topics, ensuring discussions remain respectful and appropriate while allowing legitimate philosophical inquiry into difficult subjects.
 
 **Module Features**:
+
 - **Structured Logging**: Context-aware logging using `logging_config` module
 - **Rate Limiting**: API call throttling using `rate_limiter` module (10 calls/60 seconds)
 - **Performance Tracking**: Automatic timing and metrics for moderation operations
 - **Fail-Open Design**: Continues operation even if moderation service is unavailable
 
 **Dependencies**:
+
 ```python
 from socratic_sofa.logging_config import get_logger
 from socratic_sofa.rate_limiter import rate_limited
@@ -106,6 +108,7 @@ print(reason)   # "Topic is too long. Please keep it concise (under 500 characte
 **Rate Limiting**:
 
 The function is decorated with `@rate_limited()` to prevent API abuse:
+
 - Default limit: 10 calls per 60 seconds
 - Automatic retry with exponential backoff on rate limit
 - Structured logging of rate limit events
@@ -198,16 +201,16 @@ except Exception as e:
 
 The function logs the following events with structured context:
 
-| Event | Level | Extra Context |
-|-------|-------|---------------|
-| Empty topic | DEBUG | - |
-| Topic too long | WARNING | `length` |
-| Moderation started | INFO | `topic_preview` |
-| Topic approved | INFO | `topic` |
-| Topic rejected | WARNING | `topic`, `reason` |
-| Unclear response | WARNING | - |
-| API error | ERROR | `error`, `topic_length` |
-| Rate limit hit | WARNING | `function`, `backoff_seconds` |
+| Event              | Level   | Extra Context                 |
+| ------------------ | ------- | ----------------------------- |
+| Empty topic        | DEBUG   | -                             |
+| Topic too long     | WARNING | `length`                      |
+| Moderation started | INFO    | `topic_preview`               |
+| Topic approved     | INFO    | `topic`                       |
+| Topic rejected     | WARNING | `topic`, `reason`             |
+| Unclear response   | WARNING | -                             |
+| API error          | ERROR   | `error`, `topic_length`       |
+| Rate limit hit     | WARNING | `function`, `backoff_seconds` |
 
 **AI Model Configuration**:
 

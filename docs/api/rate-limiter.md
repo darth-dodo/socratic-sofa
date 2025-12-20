@@ -5,6 +5,7 @@
 The `rate_limiter.py` module provides API call throttling for Socratic Sofa to prevent excessive requests to external services like the Anthropic content moderation endpoint.
 
 **Key Features**:
+
 - **Automatic Retry**: Sleep and retry on rate limit with exponential backoff
 - **Fail Fast Option**: Immediately raise exception on rate limit
 - **Structured Logging**: Integration with `logging_config` for tracking
@@ -29,14 +30,15 @@ def rate_limited(calls: int = DEFAULT_CALLS, period: int = DEFAULT_PERIOD) -> Ca
 
 **Parameters**:
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `calls` | `int` | `10` | Maximum number of calls allowed in the period |
-| `period` | `int` | `60` | Time period in seconds |
+| Parameter | Type  | Default | Description                                   |
+| --------- | ----- | ------- | --------------------------------------------- |
+| `calls`   | `int` | `10`    | Maximum number of calls allowed in the period |
+| `period`  | `int` | `60`    | Time period in seconds                        |
 
 **Returns**: `Callable[[F], F]` - Decorated function that respects rate limits
 
 **Behavior**:
+
 - Tracks function calls within rolling time window
 - Automatically sleeps and retries when limit exceeded
 - Logs rate limit events with structured context
@@ -112,14 +114,15 @@ def rate_limited_no_retry(calls: int = DEFAULT_CALLS, period: int = DEFAULT_PERI
 
 **Parameters**:
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `calls` | `int` | `10` | Maximum number of calls allowed in the period |
-| `period` | `int` | `60` | Time period in seconds |
+| Parameter | Type  | Default | Description                                   |
+| --------- | ----- | ------- | --------------------------------------------- |
+| `calls`   | `int` | `10`    | Maximum number of calls allowed in the period |
+| `period`  | `int` | `60`    | Time period in seconds                        |
 
 **Returns**: `Callable[[F], F]` - Decorated function that raises on rate limit
 
 **Behavior**:
+
 - Tracks function calls within rolling time window
 - Raises `RateLimitException` immediately when limit exceeded
 - Caller must handle the exception

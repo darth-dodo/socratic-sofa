@@ -5,7 +5,6 @@ Tests structured logging configuration and utilities.
 
 import logging
 import time
-from unittest.mock import Mock
 
 import pytest
 

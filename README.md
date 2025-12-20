@@ -156,6 +156,7 @@ The application uses structured logging for better observability:
 - **Request Tracking**: Each dialogue session gets a unique request_id for end-to-end tracing
 
 Example usage:
+
 ```python
 from socratic_sofa.logging_config import get_logger, log_timing
 

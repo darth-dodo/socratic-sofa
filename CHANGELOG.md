@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - Structured logging system (`logging_config.py`) with:
   - JSON-formatted log output option via environment variable `JSON_LOGS=true`
   - Context-aware logger adapters for operation tracking
@@ -27,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New dependency: `ratelimit>=2.2.1` for API rate limiting
 
 ### Changed
+
 - `content_filter.py` now uses structured logging instead of print statements for better observability
 - `content_filter.py` now applies rate limiting to OpenAI API calls to prevent throttling
 - `gradio_app.py` now uses structured logging for consistent logging behavior
@@ -34,12 +36,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved error handling and resilience throughout the codebase
 
 ### Fixed
+
 - Potential API rate limiting issues by implementing proper rate control
 - Logging inconsistencies by standardizing on structured logging approach
 
 ## [0.1.0] - 2025-12-20
 
 ### Added
+
 - Initial release of Socratic Sofa
 - Interactive Socratic dialogue system powered by CrewAI
 - Content filtering for inappropriate inputs
@@ -52,5 +56,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Gradio-based web interface
 
 ### Security
+
 - OpenAI API key validation and secure handling
 - Content moderation for user inputs

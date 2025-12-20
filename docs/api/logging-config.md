@@ -5,6 +5,7 @@
 The `logging_config.py` module provides structured logging infrastructure for Socratic Sofa with context-aware logging, performance tracking, and JSON output support for production environments.
 
 **Key Features**:
+
 - **Structured Logging**: Consistent log format with contextual metadata
 - **JSON Output**: Machine-parsable logs for production monitoring
 - **Performance Tracking**: Automatic timing utilities for operations
@@ -27,10 +28,10 @@ def setup_logging(level: int = LOG_LEVEL, json_output: bool = False) -> logging.
 
 **Parameters**:
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `level` | `int` | `LOG_LEVEL` (INFO) | Logging level (DEBUG, INFO, WARNING, ERROR) |
-| `json_output` | `bool` | `False` | If True, output JSON format for production |
+| Parameter     | Type   | Default            | Description                                 |
+| ------------- | ------ | ------------------ | ------------------------------------------- |
+| `level`       | `int`  | `LOG_LEVEL` (INFO) | Logging level (DEBUG, INFO, WARNING, ERROR) |
+| `json_output` | `bool` | `False`            | If True, output JSON format for production  |
 
 **Returns**: `logging.Logger` - Configured root logger instance
 
@@ -79,9 +80,9 @@ def get_logger(name: str, **context: Any) -> LoggerAdapter
 
 **Parameters**:
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `name` | `str` | Logger name (usually `__name__`) |
+| Parameter   | Type  | Description                                     |
+| ----------- | ----- | ----------------------------------------------- |
+| `name`      | `str` | Logger name (usually `__name__`)                |
 | `**context` | `Any` | Optional context to include in all log messages |
 
 **Returns**: `LoggerAdapter` - Logger with context support
@@ -140,11 +141,11 @@ def log_timing(logger: LoggerAdapter, operation: str, **extra: Any)
 
 **Parameters**:
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `logger` | `LoggerAdapter` | Logger instance to use |
-| `operation` | `str` | Name of the operation being timed |
-| `**extra` | `Any` | Additional context to include in logs |
+| Parameter   | Type            | Description                           |
+| ----------- | --------------- | ------------------------------------- |
+| `logger`    | `LoggerAdapter` | Logger instance to use                |
+| `operation` | `str`           | Name of the operation being timed     |
+| `**extra`   | `Any`           | Additional context to include in logs |
 
 **Example**:
 
@@ -196,9 +197,9 @@ def log_function_call(logger: LoggerAdapter | None = None)
 
 **Parameters**:
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `logger` | `LoggerAdapter \| None` | `None` | Logger to use (auto-creates if None) |
+| Parameter | Type                    | Default | Description                          |
+| --------- | ----------------------- | ------- | ------------------------------------ |
+| `logger`  | `LoggerAdapter \| None` | `None`  | Logger to use (auto-creates if None) |
 
 **Returns**: Decorator function
 
@@ -356,6 +357,7 @@ Default logging level: `logging.INFO`
 ### `LOG_FORMAT`
 
 Console log format string:
+
 ```
 "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
 ```
@@ -363,6 +365,7 @@ Console log format string:
 ### `DATE_FORMAT`
 
 Date format for console logs:
+
 ```
 "%Y-%m-%d %H:%M:%S"
 ```

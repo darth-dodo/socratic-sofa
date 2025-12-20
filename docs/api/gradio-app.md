@@ -5,12 +5,14 @@
 The `gradio_app.py` module provides a web interface for Socratic Sofa using Gradio. It manages user input, topic selection, content moderation, and displays the philosophical dialogue outputs.
 
 **Module Features**:
+
 - **Structured Logging**: Context-aware logging for all web interface operations
 - **Performance Tracking**: Automatic timing of dialogue generation and crew execution
 - **Error Handling**: Graceful degradation with user-friendly error messages
 - **Mobile-First Design**: Responsive CSS optimized for mobile and desktop
 
 **Dependencies**:
+
 ```python
 from socratic_sofa.logging_config import get_logger, log_timing
 from socratic_sofa.content_filter import is_topic_appropriate, get_alternative_suggestions
@@ -258,6 +260,7 @@ with log_timing(logger, "crew_execution", topic=final_topic):
 ```
 
 This automatically logs:
+
 - Start of execution with context
 - Completion time and success
 - Error details if execution fails

@@ -150,7 +150,7 @@ class TestSocraticSofaAgentCreation:
         )
 
         # Create crew instance - CrewAI's @CrewBase loads config automatically
-        crew_instance = SocraticSofa()
+        SocraticSofa()
 
         # Agent should have been called with config for socratic_questioner
         # The @agent decorator calls the method during class instantiation
@@ -169,7 +169,7 @@ class TestSocraticSofaAgentCreation:
         )
 
         # Create crew instance - CrewAI's @CrewBase loads config automatically
-        crew_instance = SocraticSofa()
+        SocraticSofa()
 
         # Agent should have been called for both agents
         calls = mock_agent_class.call_args_list
@@ -346,7 +346,7 @@ class TestSocraticSofaCrewCreation:
         crew_obj.tasks = []
 
         # Call the method
-        result = crew_obj.crew()
+        crew_obj.crew()
 
         # Verify sequential process is used
         call_kwargs = mock_crew_class.call_args[1]

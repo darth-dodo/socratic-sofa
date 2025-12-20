@@ -43,11 +43,13 @@ User Input (Topic)
 **Location**: `src/socratic_sofa/content_filter.py`
 
 **Imports**:
+
 - `logging_config`: Structured logging with context awareness
 - `rate_limiter`: API call throttling with automatic retry
 - `anthropic`: Claude API client
 
 **Logging Setup**:
+
 ```python
 from socratic_sofa.logging_config import get_logger
 
@@ -77,6 +79,7 @@ def is_topic_appropriate(topic: str) -> tuple[bool, str]:
 ```
 
 **Features**:
+
 - **Rate Limited**: Decorated with `@rate_limited()` to prevent API abuse
 - **Structured Logging**: Context-aware logs for all moderation decisions
 - **Performance Tracking**: Automatic timing of API calls

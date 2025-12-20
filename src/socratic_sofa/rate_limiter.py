@@ -5,8 +5,8 @@ Uses the ratelimit library to prevent excessive API calls
 to the Anthropic content moderation endpoint.
 """
 
-from functools import wraps
 from collections.abc import Callable
+from functools import wraps
 from typing import Any, TypeVar
 
 from ratelimit import RateLimitException, limits, sleep_and_retry
@@ -82,4 +82,10 @@ def rate_limited_no_retry(
 
 
 # Re-export RateLimitException for convenience
-__all__ = ["rate_limited", "rate_limited_no_retry", "RateLimitException", "DEFAULT_CALLS", "DEFAULT_PERIOD"]
+__all__ = [
+    "rate_limited",
+    "rate_limited_no_retry",
+    "RateLimitException",
+    "DEFAULT_CALLS",
+    "DEFAULT_PERIOD",
+]

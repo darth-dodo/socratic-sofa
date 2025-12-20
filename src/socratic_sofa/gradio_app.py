@@ -14,14 +14,13 @@ from threading import Thread
 import gradio as gr
 import yaml
 
-from socratic_sofa.logging_config import get_logger, log_timing
-
 from socratic_sofa.content_filter import (
     get_alternative_suggestions,
     get_rejection_guidelines,
     is_topic_appropriate,
 )
 from socratic_sofa.crew import SocraticSofa
+from socratic_sofa.logging_config import get_logger
 
 # Module logger
 logger = get_logger(__name__)
@@ -35,7 +34,9 @@ def load_topics_data():
         with open(topics_file) as f:
             return yaml.safe_load(f)
     except Exception as e:
-        logger.warning("Error loading topics file", extra={"error": str(e), "file": str(topics_file)})
+        logger.warning(
+            "Error loading topics file", extra={"error": str(e), "file": str(topics_file)}
+        )
         return {
             "fallback": {
                 "name": "Philosophy",
