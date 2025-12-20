@@ -6,10 +6,11 @@ The `gradio_app.py` module provides a web interface for Socratic Sofa using Grad
 
 **Module Features**:
 
+- **Structured Output Formatting**: Pydantic models converted to readable markdown
 - **Structured Logging**: Context-aware logging for all web interface operations
 - **Performance Tracking**: Automatic timing of dialogue generation and crew execution
 - **Error Handling**: Graceful degradation with user-friendly error messages
-- **Mobile-First Design**: Responsive CSS optimized for mobile and desktop
+- **Warm Design**: Calming UI with cream, orange and peach color palette
 
 **Dependencies**:
 
@@ -17,11 +18,72 @@ The `gradio_app.py` module provides a web interface for Socratic Sofa using Grad
 from socratic_sofa.logging_config import get_logger, log_timing
 from socratic_sofa.content_filter import is_topic_appropriate, get_alternative_suggestions
 from socratic_sofa.crew import SocraticSofa
+from socratic_sofa.schemas import (
+    format_topic_output,
+    format_inquiry_output,
+    format_judgment_output,
+)
 ```
 
 ---
 
 ## Functions
+
+### `format_task_output()`
+
+Formats CrewAI task output using Pydantic schemas for readable markdown display.
+
+**Signature**:
+
+```python
+def format_task_output(task_output, task_name: str) -> str
+```
+
+**Parameters**:
+
+| Parameter     | Type  | Description                                           |
+| ------------- | ----- | ----------------------------------------------------- |
+| `task_output` | `Any` | CrewAI TaskOutput object with pydantic or raw content |
+| `task_name`   | `str` | Name of the task for formatting selection             |
+
+**Returns**: `str` - Formatted markdown string
+
+**Formatting Logic**:
+
+| Task Name       | Pydantic Model   | Formatting Function        |
+| --------------- | ---------------- | -------------------------- |
+| `propose_topic` | `TopicOutput`    | `format_topic_output()`    |
+| `propose`       | `InquiryOutput`  | `format_inquiry_output()`  |
+| `oppose`        | `InquiryOutput`  | `format_inquiry_output()`  |
+| `judge_task`    | `JudgmentOutput` | `format_judgment_output()` |
+
+**Fallback Behavior**:
+
+If Pydantic parsing fails, the function gracefully falls back to raw output:
+
+```python
+def format_task_output(task_output, task_name: str) -> str:
+    try:
+        if hasattr(task_output, "pydantic") and task_output.pydantic is not None:
+            # Use Pydantic formatting
+            ...
+        return task_output.raw
+    except Exception:
+        return task_output.raw
+```
+
+**Example**:
+
+```python
+# In run_socratic_dialogue()
+topic_output = format_task_output(
+    crew_output.tasks_output[0],
+    "propose_topic"
+)
+# Returns formatted markdown with topic, context, and key concepts
+```
+
+---
 
 ### `load_topics()`
 
@@ -371,6 +433,58 @@ print(TOPICS[1])    # "[Ethics] What is justice?"
 
 ---
 
+## Warm Design
+
+The interface features a calming design with warm cream, orange and peach colors:
+
+### Color Palette
+
+```css
+:root {
+  --orange: #f47d31; /* Primary accent */
+  --orange-dark: #e06820; /* Dark accent */
+  --coral: #ff8c69; /* Warm highlight */
+  --peach: #ffb088; /* Medium accent */
+  --peach-light: #ffdab9; /* Light accent */
+  --peach-cream: #fff0e5; /* Very light accent */
+  --cream: #fff8f0; /* Background */
+  --warm-white: #fffbf5; /* Cards */
+  --soft-peach: #f5e6da; /* Borders */
+  --text: #5c3d2e; /* Primary text */
+  --text-light: #8b6b5c; /* Secondary text */
+}
+```
+
+### Key Design Features
+
+- **Soft Rounded Corners**: 50px for buttons, 24px for cards
+- **Gradient Buttons**: Orange-to-coral gradient for primary actions
+- **Breathing Animation**: Subtle scale animation on active progress stages
+- **Smooth Transitions**: Cubic-bezier easing on all interactive elements
+- **Touch-Friendly**: Minimum 48px height for mobile touch targets
+
+### Animations
+
+```css
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 0.92;
+  }
+}
+
+.stage.active {
+  animation: breathe 3s ease-in-out infinite;
+}
+```
+
+---
+
 ## Mobile Responsive Design
 
 The interface includes comprehensive CSS for mobile optimization:
@@ -387,6 +501,7 @@ The interface includes comprehensive CSS for mobile optimization:
 button {
   min-height: 48px; /* Touch-friendly */
   width: 100%; /* Full width on mobile */
+  border-radius: 50px; /* Pill-shaped buttons */
 }
 
 .prose h1 {

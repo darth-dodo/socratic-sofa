@@ -21,9 +21,65 @@ from socratic_sofa.content_filter import (
 )
 from socratic_sofa.crew import SocraticSofa
 from socratic_sofa.logging_config import get_logger
+from socratic_sofa.schemas import (
+    InquiryOutput,
+    JudgmentOutput,
+    TopicOutput,
+    format_inquiry_output,
+    format_judgment_output,
+    format_topic_output,
+)
 
 # Module logger
 logger = get_logger(__name__)
+
+
+def format_task_output(task_output, task_name: str) -> str:
+    """
+    Format task output using Pydantic models if available, falling back to raw output.
+
+    Args:
+        task_output: The CrewAI task output object
+        task_name: Name of the task (propose_topic, propose, oppose, judge_task)
+
+    Returns:
+        Formatted markdown string
+    """
+    try:
+        # Try to use Pydantic output if available
+        if hasattr(task_output, "pydantic") and task_output.pydantic is not None:
+            pydantic_obj = task_output.pydantic
+
+            if task_name == "propose_topic" and isinstance(pydantic_obj, TopicOutput):
+                return format_topic_output(pydantic_obj)
+            elif task_name == "propose" and isinstance(pydantic_obj, InquiryOutput):
+                return format_inquiry_output(pydantic_obj, "First Line of Inquiry", "🔵")
+            elif task_name == "oppose" and isinstance(pydantic_obj, InquiryOutput):
+                return format_inquiry_output(pydantic_obj, "Alternative Line of Inquiry", "🟢")
+            elif task_name == "judge_task" and isinstance(pydantic_obj, JudgmentOutput):
+                return format_judgment_output(pydantic_obj)
+
+        # Fall back to raw output with headers
+        raw = task_output.raw if hasattr(task_output, "raw") else str(task_output)
+
+        if task_name == "propose":
+            return "## 🔵 First Line of Inquiry\n\n" + raw
+        elif task_name == "oppose":
+            return "## 🟢 Alternative Line of Inquiry\n\n" + raw
+        else:
+            return raw
+
+    except Exception as e:
+        logger.warning(
+            "Failed to format Pydantic output, using raw",
+            extra={"task_name": task_name, "error": str(e)},
+        )
+        raw = task_output.raw if hasattr(task_output, "raw") else str(task_output)
+        if task_name == "propose":
+            return "## 🔵 First Line of Inquiry\n\n" + raw
+        elif task_name == "oppose":
+            return "## 🟢 Alternative Line of Inquiry\n\n" + raw
+        return raw
 
 
 # Load topics from YAML
@@ -285,21 +341,19 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
                     task_name = task_names[task_index]
 
                     if task_name == "propose_topic":
-                        outputs["topic"] = task_output.raw
+                        outputs["topic"] = format_task_output(task_output, task_name)
                         outputs["proposition"] = "🔄 *First line of inquiry in progress...*"
                         current_stage = 1
                     elif task_name == "propose":
-                        outputs["proposition"] = "## 🔵 First Line of Inquiry\n\n" + task_output.raw
+                        outputs["proposition"] = format_task_output(task_output, task_name)
                         outputs["opposition"] = "🔄 *Alternative inquiry in progress...*"
                         current_stage = 2
                     elif task_name == "oppose":
-                        outputs["opposition"] = (
-                            "## 🟢 Alternative Line of Inquiry\n\n" + task_output.raw
-                        )
+                        outputs["opposition"] = format_task_output(task_output, task_name)
                         outputs["judgment"] = "🔄 *Evaluating dialogues...*"
                         current_stage = 3
                     elif task_name == "judge_task":
-                        outputs["judgment"] = task_output.raw
+                        outputs["judgment"] = format_task_output(task_output, task_name)
                         current_stage = 4
 
                     task_index += 1
@@ -327,17 +381,16 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
 
         # Get final results from task objects to ensure we have all outputs
         tasks = crew.tasks
+        task_names_final = ["propose_topic", "propose", "oppose", "judge_task"]
         if len(tasks) >= 4:
             if tasks[0].output:
-                outputs["topic"] = tasks[0].output.raw
+                outputs["topic"] = format_task_output(tasks[0].output, task_names_final[0])
             if tasks[1].output:
-                outputs["proposition"] = "## 🔵 First Line of Inquiry\n\n" + tasks[1].output.raw
+                outputs["proposition"] = format_task_output(tasks[1].output, task_names_final[1])
             if tasks[2].output:
-                outputs["opposition"] = (
-                    "## 🟢 Alternative Line of Inquiry\n\n" + tasks[2].output.raw
-                )
+                outputs["opposition"] = format_task_output(tasks[2].output, task_names_final[2])
             if tasks[3].output:
-                outputs["judgment"] = tasks[3].output.raw
+                outputs["judgment"] = format_task_output(tasks[3].output, task_names_final[3])
 
         # Final yield with complete results and finished progress
         elapsed = time.time() - start_time
@@ -370,85 +423,247 @@ def run_socratic_dialogue_streaming(dropdown_topic: str, custom_topic: str):
         yield "", error_msg, error_msg, error_msg, error_msg
 
 
-# CSS for mobile responsive design
+# CSS for warm cream, orange and peach design
 CUSTOM_CSS = """
-        /* Progress indicator styles */
+        /* Warm cream, orange and peach color palette */
+        :root {
+            --orange: #F47D31;
+            --orange-dark: #E06820;
+            --coral: #FF8C69;
+            --peach: #FFB088;
+            --peach-light: #FFDAB9;
+            --peach-cream: #FFF0E5;
+            --cream: #FFF8F0;
+            --warm-white: #FFFBF5;
+            --soft-peach: #F5E6DA;
+            --text: #5C3D2E;
+            --text-light: #8B6B5C;
+            --glass-bg: rgba(255, 248, 240, 0.85);
+            --glass-border: rgba(255, 200, 150, 0.4);
+            --glass-shadow: rgba(180, 100, 50, 0.08);
+        }
+
+        /* Gradient background */
+        .gradio-container {
+            background: linear-gradient(135deg, var(--cream) 0%, var(--peach-cream) 25%, var(--peach-light) 50%, var(--peach-cream) 75%, var(--cream) 100%) !important;
+            background-size: 400% 400% !important;
+            animation: gradientShift 20s ease infinite !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Progress indicator */
         .progress-container {
-            margin: 20px 0;
-            padding: 15px;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin: 24px 0;
+            padding: 24px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 28px;
+            box-shadow: 0 8px 32px var(--glass-shadow), inset 0 1px 1px var(--glass-border);
+            border: 1px solid var(--glass-border);
         }
 
         .progress-stages {
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .progress-stages .stage {
             flex: 1 1 auto;
             text-align: center;
-            padding: 8px 12px;
-            border-radius: 20px;
+            padding: 12px 18px;
+            border-radius: 50px;
             font-size: 0.85rem;
             white-space: nowrap;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .progress-stages .stage.completed {
-            background: #d4edda;
-            color: #155724;
+            background: linear-gradient(135deg, var(--peach) 0%, var(--coral) 100%);
+            color: var(--text);
+            box-shadow: 0 4px 15px rgba(255, 176, 136, 0.4);
         }
 
         .progress-stages .stage.active {
-            background: #cce5ff;
-            color: #004085;
-            font-weight: bold;
-            animation: pulse 1.5s infinite;
+            background: linear-gradient(135deg, var(--orange) 0%, var(--coral) 100%);
+            color: white;
+            font-weight: 600;
+            animation: breathe 3s ease-in-out infinite;
+            box-shadow: 0 6px 20px rgba(244, 125, 49, 0.4);
         }
 
         .progress-stages .stage.pending {
-            background: #e9ecef;
-            color: #6c757d;
+            background: var(--peach-cream);
+            color: var(--text-light);
+            border: 1px solid var(--glass-border);
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.03); opacity: 0.92; }
         }
 
         .progress-bar-container {
             width: 100%;
             height: 8px;
-            background: #e9ecef;
+            background: var(--peach-cream);
             border-radius: 4px;
             overflow: hidden;
+            backdrop-filter: blur(5px);
         }
 
         .progress-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.5s ease;
+            background: linear-gradient(90deg, var(--orange) 0%, var(--coral) 50%, var(--peach) 100%);
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(244, 125, 49, 0.5);
         }
 
         .progress-status {
             text-align: center;
-            margin-top: 10px;
+            margin-top: 14px;
             font-size: 0.9em;
-            color: #6c757d;
+            color: var(--text-light);
+            font-weight: 500;
         }
 
-        /* Mobile responsive styles */
+        /* Buttons */
+        button.primary {
+            background: linear-gradient(135deg, var(--orange) 0%, var(--coral) 100%) !important;
+            border: none !important;
+            border-radius: 50px !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.3px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: 0 6px 20px rgba(244, 125, 49, 0.35), inset 0 1px 1px rgba(255,255,255,0.3) !important;
+        }
+
+        button.primary:hover {
+            transform: translateY(-3px) scale(1.02) !important;
+            box-shadow: 0 10px 30px rgba(244, 125, 49, 0.45), inset 0 1px 1px rgba(255,255,255,0.3) !important;
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, var(--peach) 0%, var(--coral) 100%) !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid var(--glass-border) !important;
+            border-radius: 50px !important;
+            color: var(--text) !important;
+            font-weight: 500 !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        button.secondary:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 25px rgba(255, 176, 136, 0.4) !important;
+        }
+
+        /* Input fields */
+        .gr-textbox textarea, .gr-textbox input {
+            border-radius: 18px !important;
+            border: 1px solid var(--glass-border) !important;
+            padding: 16px 20px !important;
+            transition: all 0.3s ease !important;
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(15px) !important;
+            -webkit-backdrop-filter: blur(15px) !important;
+        }
+
+        .gr-textbox textarea:focus, .gr-textbox input:focus {
+            border-color: var(--orange) !important;
+            box-shadow: 0 0 0 4px rgba(244, 125, 49, 0.15), 0 8px 25px var(--glass-shadow) !important;
+        }
+
+        /* Dropdown */
+        .gr-dropdown {
+            border-radius: 18px !important;
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(15px) !important;
+            border: 1px solid var(--glass-border) !important;
+        }
+
+        /* Card sections */
+        .gr-box, .gr-panel {
+            border-radius: 24px !important;
+            border: 1px solid var(--glass-border) !important;
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            box-shadow: 0 8px 32px var(--glass-shadow), inset 0 1px 1px rgba(255,255,255,0.4) !important;
+        }
+
+        /* Typography */
+        .prose h1, .prose h2, .prose h3 {
+            color: var(--text) !important;
+            font-weight: 600 !important;
+        }
+
+        .prose p, .prose li {
+            color: var(--text) !important;
+            line-height: 1.75 !important;
+        }
+
+        .prose {
+            max-width: 100%;
+            padding: 10px 0;
+        }
+
+        /* Blockquotes */
+        .prose blockquote {
+            border-left: 4px solid var(--orange) !important;
+            background: var(--peach-cream) !important;
+            backdrop-filter: blur(10px) !important;
+            border-radius: 0 16px 16px 0 !important;
+            padding: 14px 20px !important;
+            margin: 14px 0 !important;
+            font-style: normal !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
+        }
+
+        /* Tables */
+        .prose table {
+            border-radius: 16px !important;
+            overflow: hidden !important;
+            border: 1px solid var(--glass-border) !important;
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(10px) !important;
+        }
+
+        .prose th {
+            background: var(--peach-cream) !important;
+            color: var(--text) !important;
+            font-weight: 600 !important;
+        }
+
+        .prose td, .prose th {
+            padding: 14px 18px !important;
+            border-color: var(--soft-peach) !important;
+        }
+
+        .prose tr:hover td {
+            background: var(--cream) !important;
+        }
+
+        /* Mobile responsive */
         @media (max-width: 768px) {
             .gradio-container {
-                padding: 10px !important;
+                padding: 12px !important;
             }
 
-            /* Stack columns vertically on mobile */
             .gr-row {
                 flex-direction: column !important;
             }
@@ -459,94 +674,73 @@ CUSTOM_CSS = """
                 margin-bottom: 16px !important;
             }
 
-            /* Typography adjustments */
-            .prose h1 {
-                font-size: 1.5rem !important;
-                margin-bottom: 0.5rem !important;
-            }
-            .prose h2 {
-                font-size: 1.2rem !important;
-                margin-top: 1rem !important;
-                margin-bottom: 0.5rem !important;
-            }
-            .prose h3 {
-                font-size: 1rem !important;
-                margin-top: 0.75rem !important;
-                margin-bottom: 0.5rem !important;
-            }
+            .prose h1 { font-size: 1.5rem !important; }
+            .prose h2 { font-size: 1.25rem !important; }
+            .prose h3 { font-size: 1.1rem !important; }
 
-            .prose p {
-                font-size: 0.95rem !important;
-                line-height: 1.5 !important;
-            }
-
-            /* Button improvements */
             button {
                 width: 100% !important;
-                font-size: 1rem !important;
-                padding: 12px !important;
+                padding: 16px !important;
                 margin: 8px 0 !important;
             }
 
-            /* Component spacing */
-            .gr-box {
-                border-radius: 8px !important;
-                margin-bottom: 12px !important;
+            .progress-stages {
+                flex-direction: column;
+                gap: 10px;
             }
 
-            /* Dropdown and input fields */
-            .gr-dropdown,
-            .gr-textbox {
-                width: 100% !important;
+            .progress-stages .stage {
+                width: 100%;
             }
         }
 
-        /* Touch-friendly button sizing for all screens */
+        /* Touch-friendly */
         button {
-            min-height: 48px;
+            min-height: 54px;
             font-weight: 500;
         }
 
-        /* Better spacing for forms */
+        /* Spacing */
         .gr-form {
-            gap: 12px;
+            gap: 18px;
         }
 
-        /* Improve markdown readability */
-        .prose {
-            max-width: 100%;
-        }
-
-        /* Better spacing between sections */
         .gr-row {
             margin-bottom: 1.5rem;
         }
 
-        /* Streaming status indicators */
-        .streaming-status {
-            color: #6366f1;
-            font-style: italic;
-        }
-
-        /* Example suggestions styling */
+        /* Example suggestions */
         .example-suggestions {
-            opacity: 0.7;
-            margin-top: -8px !important;
-            margin-bottom: 12px !important;
+            opacity: 0.85;
+            margin-top: -4px !important;
+            margin-bottom: 18px !important;
+            color: var(--text-light);
         }
 
         .example-suggestions small {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
 
-        /* Random button styling */
-        .secondary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        /* Smooth transitions */
+        .gr-box, button, .gr-textbox textarea, .gr-dropdown {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Soft focus */
+        *:focus {
+            outline: none !important;
+        }
+
+        /* Subtle glow on hover for interactive elements */
+        .gr-box:hover {
+            box-shadow: 0 12px 40px var(--glass-shadow), inset 0 1px 1px rgba(255,255,255,0.5) !important;
         }
     """
 
 # Create the Gradio interface
-with gr.Blocks(title="Socratic Sofa - Philosophical Dialogue") as demo:
+with gr.Blocks(
+    title="Socratic Sofa - Philosophical Dialogue",
+) as demo:
     gr.Markdown(
         """
         # 🏛️ Socratic Sofa
@@ -716,8 +910,8 @@ def main():
         share=False,
         css=CUSTOM_CSS,
         theme=gr.themes.Soft(
-            primary_hue="indigo",
-            secondary_hue="purple",
+            primary_hue="orange",
+            secondary_hue="teal",
         ),
     )
 
