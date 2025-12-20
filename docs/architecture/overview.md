@@ -190,6 +190,11 @@ Final Evaluation & Scores
 - **Gradio**: Web interface and UI components
 - **YAML**: Configuration management (agents, tasks, topics)
 
+### Infrastructure & Utilities
+
+- **Structured Logging**: JSON and console logging with context awareness (`logging_config.py`)
+- **Rate Limiting**: API call throttling using `ratelimit` library (`rate_limiter.py`)
+
 ### File System
 
 - **Markdown**: Output format for all generated content
@@ -333,16 +338,27 @@ The Socratic method inherently requires sequential reasoning where each question
 
 ### Current Logging
 
-- CrewAI verbose mode: Agent actions and task execution
-- Gradio console: Request handling and errors
-- Content filter: Moderation decisions and failures
+- **Structured Logging Framework**: Context-aware logging with JSON output support
+  - Console format for development (human-readable)
+  - JSON format for production (machine-parsable)
+  - Performance timing utilities for operation tracking
+  - Function call logging with automatic timing
+- **CrewAI Verbose Mode**: Agent actions and task execution details
+- **Gradio Console**: Request handling and errors
+- **Content Filter**: Moderation decisions and failures with structured context
+
+### Logging Features
+
+- **Context Propagation**: Session IDs, topic context, request metadata
+- **Performance Tracking**: Automatic timing for functions and operations
+- **Error Details**: Structured exception logging with traceback
+- **Log Levels**: DEBUG, INFO, WARNING, ERROR with configurable thresholds
 
 ### Recommended Additions
 
-1. **Structured Logging**: JSON format with correlation IDs
-2. **Metrics Collection**: Dialogue completion rate, moderation accuracy
-3. **Error Tracking**: Sentry or similar for production issues
-4. **Performance Monitoring**: Response times, API latency
+1. **Metrics Collection**: Dialogue completion rate, moderation accuracy
+2. **Error Tracking**: Sentry or similar for production issues
+3. **Log Aggregation**: Centralized log management (ELK stack, Datadog)
 
 ## Deployment Architecture
 

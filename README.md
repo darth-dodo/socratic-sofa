@@ -22,10 +22,12 @@ Experience deep philosophical inquiry where AI explores topics through systemati
 - ⚖️ **Dialectic Moderator** - Evaluates the authenticity and effectiveness of Socratic inquiry with differentiation scoring
 - 📚 **100 Curated Topics** - Philosophical questions across 7 categories: classics, ethics, mind, society, modern, fun, and personal
 - 🌍 **Multiple Philosophical Traditions** - Questions draw from Greek, Eastern, Modern Western, and Contemporary philosophy
-- 🛡️ **Content Moderation** - AI-powered filtering for appropriate philosophical discourse
+- 🛡️ **Content Moderation** - AI-powered filtering for appropriate philosophical discourse with rate limiting
 - 🌐 **Mobile-Responsive UI** - Beautiful, touch-friendly interface that works on all devices
 - 🔄 **Streaming Output** - Real-time dialogue generation with progress feedback
 - 📜 **Four-Stage Dialogue** - Topic → Proposition → Opposition → Judgment
+- 📊 **Structured Logging** - JSON-formatted logs with context chaining and performance timing
+- ⏱️ **Rate Limiting** - API call throttling with automatic retry for reliability
 
 ## 🎯 How It Works
 
@@ -85,7 +87,9 @@ Unlike traditional debate systems, Socratic Sofa uses **questions, not assertion
 - **Package Manager**: UV for fast dependency management
 - **Testing**: 80%+ code coverage with pytest
 - **CI/CD**: GitHub Actions with automated deployment to HuggingFace Spaces
-- **Content Safety**: Claude-powered content moderation
+- **Content Safety**: Claude-powered content moderation with rate limiting (10 calls/60s)
+- **Logging**: Structured JSON logging with context chaining and performance timing
+- **Rate Limiting**: Automatic retry with exponential backoff for API reliability
 
 ## 🚀 Getting Started
 
@@ -136,9 +140,41 @@ uv run pytest --cov=src/socratic_sofa --cov-report=term-missing
 - **`crew.py`**: CrewAI orchestration with socratic_questioner and judge agents
 - **`gradio_app.py`**: Web interface with topic selection and streaming output
 - **`content_filter.py`**: Content moderation using Claude API for safety
+- **`logging_config.py`**: Structured JSON logging with context chaining and timing
+- **`rate_limiter.py`**: API rate limiting with automatic retry and exponential backoff
 - **`config/agents.yaml`**: Agent configurations with philosophical traditions
 - **`config/tasks.yaml`**: Task definitions with differentiation requirements
 - **`topics.yaml`**: 100 curated topics organized by 7 categories
+
+### Logging and Monitoring
+
+The application uses structured logging for better observability:
+
+- **JSON Format**: All logs are JSON-formatted for easy parsing and analysis
+- **Context Chaining**: Logger contexts can be chained via `with_context()` for request tracking
+- **Performance Timing**: `log_timing` context manager and `log_function_call` decorator track operation duration
+- **Request Tracking**: Each dialogue session gets a unique request_id for end-to-end tracing
+
+Example usage:
+```python
+from socratic_sofa.logging_config import get_logger, log_timing
+
+logger = get_logger(__name__)
+logger = logger.with_context(request_id="abc-123", user="demo")
+
+with log_timing(logger, "dialogue_generation"):
+    # Your code here
+    logger.info("Processing topic", topic="justice")
+```
+
+### Rate Limiting
+
+API calls are protected with rate limiting to prevent quota exhaustion:
+
+- **Decorator-Based**: `@rate_limited(calls=10, period=60)` with automatic retry
+- **Content Moderation**: Limited to 10 calls per 60 seconds
+- **Exponential Backoff**: Automatic retry with increasing delays on rate limit hits
+- **Exception Handling**: `RateLimitException` for cases requiring manual handling
 
 ### Agent Workflow
 

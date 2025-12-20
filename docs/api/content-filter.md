@@ -4,6 +4,19 @@
 
 The `content_filter.py` module provides AI-powered content moderation for philosophical topics, ensuring discussions remain respectful and appropriate while allowing legitimate philosophical inquiry into difficult subjects.
 
+**Module Features**:
+- **Structured Logging**: Context-aware logging using `logging_config` module
+- **Rate Limiting**: API call throttling using `rate_limiter` module (10 calls/60 seconds)
+- **Performance Tracking**: Automatic timing and metrics for moderation operations
+- **Fail-Open Design**: Continues operation even if moderation service is unavailable
+
+**Dependencies**:
+```python
+from socratic_sofa.logging_config import get_logger
+from socratic_sofa.rate_limiter import rate_limited
+from anthropic import Anthropic
+```
+
 ---
 
 ## Functions
@@ -90,18 +103,31 @@ print(reason)   # "Topic is too long. Please keep it concise (under 500 characte
 - Questions about morality, even if touching on difficult subjects
 - Sincere inquiry into human nature and society
 
+**Rate Limiting**:
+
+The function is decorated with `@rate_limited()` to prevent API abuse:
+- Default limit: 10 calls per 60 seconds
+- Automatic retry with exponential backoff on rate limit
+- Structured logging of rate limit events
+
 **Implementation**:
 
 ```python
+@rate_limited(calls=10, period=60)
 def is_topic_appropriate(topic: str) -> tuple[bool, str]:
+    logger = get_logger(__name__)
+
     # Quick checks before API call
     if not topic or not topic.strip():
+        logger.debug("Empty topic, allowing AI to choose")
         return True, ""
 
     if len(topic) > 500:
+        logger.warning("Topic too long", extra={"length": len(topic)})
         return False, "Topic is too long. Please keep it concise (under 500 characters)."
 
     # AI moderation using Claude
+    logger.info("Starting moderation check", extra={"topic_preview": topic[:50]})
     try:
         client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
@@ -126,17 +152,26 @@ def is_topic_appropriate(topic: str) -> tuple[bool, str]:
         result = response.content[0].text.strip()
 
         if result.startswith("APPROPRIATE"):
+            logger.info("Topic approved", extra={"topic": topic[:50]})
             return True, ""
         elif result.startswith("INAPPROPRIATE:"):
             reason = result.replace("INAPPROPRIATE:", "").strip()
+            logger.warning(
+                "Topic rejected",
+                extra={"topic": topic[:50], "reason": reason}
+            )
             return False, f"This topic may not be appropriate: {reason}"
         else:
             # Unclear response - err on permissive side
+            logger.warning("Unclear moderation response, allowing topic")
             return True, ""
 
     except Exception as e:
         # Fail open for better UX
-        print(f"⚠️ Content moderation error: {e}")
+        logger.error(
+            "Content moderation error",
+            extra={"error": str(e), "topic_length": len(topic)}
+        )
         return True, ""
 ```
 
@@ -145,16 +180,34 @@ def is_topic_appropriate(topic: str) -> tuple[bool, str]:
 The function implements a "fail open" strategy for resilience:
 
 - If the API call fails, the topic is allowed
-- Errors are logged to console with warning emoji
+- Errors are logged with structured context for debugging
 - Users experience minimal disruption from moderation failures
 
 ```python
 try:
     # Moderation logic...
 except Exception as e:
-    print(f"⚠️ Content moderation error: {e}")
+    logger.error(
+        "Content moderation error",
+        extra={"error": str(e), "topic_length": len(topic)}
+    )
     return True, ""  # Allow topic to proceed
 ```
+
+**Logging Events**:
+
+The function logs the following events with structured context:
+
+| Event | Level | Extra Context |
+|-------|-------|---------------|
+| Empty topic | DEBUG | - |
+| Topic too long | WARNING | `length` |
+| Moderation started | INFO | `topic_preview` |
+| Topic approved | INFO | `topic` |
+| Topic rejected | WARNING | `topic`, `reason` |
+| Unclear response | WARNING | - |
+| API error | ERROR | `error`, `topic_length` |
+| Rate limit hit | WARNING | `function`, `backoff_seconds` |
 
 **AI Model Configuration**:
 

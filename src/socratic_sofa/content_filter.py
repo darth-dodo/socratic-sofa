@@ -8,11 +8,13 @@ import os
 from anthropic import Anthropic
 
 from socratic_sofa.logging_config import get_logger, log_timing
+from socratic_sofa.rate_limiter import rate_limited
 
 # Module logger
 logger = get_logger(__name__)
 
 
+@rate_limited(calls=10, period=60)
 def is_topic_appropriate(topic: str) -> tuple[bool, str]:
     """
     Check if a topic is appropriate for philosophical dialogue using AI moderation.

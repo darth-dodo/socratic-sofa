@@ -9,6 +9,7 @@ dependencies = [
     "crewai[tools]==1.7.0",
     "gradio>=6.1.0",
     "pyyaml>=6.0.3",
+    "ratelimit>=2.2.1",
 ]
 
 [project.optional-dependencies]
