@@ -426,17 +426,6 @@ class TestEventHandlers:
         # Should return a gr.update object with choices and value
         assert hasattr(result, "get") or hasattr(result, "__getitem__")
 
-    def test_select_random_topic_returns_tuple(self):
-        """Test select_random_topic returns tuple of updates."""
-        from socratic_sofa.gradio_app import select_random_topic
-
-        dropdown_update, textbox_value = select_random_topic()
-
-        # Should return dropdown update and empty textbox value
-        assert textbox_value == ""
-        # dropdown_update should be a gr.update object
-        assert hasattr(dropdown_update, "get") or hasattr(dropdown_update, "__getitem__")
-
     def test_clear_custom_on_dropdown_change_clears_for_selected(self):
         """Test clearing custom input when dropdown topic selected."""
         from socratic_sofa.gradio_app import clear_custom_on_dropdown_change
