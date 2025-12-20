@@ -5,6 +5,26 @@ All notable changes to Socratic Sofa will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2025-12-20
+
+### Added
+
+- **Security Scanning**: Bandit integration for vulnerability detection in CI pipeline
+- **Secrets Detection**: detect-secrets with baseline for credential scanning
+- **Enhanced CI/CD**: Split into 3 parallel jobs (quality, security, tests)
+
+### Improved
+
+- **Test Coverage**: Increased from 80% to 99% with 220+ tests
+- **Documentation**: Updated testing guide with current test suite details
+- **Architecture Docs**: Added mermaid diagrams for visual documentation
+- **Pre-commit Hooks**: Full suite including isort, ruff, bandit, detect-secrets, vulture, prettier
+
+### Fixed
+
+- **CrewAI Tests**: Added mock OpenAI API key fixture for test isolation
+- **Linting Issues**: Resolved unused imports and variable assignments
+
 ## [0.2.0] - 2024-12-19
 
 ### Added

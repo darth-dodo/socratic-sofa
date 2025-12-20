@@ -51,12 +51,12 @@ Technical API documentation for developers.
 
 See [CHANGELOG.md](CHANGELOG.md) for recent updates and improvements.
 
-**Latest (v0.2.0)**:
+**Latest (v0.2.1)**:
 
-- Differentiation scoring for second inquiry (bonus +10%)
-- Philosophical traditions integration (Greek, Eastern, Modern, Contemporary)
-- 80%+ test coverage with automated CI/CD
-- Markdown-formatted judge evaluations
+- Security scanning with Bandit and detect-secrets
+- 99% test coverage with 220+ tests
+- Enhanced CI/CD with parallel quality, security, and test jobs
+- Mermaid diagrams in architecture documentation
 
 ## 🎯 Quick Links
 
@@ -101,8 +101,8 @@ Found a typo or want to improve the docs? We welcome contributions!
 
 ---
 
-**Last Updated**: December 19, 2024
-**Version**: 0.2.0
+**Last Updated**: December 20, 2025
+**Version**: 0.2.1
 **License**: MIT
 
 ## 🔗 Project Links
