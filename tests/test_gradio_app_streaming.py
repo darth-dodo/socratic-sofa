@@ -595,6 +595,4 @@ class TestMainFunction:
 
         call_kwargs = mock_launch.call_args[1]
         assert "theme" in call_kwargs
-        # Theme should be a Gradio theme object
-        theme = call_kwargs["theme"]
-        assert theme is not None
+        assert call_kwargs["theme"] is not None

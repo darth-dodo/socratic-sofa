@@ -443,6 +443,26 @@ CUSTOM_CSS = """
             --glass-shadow: rgba(180, 100, 50, 0.08);
         }
 
+        /* Dark mode with warm orange/peach tones */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --orange: #FF9A5C;
+                --orange-dark: #E8854A;
+                --coral: #FFB088;
+                --peach: #FFCAAA;
+                --peach-light: #3D2A20;
+                --peach-cream: #2A1E18;
+                --cream: #1F1714;
+                --warm-white: #2A1E18;
+                --soft-peach: #3D2A20;
+                --text: #FFE4D6;
+                --text-light: #D4B8A8;
+                --glass-bg: rgba(45, 30, 22, 0.9);
+                --glass-border: rgba(255, 150, 100, 0.2);
+                --glass-shadow: rgba(0, 0, 0, 0.3);
+            }
+        }
+
         /* Gradient background */
         .gradio-container {
             background: linear-gradient(135deg, var(--cream) 0%, var(--peach-cream) 25%, var(--peach-light) 50%, var(--peach-cream) 75%, var(--cream) 100%) !important;
@@ -740,11 +760,6 @@ CUSTOM_CSS = """
 # Create the Gradio interface
 with gr.Blocks(
     title="Socratic Sofa - Philosophical Dialogue",
-    css=CUSTOM_CSS,
-    theme=gr.themes.Soft(
-        primary_hue="orange",
-        secondary_hue="orange",
-    ),
 ) as demo:
     gr.Markdown(
         """
@@ -913,6 +928,11 @@ def main():
         server_name="0.0.0.0",  # nosec B104 - Required for HF Spaces deployment
         server_port=7860,
         share=False,
+        css=CUSTOM_CSS,
+        theme=gr.themes.Soft(
+            primary_hue="orange",
+            secondary_hue="orange",
+        ),
     )
 
 
