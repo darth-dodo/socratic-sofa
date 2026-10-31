@@ -147,7 +147,7 @@ def is_topic_appropriate(topic: str) -> tuple[bool, str]:
         """
 
         response = client.messages.create(
-            model="claude-3-5-haiku-20241022",  # Fast and economical
+            model="claude-haiku-4-5",  # Fast and economical
             max_tokens=100,
             messages=[{"role": "user", "content": moderation_prompt}]
         )
@@ -214,11 +214,11 @@ The function logs the following events with structured context:
 
 **AI Model Configuration**:
 
-| Setting       | Value                       | Reason                             |
-| ------------- | --------------------------- | ---------------------------------- |
-| `model`       | `claude-3-5-haiku-20241022` | Fast response, cost-effective      |
-| `max_tokens`  | `100`                       | Sufficient for moderation decision |
-| `temperature` | Default                     | Consistent moderation decisions    |
+| Setting       | Value              | Reason                             |
+| ------------- | ------------------ | ---------------------------------- |
+| `model`       | `claude-haiku-4-5` | Fast response, cost-effective      |
+| `max_tokens`  | `100`              | Sufficient for moderation decision |
+| `temperature` | Not sent           | Current Claude models reject it    |
 
 ---
 
@@ -516,7 +516,7 @@ def moderate_with_context(topic: str, user_history: list) -> tuple[bool, str]:
 
 ## Notes
 
-- **Fast Model**: Uses `claude-3-5-haiku-20241022` for speed and cost efficiency
+- **Fast Model**: Uses `claude-haiku-4-5` for speed and cost efficiency
 - **Fail Open**: Prioritizes user experience by allowing topics if moderation fails
 - **Balanced Approach**: Strict on harmful content, permissive on controversial philosophy
 - **Policy Questions**: Allows legitimate questions about legalization/regulation

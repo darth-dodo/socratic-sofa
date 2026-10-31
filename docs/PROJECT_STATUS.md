@@ -58,7 +58,7 @@
 
 ### ✅ Content Moderation
 
-- **AI-Powered Filtering**: Claude 3.5 Haiku for fast moderation
+- **AI-Powered Filtering**: Claude Haiku 4.5 for fast moderation
 - **Appropriate Discourse**: Blocks inappropriate content while allowing legitimate inquiry
 - **Alternative Suggestions**: Provides alternative topics when content is rejected
 - **Fail-Open Design**: Better UX with logged moderation failures
@@ -118,7 +118,7 @@
 - **CrewAI 1.7.0**: Multi-agent orchestration
 - **Anthropic Claude**: AI models
   - Sonnet 4.5: Main dialogue generation
-  - Haiku 3.5: Content moderation
+  - Haiku 4.5: Content moderation
 - **Gradio 6.1.0**: Web interface
 
 ### Development Tools
