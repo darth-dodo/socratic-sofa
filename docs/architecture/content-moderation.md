@@ -2,7 +2,7 @@
 
 ## Overview
 
-Socratic Sofa implements AI-powered content moderation to ensure topics are appropriate for respectful philosophical dialogue while maintaining an open and inclusive environment for genuine inquiry. The system uses Claude 3.5 Haiku for fast, cost-effective content evaluation before philosophical dialogue begins.
+Socratic Sofa implements AI-powered content moderation to ensure topics are appropriate for respectful philosophical dialogue while maintaining an open and inclusive environment for genuine inquiry. The system uses Claude Haiku 4.5 for fast, cost-effective content evaluation before philosophical dialogue begins.
 
 ## Architecture
 
@@ -21,7 +21,7 @@ User Input (Topic)
              ↓
 ┌─────────────────────────────────────┐
 │   AI Content Moderation             │
-│   - Claude 3.5 Haiku API call      │
+│   - Claude Haiku 4.5 API call      │
 │   - Evaluation against criteria     │
 │   - Binary decision                 │
 └────────────┬────────────────────────┘
@@ -100,7 +100,7 @@ if len(topic) > 500:
 try:
     client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
     response = client.messages.create(
-        model="claude-3-5-haiku-20241022",
+        model="claude-haiku-4-5",
         max_tokens=100,
         messages=[{"role": "user", "content": moderation_prompt}]
     )
@@ -274,7 +274,7 @@ Topics are accepted if they represent:
 
 ## Moderation Prompt
 
-The system uses a carefully crafted prompt for Claude 3.5 Haiku:
+The system uses a carefully crafted prompt for Claude Haiku 4.5:
 
 ```
 You are a content moderator for a philosophical dialogue platform.
@@ -314,7 +314,7 @@ Response:
 
 ## Model Selection
 
-### Why Claude 3.5 Haiku?
+### Why Claude Haiku 4.5?
 
 **Performance Characteristics**:
 
@@ -339,7 +339,7 @@ Response:
 client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
 response = client.messages.create(
-    model="claude-3-5-haiku-20241022",  # Latest Haiku version
+    model="claude-haiku-4-5",  # Haiku 4.5 alias
     max_tokens=100,                     # Brief response only
     messages=[{"role": "user", "content": moderation_prompt}]
 )

@@ -131,7 +131,7 @@ EOF
 
 3. **Optionally add**:
    ```
-   ANTHROPIC_MODEL=claude-sonnet-4-5-20250514
+   MODEL=anthropic/claude-sonnet-4-5
    ```
 
 ### Step 6: Create README for Hugging Face

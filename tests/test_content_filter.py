@@ -174,11 +174,23 @@ class TestIsTopicAppropriate:
         assert call_args is not None
 
         kwargs = call_args[1]
-        assert kwargs["model"] == "claude-3-5-haiku-20241022"
+        assert kwargs["model"] == "claude-haiku-4-5"
         assert kwargs["max_tokens"] == 100
         assert len(kwargs["messages"]) == 1
         assert kwargs["messages"][0]["role"] == "user"
         assert topic in kwargs["messages"][0]["content"]
+
+    def test_api_called_without_sampling_parameters(self, mock_anthropic):
+        """Test that no sampling parameters are sent, since current models reject them."""
+        mock_client, mock_content = mock_anthropic
+        mock_content.text = "APPROPRIATE"
+
+        is_topic_appropriate("Is morality objective?")
+
+        kwargs = mock_client.messages.create.call_args[1]
+        assert kwargs["model"] == "claude-haiku-4-5"
+        for param in ("temperature", "top_p", "top_k"):
+            assert param not in kwargs
 
     def test_moderation_prompt_includes_topic(self, mock_anthropic):
         """Test that the moderation prompt includes the topic being evaluated."""

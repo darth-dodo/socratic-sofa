@@ -56,7 +56,7 @@ sequenceDiagram
     U->>G: Select/Enter Topic
     G->>R: Check Rate Limit
     R->>F: is_topic_appropriate()
-    F->>A: Claude 3.5 Haiku
+    F->>A: Claude Haiku 4.5
     A-->>F: APPROPRIATE/INAPPROPRIATE
 
     alt Topic Rejected
@@ -169,7 +169,7 @@ flowchart TB
 
     subgraph AI["AI Layer"]
         Claude["Claude Sonnet 4.5"]
-        Haiku["Claude 3.5 Haiku"]
+        Haiku["Claude Haiku 4.5"]
         CrewAI["CrewAI Framework"]
     end
 
@@ -201,7 +201,7 @@ flowchart TB
 | Model             | Purpose             | Characteristics                    |
 | ----------------- | ------------------- | ---------------------------------- |
 | Claude Sonnet 4.5 | Dialogue generation | Deep reasoning, multi-turn context |
-| Claude 3.5 Haiku  | Content moderation  | Fast (<1s), cost-effective         |
+| Claude Haiku 4.5  | Content moderation  | Fast (<1s), cost-effective         |
 
 ### Quality Assurance
 
@@ -230,7 +230,7 @@ The Socratic method inherently requires sequential reasoning where each question
 ```mermaid
 flowchart LR
     subgraph Moderation["Content Moderation"]
-        H["Claude 3.5 Haiku"]
+        H["Claude Haiku 4.5"]
         F["Fast: <1 second"]
         C["Cost-effective"]
     end
@@ -359,7 +359,7 @@ flowchart LR
 flowchart TD
     Input["User Topic Input"]
     Length{"Length > 500?"}
-    AI["Claude 3.5 Haiku Check"]
+    AI["Claude Haiku 4.5 Check"]
     Decision{"Appropriate?"}
     Pass["Allow Topic"]
     Reject["Reject + Suggestions"]
